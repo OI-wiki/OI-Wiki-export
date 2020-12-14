@@ -24,6 +24,7 @@ jobs:
             imagemagick
             libwebp
             librsvg
+            git
             py3-pygments
           pre_compile: |
             wget -q "https://github.com/stipub/stixfonts/blob/master/zipfiles/STIXv2.0.2.zip?raw=true" -O stix.zip
