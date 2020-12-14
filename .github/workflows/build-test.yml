@@ -30,7 +30,6 @@ jobs:
             unzip -q stix.zip
             wget -q "https://github.com/adobe-fonts/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc"
             cp STIXv2.0.2/OTF/* /usr/share/fonts
-            cp *.otf /usr/share/fonts
             cp *.ttc /usr/share/fonts
             fc-cache
 
