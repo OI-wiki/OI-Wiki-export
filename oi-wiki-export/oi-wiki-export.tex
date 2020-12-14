@@ -122,19 +122,19 @@
 \patchcmd{\quotation}{1.5em}{2em}{}{}
 
 \begin{document}
-\maketitle
-\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
-\setlength{\parskip}{0\baselineskip}
-\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
-\makeatletter
-\let\@afterindentfalse\@afterindenttrue
-\@afterindenttrue
-\makeatother
-\setlength{\parindent}{2em} % 中文缩进两个汉字位
-\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
-\frontmatter
-\tableofcontents
-\clearpage
-\mainmatter
-\input{includes}
+	\maketitle
+	\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
+	\setlength{\parskip}{0\baselineskip}
+	\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
+	\makeatletter
+	\let\@afterindentfalse\@afterindenttrue
+	\@afterindenttrue
+	\makeatother
+	\setlength{\parindent}{2em} % 中文缩进两个汉字位
+	\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
+	\frontmatter
+	\tableofcontents
+	\clearpage
+	\mainmatter
+	\input{includes}
 \end{document}
