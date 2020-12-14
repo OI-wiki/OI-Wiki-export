@@ -30,6 +30,8 @@ jobs:
             wget -q "https://github.com/stipub/stixfonts/blob/master/zipfiles/STIXv2.0.2.zip?raw=true" -O stix.zip
             unzip -q stix.zip
             wget -q "https://github.com/adobe-fonts/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc"
+            git clone https://github.com/alif-type/xits
+            cp xits/*.otf /usr/share/fonts
             wget "http://mirrors.ctan.org/fonts/cm-unicode.zip"
             unzip ./cm-unicode.zip
             cp cm-unicode/fonts/otf/* /usr/share/fonts

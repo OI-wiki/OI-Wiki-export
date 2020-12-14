@@ -17,7 +17,7 @@
 
 所需字体：
 
-- STIX Two
+- XITS
 - 思源宋体
 - 华文仿宋
 - CMU Sans Serif
