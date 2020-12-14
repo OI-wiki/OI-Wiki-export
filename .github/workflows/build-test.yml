@@ -48,14 +48,15 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
-      - name: upload
+      - id: upload
         run: |
+          cd oi-wiki-export
           filepath=$(realpath oi-wiki-export.pdf)
           dest=$(cat oi-wiki-export.pdf | curl -F "c=@-" "http://fars.ee/?u=1")
-          echo "::set-env name=pdfurl::$dest.pdf"
+          echo "::set-output name=pdfurl::$dest.pdf"
       - name: comment commit
         uses: peter-evans/commit-comment@v1
         with:
             body: |
               构建成功
-              - 查看[pdf版本的文档](${{env.pdfurl}}).
+              - 查看[pdf版本的文档](${{ steps.upload.outputs.pdfurl }}).
