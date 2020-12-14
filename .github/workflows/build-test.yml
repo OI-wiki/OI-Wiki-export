@@ -32,7 +32,9 @@ jobs:
             wget -q "https://github.com/adobe-fonts/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc"
             git clone https://github.com/alif-type/xits
             cp xits/*.otf /usr/share/fonts
-            wget "http://mirrors.ctan.org/fonts/cm-unicode.zip"
+            git clone https://github.com/dolbydu/font.git
+            cp font/unicode/* /usr/share/fonts
+            wget -q "http://mirrors.ctan.org/fonts/cm-unicode.zip"
             unzip ./cm-unicode.zip
             cp cm-unicode/fonts/otf/* /usr/share/fonts
             cp STIXv2.0.2/OTF/* /usr/share/fonts
