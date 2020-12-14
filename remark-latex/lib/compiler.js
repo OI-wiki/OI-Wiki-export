@@ -147,7 +147,7 @@ function compiler(options) {
 					case '.jpg':
 					case '.jpeg': {
 						if (!fs.existsSync(dest)) {
-							child_process.execFileSync('cp', [uri, dest])
+							fs.copyFileSync(uri, dest)
 						}
 						break
 					}

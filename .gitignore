@@ -287,7 +287,7 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 
-./oi-wiki-export/tex/*
+oi-wiki-export/tex/
 
 images
 *.pdf

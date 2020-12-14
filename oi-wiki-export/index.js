@@ -60,9 +60,13 @@ const oiwikiRoot = process.argv[2] // OI Wiki 根目录
 const yamlFile = path.join(oiwikiRoot, 'mkdocs.yml') // YAML 配置文件
 
 console.log('Checking for tex/ directory')
-child_process.execSync('mkdir -p tex')
-child_process.execSync('mkdir -p images')
 
+try {
+	fs.mkdirSync('tex')
+	fs.mkdirSync('images')
+} catch (e) {
+
+}
 console.log('Exporting OI Wiki from directory: ' + oiwikiRoot)
 
 if (!fs.existsSync(yamlFile)) {

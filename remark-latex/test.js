@@ -19,8 +19,9 @@ if (!fs.existsSync(filename)) {
 	process.exit()
 }
 
-child_process.execSync('mkdir -p images')
-
+try {
+	fs.mkdirSync('images')
+} catch (e) {}
 unified()
 	.use(parse)
 	.use(math)
