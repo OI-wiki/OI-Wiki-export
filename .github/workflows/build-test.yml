@@ -1,0 +1,56 @@
+name: Build LaTeX document
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: xu-cheng/latex-action@v2
+        with:
+          latexmk_use_xelatex: true
+          latexmk_shell_escape: true
+          extra_system_packages: |
+            unzip
+            wget
+            curl
+            coreutils
+            nodejs
+            npm
+            imagemagick
+            libwebp
+            librsvg
+            py3-pygments
+          pre_compile: |
+            wget -q "https://github.com/stipub/stixfonts/blob/master/zipfiles/STIXv2.0.2.zip?raw=true" -O stix.zip
+            unzip -q stix.zip
+            wget -q "https://github.com/adobe-fonts/source-han-serif/releases/download/1.001R/SourceHanSerif.ttc"
+            cp STIXv2.0.2/OTF/* /usr/share/fonts
+            cp *.ttf /usr/share/fonts
+            cp *.TTF /usr/share/fonts
+            cp *.otf /usr/share/fonts
+            cp *.ttc /usr/share/fonts
+            fc-cache
+
+            cd oi-wiki-export
+            npm i
+            git clone https://github.com/OI-wiki/OI-wiki.git
+            node index.js ./OI-wiki
+
+          root_file: |
+            oi-wiki-export.tex
+      - name: upload
+        run: |
+          filepath=$(realpath oi-wiki-export.pdf)
+          dest=$(cat oi-wiki-export.pdf | curl -F "c=@-" "http://fars.ee/?u=1")
+          echo "::set-env name=pdfurl::$dest.pdf"
+      - name: comment commit
+        uses: peter-evans/commit-comment@v1
+        with:
+            body: |
+              构建成功
+              - 查看[pdf版本的文档](${{env.pdfurl}}).
