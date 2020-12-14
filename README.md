@@ -20,6 +20,8 @@
 - STIX Two
 - 思源宋体
 - 华文仿宋
+- CMU Sans Serif
+- CMU Typewriter Text
 
 然后安装所需依赖：
 
