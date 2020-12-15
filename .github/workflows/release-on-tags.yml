@@ -2,8 +2,8 @@ name: Build LaTeX document
 
 on:
   push:
-  pull_request:
-    types: [opened, reopened]
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -48,15 +48,23 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
-      - id: upload
-        run: |
-          cd oi-wiki-export
-          filepath=$(realpath oi-wiki-export.pdf)
-          dest=$(cat oi-wiki-export.pdf | curl -F "c=@-" "http://fars.ee/?u=1")
-          echo "::set-output name=pdfurl::$dest.pdf"
-      - name: comment commit
-        uses: peter-evans/commit-comment@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            body: |
-              构建成功
-              - 查看[pdf版本的文档](${{ steps.upload.outputs.pdfurl }}).
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./oi-wiki-export/oi-wiki-export.pdf
+          asset_name: OI-wiki.pdf
+          asset_content_type: application/pdf
