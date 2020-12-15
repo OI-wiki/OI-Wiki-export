@@ -21,4 +21,4 @@ jobs:
         with:
           workflow: Build LaTeX document
           token: ${{ secrets.PERSONAL_TOKEN }}
-          inputs: '{"ref": "${{ steps.tag.output.tag_name }}" }'
+          inputs: '{"tag_name": "${{ steps.tag.output.tag_name }}" }'
