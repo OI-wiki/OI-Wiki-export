@@ -13,7 +13,7 @@ jobs:
         id: create-tag
         run: |
           tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
-          git tag tag_name
+          git tag $tag_name
           git push --tags
           echo "::set-output name=tag_name::$tag_name"
       - name: Test
