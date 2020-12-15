@@ -5,8 +5,7 @@ on:
     inputs:
       tag_name:
         description: release tag name
-        required: false
-        default: ${{ github.ref }}
+        required: true
   push:
     tags:
       - 'v*'
