@@ -1,8 +1,9 @@
 name: Build LaTeX document
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:

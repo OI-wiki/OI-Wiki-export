@@ -1,0 +1,14 @@
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: create tag
+        run: |
+          today_date=$(date +"%Y%m%d_%H%M")
+          git tag v$today_date
+          git push --tags
