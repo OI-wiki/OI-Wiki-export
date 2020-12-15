@@ -15,7 +15,7 @@ jobs:
           tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
           git tag $tag_name
           git push --tags
-          echo "::set-output name=tag_name::$tag_name"
+          echo $tag_name > tag_name
       - name: Test
         run: |
           echo ${{ steps.create-tag.output.tag_name }}
@@ -24,4 +24,4 @@ jobs:
         with:
           workflow: Build LaTeX document
           token: ${{ secrets.PERSONAL_TOKEN }}
-          inputs: '{"tag_name": "${{ steps.create-tag.output.tag_name }}" }'
+          inputs: '{"tag_name": "$(cat tag_name)" }'
