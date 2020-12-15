@@ -16,7 +16,10 @@ jobs:
           git tag v$today_date
           git push --tags
           echo "::set-output name=tag_name::v$today_date"
-      - name: Invoke workflow without inputs
+      - name: Test
+        run: |
+          echo ${{ steps.tag.output.tag_name }}
+      - name: Invoke LaTeX build workflow with inputs
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Build LaTeX document
