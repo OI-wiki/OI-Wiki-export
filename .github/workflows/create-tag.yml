@@ -12,10 +12,10 @@ jobs:
       - name: create tag
         id: tag
         run: |
-          today_date=$(TZ="Asia/Shanghai" date +"%Y%m%d_%H%M")
-          git tag v$today_date
+          tag_name=v$(TZ="Asia/Shanghai" date +"%Y%m%d_%H%M")
+          git tag tag_name
           git push --tags
-          echo "::set-output name=tag_name::v$today_date"
+          echo "::set-output name=tag_name::$tag_name"
       - name: Test
         run: |
           echo ${{ steps.tag.output.tag_name }}
