@@ -12,16 +12,16 @@ jobs:
       - name: create tag
         id: create-tag
         run: |
-          tagname=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
-          git tag $tagname
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          git tag $tag_name
           git push --tags
-          echo "::set-output name=ref-name::$tagname"
+          echo "::set-output name=tag_name::$tag_name"
       - name: Test
         run: |
-          echo ${{ steps.create-tag.output.ref-name }}
+          echo ${{ steps.create-tag.output.tag_name }}
       - name: Invoke LaTeX build workflow with inputs
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Build LaTeX document
           token: ${{ secrets.PERSONAL_TOKEN }}
-          inputs: '{"ref-name": "${{ steps.create-tag.output.ref-name }}" }'
+          inputs: '{"tag_name": "${{ steps.create-tag.output.tag_name }}" }'

@@ -3,7 +3,7 @@ name: Build LaTeX document
 on:
   workflow_dispatch:
     input:
-      ref-name:
+      tag_name:
         description: release tag name
         required: false
         default: ${{ github.ref }}
