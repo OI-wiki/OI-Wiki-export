@@ -11,8 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: create tag
         run: |
-          TZ="Asia/Shanghai"
-          today_date=$(date +"%Y%m%d_%H%M")
+          today_date=$(TZ="Asia/Shanghai" date +"%Y%m%d_%H%M")
           git tag v$today_date
           git push --tags
       - name: Invoke workflow without inputs
