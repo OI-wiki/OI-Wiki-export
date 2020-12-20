@@ -34,7 +34,7 @@ jobs:
             git
             py3-pygments
           pre_compile: |
-            wget -q "https://github.com/stipub/stixfonts/blob/master/zipfiles/STIXv2.0.2.zip?raw=true" -O stix.zip
+            wget -q "https://github.com/stipub/stixfonts/raw/73d7c426993abacea44288aded4e81b568d57ed1/zipfiles/STIXv2.0.2.zip" -O stix.zip
             unzip -q stix.zip
             wget -q "https://github.com/adobe-fonts/source-han-super-otc/releases/download/20190603/SourceHan.ttc"
             git clone https://github.com/alif-type/xits
