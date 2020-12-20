@@ -58,7 +58,9 @@ jobs:
         run: |
           tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d__%H%M")
           if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
-          git tag $tag_name
+          if !(git rev-parse $tag_name >/dev/null 2>&1;) then
+            git tag $tag_name
+          fi
           git push --tags
           echo "::set-output name=tag_name::$tag_name"
       - name: Create Release
