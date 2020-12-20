@@ -2,8 +2,12 @@ name: Build LaTeX document
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: release tag name
+        required: false
   schedule:
-    - cron: '0 0 */7 * *'
+    - cron: '0 0 * * 0'
 
 jobs:
   build:
@@ -11,13 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: create tag
-        id: create-tag
+        id: create_tag
         run: |
           tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
           git tag $tag_name
           git push --tags
           echo "::set-output name=tag_name::$tag_name"
-      - uses: xu-cheng/latex-action@v2
+      - name: Build the LaTeX document
+        uses: xu-cheng/latex-action@v2
         with:
           latexmk_use_xelatex: true
           latexmk_shell_escape: true
@@ -61,12 +67,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create-tag.outputs.tag_name }}
-          release_name: Release ${{ steps.create-tag.outputs.tag_name }}
+          tag_name: ${{ steps.create_tag.outputs.tag_name }}
+          release_name: Release ${{ steps.create_tag.outputs.tag_name }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload_release_asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
