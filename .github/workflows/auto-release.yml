@@ -14,14 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: create tag
-        id: create_tag
-        run: |
-          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
-          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
-          git tag $tag_name
-          git push --tags
-          echo "::set-output name=tag_name::$tag_name"
       - name: Build the LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
@@ -61,6 +53,14 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
+      - name: create tag
+        id: create_tag
+        run: |
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
+          git tag $tag_name
+          git push --tags
+          echo "::set-output name=tag_name::$tag_name"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
