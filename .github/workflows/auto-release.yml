@@ -56,7 +56,7 @@ jobs:
       - name: create tag
         id: create_tag
         run: |
-          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d__%H%M")
           if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
           git tag $tag_name
           git push --tags
