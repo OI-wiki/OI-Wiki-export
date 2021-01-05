@@ -246,10 +246,10 @@ function compiler(options) {
 				}
 			}
 			case 'thematicBreak': { // 水平分割线
-				return '\\begin{center}\\makebox[0.5\\textwidth]{\\hrulefill}\\end{center}'
+				return '\\vskip 0.5em' // 在印刷物中使用水平分割线也须不是好的实践
 			}
 			case 'blockquote': {
-				return '\\begin{shaded}\\begin{quotation}\n{0}\\end{quotation}\\end{shaded}'.format(util.all(node, parse).join(''))
+				return '\\begin{quotation}\n{0}\\end{quotation}'.format(util.all(node, parse).join(''))
 			}
 			case 'break': {
 				return '\n\n'
@@ -365,7 +365,7 @@ function compiler(options) {
 				)
 				options.nested = prevNested
 				let color = type === 'Warning' ? 'warning-orange' : 'info-blue'
-				return '\\vspace{6pt}\\begin{details}{{0}}{{1}}\n{2}\n\\end{details}\\vspace{6pt}'.format(color, title, util.all(node, parse).join(''))
+				return '\\begin{details}{{0}}{{1}}\n{2}\n\\end{details}'.format(color, title, util.all(node, parse).join(''))
 			}
 			default: {
 				console.error('Unsupported node type: {0}'.format(node.type))

@@ -3,7 +3,6 @@
 \usepackage[boldfont,slantfont,CJKmath=true]{xeCJK}
 \usepackage{tocloft}
 \usepackage{amsmath,amssymb,amsthm}
-\usepackage{unicode-math}
 \usepackage[left=0.6in,right=0.6in,top=0.8in,bottom=0.8in]{geometry}
 \usepackage{fancyhdr}
 \usepackage{fontspec}
@@ -16,9 +15,10 @@
 \usepackage{tabu}
 \usepackage{longtable}
 \usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
-\usepackage[cache=false]{minted}
+\usepackage{minted}
 \usepackage{fvextra}
 \usepackage{framed}
+\usepackage{xcolor}
 \usepackage{footnotebackref}
 \usepackage{xpatch}
 \usepackage{titlesec}
@@ -38,14 +38,18 @@
 \date{\today}
 \titleformat{\chapter}[display]{\Huge\bfseries}{第~\thechapter~章}{1em}{}
 
-\setmainfont{STIX Two Text}
+\setmainfont{CMU Serif}
 \setsansfont{CMU Sans Serif}
-\setmonofont{CMU Typewriter Text}
-\setmathfont[math-style=ISO,BoldFont={XITS Math Bold},BoldItalicFont={XITS Math Bold}]{STIX Two Math}
+\setmonofont[]{Roboto Mono}
 
-\setCJKmainfont[BoldFont={思源宋体 Bold},ItalicFont={KaiTi},BoldItalicFont={思源宋体 Heavy}]{思源宋体}
-\setCJKsansfont{思源黑体}
-\setCJKmonofont{FangSong}
+\setCJKmainfont[ItalicFont={FandolKai}, BoldFont={FandolHei}]{FandolSong}
+\setCJKmonofont{FandolHei}
+\setCJKsansfont{FandolFang}
+\setCJKsansfont{FandolHei}
+\newCJKfontfamily\song{FandolSong}
+\newCJKfontfamily\fangsong{FandolFang}
+\newCJKfontfamily\kai{FandolKai}
+\newCJKfontfamily\hei{FandolHei}
 
 \pagestyle{fancy}
 
@@ -53,10 +57,32 @@
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername\quad #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}}
 
+% Original \paragraph and \subparagraph will change the indentation and spacing rule
+% which is troublesome when succeeded by \begin{details}
+% Replace them by naive implementations to avoid these issues
+
+\def\paragraph*#1{\par\bigskip\noindent{\bfseries\large#1}\medskip}
+\def\subparagraph*#1{\par\medskip\noindent{\sffamily#1}\smallskip}
+
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus .2ex}%
+                                   {\normalfont\huge\bfseries}}
+\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\normalfont\Large\bfseries}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\large\sffamily}}
+\makeatother
+
 \fancyhf{}
 \fancyhead[LE,RO]{\thepage}
-\fancyhead[RE]{\it\nouppercase\leftmark\rm}
-\fancyhead[LO]{\it\nouppercase\rightmark\rm}
+\fancyhead[RE]{\small\nouppercase\leftmark\rm}
+\fancyhead[LO]{\small\it\nouppercase\rightmark\rm}
 
 \setlength{\headheight}{12.5pt}
 
@@ -67,17 +93,48 @@
 \renewcommand{\tablename}{表}
 \renewcommand{\contentsname}{目录}
 \allowdisplaybreaks[4]
-\definecolor{anti-flashwhite}{rgb}{0.95, 0.95, 0.96}
 
-% mdframed
-\definecolor{warning-orange}{rgb}{0.9922,0.9567,0.9098}
-\definecolor{info-blue}{rgb}{0.9373,0.9529,1.0}
+\definecolor{quote-color}{gray}{0.1}
+\definecolor{quote-bg}{gray}{0.9}
+\renewenvironment{quotation}{%
+    \def\FrameCommand{
+        {\color{quote-color}\vrule width 4pt}%
+        \color{quote-color}%
+        \colorbox{quote-bg}
+    }
+    \OuterFrameSep=2pt
+    \MakeFramed{\advance\hsize-\width\FrameRestore}
+    \vskip.3em minus .3em\nobreak
+    \leftskip=1em
+    \rightskip=1em \CJKfamily+{FandolKai}
+}{%
+    \par\nobreak\vskip.3em minus .3em
+    \endMakeFramed
+}
+
+\definecolor{warning-orange}{RGB}{255, 145, 0}
+\definecolor{info-blue}{RGB}{68, 138, 255}
 \definecolor{Red}{rgb}{1,0,0}
 \definecolor{Blue}{rgb}{0,0,1}
-\newenvironment{details}[2]{\begin{mdframed}[backgroundcolor=#1,hidealllines=true]#2\end{mdframed}\relax}{\vspace{1em}}
+
+\newenvironment{details}[2]{%
+    \vskip.5em 
+    \begin{mdframed}[%
+        roundcorner=3pt,
+        linewidth=0pt,
+        backgroundcolor=#1!20!white,
+        frametitle={\vskip-0.5em\parindent=0pt#2},
+        frametitlefont={\sffamily},
+        frametitlerule=false,
+        frametitlebackgroundcolor=#1!50!white,
+    ]%
+    \def\isInDetail{}
+}{%
+    \end{mdframed}
+}
 
 \captionsetup[figure]{labelsep=space}
-% \captionsetup[table]{labelsep=space}
+\captionsetup[table]{labelsep=space}
 
 % framed settings
 \definecolor{shadecolor}{rgb}{0.95, 0.95, 0.96}
@@ -88,7 +145,23 @@
 \newcommand{\hytt}[1]{\texttt{\hyphenchar\font="200B #1}}
 
 % minted settings
-\setminted{bgcolor=anti-flashwhite}
+\setminted{fontsize=\small}
+\newmdenv[%
+    roundcorner=3pt,
+    linewidth=0pt,
+    backgroundcolor=black!5!white,
+    frametitle={},
+]{mintedWrap}
+\BeforeBeginEnvironment{minted}{%
+    \ifdefined\isInDetail \else 
+        \medskip\begin{mintedWrap}
+    \fi
+}
+\AfterEndEnvironment{minted}{%
+    \ifdefined\isInDetail \else 
+        \end{mintedWrap}\medskip
+    \fi
+}
 
 % customize TOC
 \cftsetpnumwidth{2em}
@@ -121,17 +194,18 @@
 % blockquote 2em indent
 \patchcmd{\quotation}{1.5em}{2em}{}{}
 
+% metric adjustment
+\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
+\setlength{\parskip}{.2\baselineskip}
+\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
+\setlength{\parindent}{2em} % 中文缩进两个汉字位
+\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
+
+% do not indent the first paragraph
+\makeatletter \let\@afterindentfalse\@afterindenttrue \@afterindenttrue \makeatother
+
 \begin{document}
 	\maketitle
-	\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
-	\setlength{\parskip}{0\baselineskip}
-	\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
-	\makeatletter
-	\let\@afterindentfalse\@afterindenttrue
-	\@afterindenttrue
-	\makeatother
-	\setlength{\parindent}{2em} % 中文缩进两个汉字位
-	\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
 	\frontmatter
 	\tableofcontents
 	\clearpage
