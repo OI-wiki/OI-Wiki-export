@@ -363,6 +363,9 @@ function compiler(options) {
 					.use(footnotes)
 					.parse(node.title ? node.title : type)
 				)
+				if (title.startsWith('\\par ')) {
+					title = title.slice(5)
+				}
 				options.nested = prevNested
 				let color = type === 'Warning' ? 'warning-orange' : 'info-blue'
 				return '\\begin{details}{{0}}{{1}}\n{2}\n\\end{details}'.format(color, title, util.all(node, parse).join(''))

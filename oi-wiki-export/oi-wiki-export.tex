@@ -15,7 +15,6 @@
 \usepackage{booktabs}
 \usepackage{tabu}
 \usepackage{longtable}
-\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
 \usepackage{minted}
 \usepackage{fvextra}
 \usepackage{framed}
@@ -26,6 +25,35 @@
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{datetime}
 \usepackage{caption}
+
+% Original \paragraph and \subparagraph will change the indentation and spacing rule
+% which is troublesome when succeeded by \begin{details}
+% Replace them by naive implementations to avoid these issues
+
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus .2ex}%
+                                   {\normalfont\huge\bfseries}}
+\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\normalfont\Large\bfseries}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\normalfont\Large\bfseries}}
+\renewcommand\paragraph{\@startsection {paragraph}{4}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {.75ex}%
+                                   {\large\sffamily}}
+\renewcommand\subparagraph{\@startsection {subparagraph}{5}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {.1ex}%
+                                   {\sffamily}}
+
+% because hyperref package will redefine \section, \subsection..., it should be loaded here
+\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
 
 % additional CJK characters for '←' and '→'
 \xeCJKsetcharclass{"2190}{"2192}{1}% 1: CJK
@@ -43,7 +71,7 @@
 \setsansfont{CMU Sans Serif}
 \setmonofont[]{Roboto Mono}
 
-\setCJKmainfont[ItalicFont={FandolKai}, BoldFont={FandolHei}]{FandolSong}
+\setCJKmainfont[ItalicFont={FandolKai}]{FandolSong}
 \setCJKmonofont{FandolHei}
 \setCJKsansfont{FandolFang}
 \setCJKsansfont{FandolHei}
@@ -57,28 +85,6 @@
 \renewcommand{\chaptername}{第~\thechapter~章}
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername\quad #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}}
-
-% Original \paragraph and \subparagraph will change the indentation and spacing rule
-% which is troublesome when succeeded by \begin{details}
-% Replace them by naive implementations to avoid these issues
-
-\def\paragraph*#1{\par\bigskip\noindent{\bfseries\large#1}\medskip}
-\def\subparagraph*#1{\par\medskip\noindent{\sffamily#1}\smallskip}
-
-\makeatletter
-\renewcommand\section{\@startsection {section}{1}{\z@}%
-                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
-                                   {2.3ex \@plus .2ex}%
-                                   {\normalfont\huge\bfseries}}
-\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
-                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
-                                   {1.5ex \@plus .2ex}%
-                                   {\normalfont\Large\bfseries}}
-\renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
-                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
-                                   {1.5ex \@plus .2ex}%
-                                   {\large\sffamily}}
-\makeatother
 
 \fancyhf{}
 \fancyhead[LE,RO]{\thepage}
@@ -119,27 +125,32 @@
 \definecolor{Blue}{rgb}{0,0,1}
 
 \newenvironment{details}[2]{%
-    \vskip.5em 
-    \begin{mdframed}[%
-        roundcorner=3pt,
-        linewidth=0pt,
-        backgroundcolor=#1!20!white,
-        frametitle={\vskip-0.5em\parindent=0pt#2},
-        frametitlefont={\sffamily},
-        frametitlerule=false,
-        frametitlebackgroundcolor=#1!50!white,
-    ]%
-    \def\isInDetail{}
+    \vskip.7em 
+    % Nested detail environment is buggy and ugly, flatten them!
+    \ifdefined\@inDetail%
+        \paragraph*{#2}
+    \else
+        \begin{mdframed}[%
+            roundcorner=3pt,
+            linewidth=0pt,
+            backgroundcolor=#1!20!white,
+            frametitle={\hskip-2em#2},
+            frametitlefont={\sffamily},
+            frametitlerule=false,
+            frametitlebackgroundcolor=#1!50!white,
+        ]%
+        \bgroup \def\@inDetail{}
+    \fi
 }{%
-    \end{mdframed}
+    \egroup\ifdefined\@inDetail\else
+        \end{mdframed}
+    \fi
 }
 
 \captionsetup[figure]{labelsep=space}
 \captionsetup[table]{labelsep=space}
 
 % framed settings
-\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.96}
-
 \newcommand{\hyref}[2]{\href{#1}{\hyphenchar\font="200B #2}}
 
 % auto-wrap typewriter style
@@ -148,19 +159,20 @@
 % minted settings
 \setminted{fontsize=\small}
 \newmdenv[%
-    roundcorner=3pt,
+    roundcorner=5pt,
     linewidth=0pt,
     backgroundcolor=black!5!white,
     frametitle={},
 ]{mintedWrap}
 \BeforeBeginEnvironment{minted}{%
-    \ifdefined\isInDetail \else 
-        \medskip\begin{mintedWrap}
+    \bigskip
+    \ifdefined\@inDetail \else 
+        \begin{mintedWrap}
     \fi
 }
 \AfterEndEnvironment{minted}{%
-    \ifdefined\isInDetail \else 
-        \end{mintedWrap}\medskip
+    \ifdefined\@inDetail \else 
+        \end{mintedWrap}
     \fi
 }
 
@@ -172,12 +184,8 @@
 
 % image related
 \graphicspath{{images/}}
-\makeatletter
-\def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
-\makeatother
 
 % URL auto line break
-\makeatletter
 \def\UrlAlphabet{%
 	\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
 	\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
@@ -190,10 +198,6 @@
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \g@addto@macro{\UrlBreaks}{\UrlAlphabet}
 \g@addto@macro{\UrlBreaks}{\UrlDigits}
-\makeatother
-
-% blockquote 2em indent
-\patchcmd{\quotation}{1.5em}{2em}{}{}
 
 % metric adjustment
 \renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
@@ -203,7 +207,8 @@
 \setlength{\tabcolsep}{2pt} % 表格列间距 2pt
 
 % do not indent the first paragraph
-\makeatletter \let\@afterindentfalse\@afterindenttrue \@afterindenttrue \makeatother
+\let\@afterindentfalse\@afterindenttrue \@afterindenttrue
+\makeatother
 
 \begin{document}
 	\maketitle
