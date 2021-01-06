@@ -14,14 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: create tag
-        id: create_tag
-        run: |
-          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
-          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
-          git tag $tag_name
-          git push --tags
-          echo "::set-output name=tag_name::$tag_name"
       - name: Build the LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
@@ -40,7 +32,7 @@ jobs:
             git
             py3-pygments
           pre_compile: |
-            wget -q "https://github.com/stipub/stixfonts/blob/master/zipfiles/STIXv2.0.2.zip?raw=true" -O stix.zip
+            wget -q "https://github.com/stipub/stixfonts/raw/73d7c426993abacea44288aded4e81b568d57ed1/zipfiles/STIXv2.0.2.zip" -O stix.zip
             unzip -q stix.zip
             wget -q "https://github.com/adobe-fonts/source-han-super-otc/releases/download/20190603/SourceHan.ttc"
             git clone https://github.com/alif-type/xits
@@ -61,6 +53,14 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
+      - name: create tag
+        id: create_tag
+        run: |
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
+          git tag $tag_name
+          git push --tags
+          echo "::set-output name=tag_name::$tag_name"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
