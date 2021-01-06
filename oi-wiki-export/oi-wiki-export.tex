@@ -1,6 +1,11 @@
+% TODO: 
+%   no break page between details title and content
+%   solve abnormal spacing for CJK in href
+%   tighter glue for section header
+
 \documentclass[10pt,a4paper,openany]{book}
 \usepackage[normalem]{ulem}
-\usepackage[boldfont,slantfont,CJKmath=true]{xeCJK}
+\usepackage[CJKmath=true]{xeCJK}
 \usepackage{tocloft}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[left=0.6in,right=0.6in,top=0.8in,bottom=0.8in]{geometry}
@@ -38,7 +43,7 @@
 \renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
                                    {-3.25ex \@plus -1ex \@minus -.2ex}%
                                    {1.5ex \@plus .2ex}%
-                                   {\normalfont\Large\bfseries}}
+                                   {\normalfont\LARGE\bfseries}}
 \renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
                                    {-3.25ex \@plus -1ex \@minus -.2ex}%
                                    {1.5ex \@plus .2ex}%
@@ -53,7 +58,8 @@
                                    {\sffamily}}
 
 % because hyperref package will redefine \section, \subsection..., it should be loaded here
-\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
+\usepackage{hyperref}
+\hypersetup{colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode}
 
 % additional CJK characters for '←' and '→'
 \xeCJKsetcharclass{"2190}{"2192}{1}% 1: CJK
@@ -71,14 +77,10 @@
 \setsansfont{CMU Sans Serif}
 \setmonofont[]{Roboto Mono}
 
-\setCJKmainfont[ItalicFont={FandolKai}]{FandolSong}
+\setCJKmainfont{FandolSong}
 \setCJKmonofont{FandolHei}
 \setCJKsansfont{FandolFang}
 \setCJKsansfont{FandolHei}
-\newCJKfontfamily\song{FandolSong}
-\newCJKfontfamily\fangsong{FandolFang}
-\newCJKfontfamily\kai{FandolKai}
-\newCJKfontfamily\hei{FandolHei}
 
 \pagestyle{fancy}
 
@@ -100,6 +102,21 @@
 \renewcommand{\tablename}{表}
 \renewcommand{\contentsname}{目录}
 \allowdisplaybreaks[4]
+
+% Using \includegraphics in quotation or details environment will cause errors
+% Former versions solve this problem by using [H] option to override floating behavior
+% However, this will cause problems in main text graphic positioning
+\newcommand{\includegraphicsEverywhere}[2]{%
+    \ifinner
+    \begin{figure}[H]
+    \else
+    \begin{figure}[htbp]
+    \fi
+        \centering
+        \includegraphics[max width=0.9\textwidth, max height=0.45\textheight]{{#1}}
+        \caption{#2}
+    \end{figure}
+}
 
 \definecolor{quote-color}{gray}{0.1}
 \definecolor{quote-bg}{gray}{0.9}
@@ -128,7 +145,7 @@
     \vskip.7em 
     % Nested detail environment is buggy and ugly, flatten them!
     \ifdefined\@inDetail%
-        \paragraph*{#2}
+        \paragraph*{#2}\begingroup
     \else
         \begin{mdframed}[%
             roundcorner=3pt,
@@ -139,10 +156,11 @@
             frametitlerule=false,
             frametitlebackgroundcolor=#1!50!white,
         ]%
-        \bgroup \def\@inDetail{}
+        \begingroup\def\@inDetail{}
     \fi
 }{%
-    \egroup\ifdefined\@inDetail\else
+    \endgroup
+    \ifdefined\@inDetail\else
         \end{mdframed}
     \fi
 }
@@ -187,12 +205,12 @@
 
 % URL auto line break
 \def\UrlAlphabet{%
-	\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
-	\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
-	\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
-	\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
-	\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
-	\do\Y\do\Z%
+    \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+    \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+    \do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+    \do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+    \do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+    \do\Y\do\Z%
 }
 \def\UrlDigits{\do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0}
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
@@ -208,13 +226,14 @@
 
 % do not indent the first paragraph
 \let\@afterindentfalse\@afterindenttrue \@afterindenttrue
+
 \makeatother
 
 \begin{document}
-	\maketitle
-	\frontmatter
-	\tableofcontents
-	\clearpage
-	\mainmatter
-	\input{includes}
+    \maketitle
+    \frontmatter
+    \tableofcontents
+    \clearpage
+    \mainmatter
+    \input{includes}
 \end{document}

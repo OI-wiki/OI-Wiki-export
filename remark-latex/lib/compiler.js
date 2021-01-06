@@ -159,7 +159,7 @@ function compiler(options) {
 						break
 					}
 				}
-				return '\\begin{figure}[htbp]\n\\centering\n\\includegraphics[max width=0.7\\textwidth, max height=0.4\\textheight]{{{0}}}\n\\caption{{1}}\\end{figure}'.format(path.basename(dest, '.jpg'), escape(node.alt || ''))
+				return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, '.jpg'), escape(node.alt || ''))
 			} catch (e) {
 				console.log('Error occurred when processing image file `{0}`'.format(uri))
 				return ''
