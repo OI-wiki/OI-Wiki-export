@@ -17,11 +17,9 @@
 
 所需字体：
 
-- XITS
-- 思源字体(推荐使用 https://github.com/adobe-fonts/source-han-super-otc )
-- 楷体(Kaiti.ttf)
-- 仿宋(Fangsong.ttf)
-- CM Unicode(https://ctan.org/pkg/cm-unicode?lang=en)
+- Fandol 系列中文字体（包括 FandolSong, FandolHei, FandolKai）
+- Roboto Mono
+- Computer Modern Unicode 系列字体（包括 CMU Serif 和 CMU Sans Serif）
 
 然后安装所需依赖：
 
