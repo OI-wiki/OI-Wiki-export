@@ -112,22 +112,38 @@
     \end{figure}
 }
 
-\definecolor{quote-color}{gray}{0.1}
-\definecolor{quote-bg}{gray}{0.9}
+\newmdenv[%
+    backgroundcolor=black!5!white,
+    topline=false,rightline=false,bottomline=false,
+    linewidth=2pt,
+    linecolor=black!80!white,
+]{authorBox}
+\newcommand{\authors}[1]{
+    \vskip.5em
+    \begin{authorBox}
+        \vskip.3em
+        \noindent\small\textbf{Authors: }%
+        \parbox[t]{0.92\textwidth}{#1}%
+        \vskip.3em
+    \end{authorBox}
+}
+
+\newmdenv[%
+    backgroundcolor=black!5!white,
+    topline=false,rightline=false,bottomline=false,
+    linewidth=4pt,
+    linecolor=black!80!white,
+    innertopmargin=1em,
+    innerbottommargin=1em,
+    innerleftmargin=1em,
+    innerrightmargin=1em,
+]{quotationBox}
 \renewenvironment{quotation}{%
-    \def\FrameCommand{
-        {\color{quote-color}\vrule width 4pt}%
-        \color{quote-color}%
-        \colorbox{quote-bg}
-    }
-    \OuterFrameSep=2pt
-    \MakeFramed{\advance\hsize-\width\FrameRestore}
-    \vskip.3em minus .3em\nobreak
+    \begin{quotationBox}
     \leftskip=1em
     \rightskip=1em \CJKfamily+{FandolKai}
 }{%
-    \par\nobreak\vskip.3em minus .3em
-    \endMakeFramed
+    \end{quotationBox}
 }
 
 \definecolor{warning-orange}{RGB}{255, 145, 0}
@@ -174,17 +190,16 @@
     roundcorner=5pt,
     linewidth=0pt,
     backgroundcolor=black!5!white,
-    frametitle={},
-]{mintedWrap}
+]{grayRoundcornerBox}
 \BeforeBeginEnvironment{minted}{%
     \bigskip
     \ifdefined\@inDetail \else 
-        \begin{mintedWrap}
+        \begin{grayRoundcornerBox}
     \fi
 }
 \AfterEndEnvironment{minted}{%
     \ifdefined\@inDetail \else 
-        \end{mintedWrap}
+        \end{grayRoundcornerBox}
     \fi
 }
 

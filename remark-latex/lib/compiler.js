@@ -175,7 +175,11 @@ function compiler(options) {
 				return article
 			}
 			case 'paragraph': {
-				return '\\par {0}'.format(util.all(node, parse).join(''))
+				let parText = util.all(node, parse).join('')
+				if (parText.startsWith('author: ')) {
+					return '\\authors{{0}}'.format(parText.slice(8))
+				}
+				return '\\par {0}'.format(parText)
 			}
 			case 'heading': {
 				const block = ['chapter', 'section', 'subsection', 'subsubsection', 'paragraph', 'subparagraph']
