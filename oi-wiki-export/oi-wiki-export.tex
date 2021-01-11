@@ -43,7 +43,7 @@
 \renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
                                    {-3.25ex \@plus -1ex \@minus -.2ex}%
                                    {1.5ex \@plus .2ex}%
-                                   {\normalfont\Large\bfseries}}
+                                   {\Large\sffamily}}
 \renewcommand\paragraph{\@startsection {paragraph}{4}{\z@}%
                                    {-3.25ex \@plus -1ex \@minus -.2ex}%
                                    {.75ex}%
@@ -71,7 +71,7 @@
 
 \setmainfont{CMU Serif}
 \setsansfont{CMU Sans Serif}
-\setmonofont[]{Roboto Mono}
+\setmonofont[Scale=0.9]{Roboto Mono}  % scale is needed for visual balance between Chinese and English
 
 \setCJKmainfont{Noto Serif CJK SC}
 \setCJKmonofont{Noto Sans CJK SC}
@@ -254,4 +254,6 @@
     \clearpage
     \mainmatter
     \input{includes}
+    % \input{tex/3.tex}
+    % \input{test.tex}
 \end{document}

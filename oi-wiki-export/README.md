@@ -44,7 +44,7 @@ includes.tex
 - 在超链接中，中文与英文、标点之间的 glue 没有被 xeCJK 正确地处理。
 - details 环境下的标题和正文直接可能会出现换页。
 - 章节标题上下的 glue 过于宽松，在浮动体较多的位置会出现过大的空隙。
-- 在上下文有缩进的场合使用 details 环境时，标题的缩进没有被正确的处理。
+- 部分字符（目前已经发现有 IPA Extensions 和 Spacing Modifier Letters 这两个 Unicode block）没有被字体的编码集合覆盖。
 
 ## `index.js`
 

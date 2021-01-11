@@ -17,9 +17,9 @@
 
 所需字体：
 
-- Fandol 系列中文字体（包括 FandolSong, FandolHei, FandolKai）
 - Roboto Mono
 - Computer Modern Unicode 系列字体（包括 CMU Serif 和 CMU Sans Serif）
+- Noto 系列字体（包括 Noto Sans CJK SC 和 Noto Serif CJK SC）
 
 然后安装所需依赖：
 
