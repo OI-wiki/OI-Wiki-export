@@ -179,6 +179,9 @@ function compiler(options) {
 				if (parText.startsWith('author: ')) {
 					return '\\authors{{0}}'.format(parText.slice(8))
 				}
+				if (parText.startsWith('disqus:')) {
+					return ''
+				}
 				return '\\par {0}'.format(parText)
 			}
 			case 'heading': {
