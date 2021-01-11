@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper,openany]{book}
 \usepackage[normalem]{ulem}
-\usepackage[CJKmath=true]{xeCJK}
+\usepackage{xeCJK}
 \usepackage{tocloft}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{unicode-math}
@@ -140,9 +140,8 @@
     innerrightmargin=1em,
 ]{quotationBox}
 \renewenvironment{quotation}{%
+    \vskip0.5em
     \begin{quotationBox}
-    \leftskip=1em
-    \rightskip=1em \CJKfamily+{FandolKai}
 }{%
     \end{quotationBox}
 }
@@ -162,7 +161,7 @@
             roundcorner=3pt,
             linewidth=0pt,
             backgroundcolor=#1!20!white,
-            frametitle={\hskip-2em#2},
+            frametitle={#2},
             frametitlefont={\sffamily},
             frametitlerule=false,
             frametitlebackgroundcolor=#1!50!white,
@@ -172,14 +171,14 @@
 }{%
     \endgroup
     \ifdefined\@inDetail\else
-        \end{mdframed}
+        \end{mdframed}\vskip.5em
     \fi
 }
 
 \captionsetup[figure]{labelsep=space}
 \captionsetup[table]{labelsep=space}
 
-% framed settings
+% hyperref settings
 \newcommand{\hyref}[2]{\href{#1}{\hyphenchar\font="200B #2}}
 
 % auto-wrap typewriter style
@@ -234,11 +233,20 @@
 \setlength{\parindent}{2em} % 中文缩进两个汉字位
 \setlength{\tabcolsep}{2pt} % 表格列间距 2pt
 
-% do not indent the first paragraph
-\let\@afterindentfalse\@afterindenttrue \@afterindenttrue
+% patches to fix indent first paragraph, even in details environment
+% known bug: if put a enumerate environment in the first graph of details environment, 
+%            its vertical spacing may not behave as expected. 
+\let\@afterindentfalse\@afterindenttrue
+\newlength{\parindent@restore}
+\parindent@restore\parindent
+\patchcmd\mdf@trivlist{\itemindent\z@}{\itemindent\parindent@restore}{}{}
+\patchcmd\mdfframedtitleenv{%
+    \mdf@lrbox{\mdf@frametitlebox}%
+}{%
+    \mdf@lrbox{\mdf@frametitlebox}\parindent\z@%
+}{}{}
 
 \makeatother
-
 \begin{document}
     \maketitle
     \frontmatter
