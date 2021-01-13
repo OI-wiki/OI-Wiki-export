@@ -18,8 +18,7 @@
 所需字体：
 
 - Roboto Mono
-- Computer Modern Unicode 系列字体（包括 CMU Serif 和 CMU Sans Serif）
-- Noto 系列字体（包括 Noto Sans CJK SC 和 Noto Serif CJK SC）
+- Noto 系列字体（包括 Noto Sans, Noto Serif, Noto Sans CJK SC, Noto Serif CJK SC）
 
 然后安装所需依赖：
 

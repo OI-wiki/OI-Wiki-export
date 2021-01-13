@@ -39,12 +39,10 @@ includes.tex
 
 `oi-wiki-export.tex` 是调用了上面产生的这些 LaTeX 文档的 TeX 文件，编译它即可得到 OI Wiki 的 PDF。由于 OI Wiki 的内容包含中文、英文，以及少量的日文、俄文等，文字构成复杂，建议使用 XeLaTeX 编译。依赖包可直接查看 `oi-wiki-export.tex`。若使用最新版本的 TeX Live，应当不会出现依赖问题。
 
-提供的 `oi-wiki-export.tex` 使用 CMU 系列字体作为西文字体，Fandol 系列字体作为中文字体，Roboto Mono 作为西文等宽字体。目前还有若干排版问题需要修复：
+提供的 `oi-wiki-export.tex` 使用 Noto 系列字体作为主要字体，使用 Roboto Mono 作为英文等宽字体。
 
-- 在超链接中，中文与英文、标点之间的 glue 没有被 xeCJK 正确地处理。
+- 在超链接（`\hyref` 中，中文与英文、标点之间的 glue 没有被 xeCJK 正确地处理。
 - details 环境下的标题和正文直接可能会出现换页。
-- 章节标题上下的 glue 过于宽松，在浮动体较多的位置会出现过大的空隙。
-- 部分字符（目前已经发现有 IPA Extensions 和 Spacing Modifier Letters 这两个 Unicode block）没有被字体的编码集合覆盖。
 
 ## `index.js`
 

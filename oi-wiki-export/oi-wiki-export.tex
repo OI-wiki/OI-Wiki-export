@@ -16,7 +16,7 @@
 \usepackage{booktabs}
 \usepackage{tabu}
 \usepackage{longtable}
-\usepackage{minted}
+\usepackage[cache=false]{minted}
 \usepackage{fvextra}
 \usepackage{framed}
 \usepackage{xcolor}
@@ -69,11 +69,11 @@
 \date{\today}
 \titleformat{\chapter}[display]{\Huge\bfseries}{第~\thechapter~章}{1em}{}
 
-\setmainfont{CMU Serif}
-\setsansfont{CMU Sans Serif}
+\setmainfont[BoldFont={Noto Serif SemiBold}]{Noto Serif}
+\setsansfont[BoldFont={Noto Sans SemiBold}]{Noto Sans}
 \setmonofont[Scale=0.9]{Roboto Mono}  % scale is needed for visual balance between Chinese and English
 
-\setCJKmainfont{Noto Serif CJK SC}
+\setCJKmainfont[ItalicFont={KaiTi}]{Noto Serif CJK SC}
 \setCJKmonofont{Noto Sans CJK SC}
 \setCJKsansfont{Noto Sans CJK SC}
 
@@ -253,7 +253,7 @@
     \tableofcontents
     \clearpage
     \mainmatter
-    \input{includes}
-    % \input{tex/3.tex}
+    % \input{includes}
+    \input{tex/3.tex}
     % \input{test.tex}
 \end{document}
