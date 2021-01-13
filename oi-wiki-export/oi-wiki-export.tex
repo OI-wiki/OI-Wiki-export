@@ -246,6 +246,10 @@
     \mdf@lrbox{\mdf@frametitlebox}\parindent\z@%
 }{}{}
 
+% It is observed someone used these macros to input '<' and '>'
+\newcommand{\lt}{\symbol{"3C}}  % less than
+\newcommand{\gt}{\symbol{"3E}}  % greater than
+
 \makeatother
 \begin{document}
     \maketitle
