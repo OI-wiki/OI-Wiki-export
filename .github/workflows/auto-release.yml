@@ -1,4 +1,4 @@
-name: Build LaTeX document
+name: Build and Release LaTeX document
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         description: release tag name
         required: false
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: "0 0 * * 0"
 
 jobs:
   build:
@@ -37,8 +37,9 @@ jobs:
             wget -q "https://github.com/adobe-fonts/source-han-super-otc/releases/download/20190603/SourceHan.ttc"
             git clone https://github.com/alif-type/xits
             cp xits/*.otf /usr/share/fonts
-            git clone https://github.com/dolbydu/font.git
-            cp font/unicode/* /usr/share/fonts
+            wget https://mirrors.sjtug.sjtu.edu.cn/ctan/fonts/fandol.zip
+            unzip -q fandol.zip
+            cp fandol/* /usr/share/fonts
             wget -q "http://mirrors.ctan.org/fonts/cm-unicode.zip"
             unzip ./cm-unicode.zip
             cp cm-unicode/fonts/otf/* /usr/share/fonts
