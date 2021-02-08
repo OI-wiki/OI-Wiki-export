@@ -153,7 +153,6 @@ function compiler(options) {
 						break
 					}
 					case '.svg': {
-						console.log(dest, uri);
 						if (!fs.existsSync(dest)) {
 							child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri])
 						}
