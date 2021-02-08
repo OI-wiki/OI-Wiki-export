@@ -141,7 +141,8 @@ function compiler(options) {
 				} else {
 					ext = path.extname(loc)
 				}
-				dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + '.jpg')
+				let is_svg = ext === '.svg';
+				dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + (is_svg ? '.pdf' : '.jpg'))
 				// convert
 				switch (ext) {
 					case '.jpg':
@@ -151,6 +152,12 @@ function compiler(options) {
 						}
 						break
 					}
+					case '.svg': {
+						console.log(dest, uri);
+						if (!fs.existsSync(dest)) {
+							child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri])
+						}
+					}
 					default: {
 						if (!fs.existsSync(dest)) {
 							// 混合白色背景（原图可能是 PNG 透明图）
@@ -159,7 +166,7 @@ function compiler(options) {
 						break
 					}
 				}
-				return '\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\maxwidth{0.7\\linewidth}]{{{0}}}\n\\caption{{1}}\\end{figure}'.format(path.basename(dest, '.jpg'), escape(node.alt || ''))
+				return '\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\maxwidth{0.7\\linewidth}]{{{0}}}\n\\caption{{1}}\\end{figure}'.format(path.basename(dest, is_svg ? '.pdf' : '.jpg'), escape(node.alt || ''))
 			} catch (e) {
 				console.log('Error occurred when processing image file `{0}`'.format(uri))
 				return ''
