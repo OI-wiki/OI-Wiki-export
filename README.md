@@ -19,8 +19,7 @@
 
 - XITS
 - 思源字体(推荐使用 https://github.com/adobe-fonts/source-han-super-otc )
-- 楷体(Kaiti.ttf)
-- 仿宋(Fangsong.ttf)
+- Fandol
 - CM Unicode(https://ctan.org/pkg/cm-unicode?lang=en)
 
 然后安装所需依赖：
