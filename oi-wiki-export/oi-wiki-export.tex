@@ -72,6 +72,7 @@
 \setmainfont[BoldFont={Noto Serif SemiBold}]{Noto Serif}
 \setsansfont[BoldFont={Noto Sans SemiBold}]{Noto Sans}
 \setmonofont[Scale=0.9]{Roboto Mono}  % scale is needed for visual balance between Chinese and English
+\setmathfont{CMU Serif}
 
 \setCJKmainfont{Noto Serif CJK SC}
 \setCJKmonofont{Noto Sans CJK SC}
@@ -102,6 +103,7 @@
 % Former versions solve this problem by using [H] option to override floating behavior
 % However, this will cause problems in main text graphic positioning
 \newcommand{\includegraphicsEverywhere}[2]{%
+    \par
     \ifinner
     \begin{figure}[H]
     \else
@@ -167,6 +169,7 @@
             frametitlebackgroundcolor=#1!50!white,
         ]%
         \begingroup\def\@inDetail{}
+        %\ifinner Inner \else Outer \fi
     \fi
 }{%
     \endgroup
@@ -258,4 +261,5 @@
     \clearpage
     \mainmatter
     \input{includes}
+    %\input{test.tex}
 \end{document}
