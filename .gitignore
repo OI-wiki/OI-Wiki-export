@@ -291,3 +291,5 @@ oi-wiki-export/tex/
 
 images
 *.pdf
+
+.vscode

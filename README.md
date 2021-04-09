@@ -35,7 +35,7 @@ node index.js path/to/OI-wiki/repo
 然后使用 latexmk 编译导出后得到的 tex 文档
 
 ```
-latexmk -shell-escape -xelatex oi-wiki-export.tex
+latexmk -shell-escape -8bit -xelatex oi-wiki-export.tex
 ```
 
 最终得到的 oi-wiki-export.pdf 即为结果。

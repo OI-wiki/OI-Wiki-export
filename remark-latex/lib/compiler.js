@@ -141,7 +141,8 @@ function compiler(options) {
 				} else {
 					ext = path.extname(loc)
 				}
-				dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + '.jpg')
+				let is_svg = ext === '.svg';
+				dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + (is_svg ? '.pdf' : '.jpg'))
 				// convert
 				switch (ext) {
 					case '.jpg':
@@ -150,6 +151,11 @@ function compiler(options) {
 							fs.copyFileSync(uri, dest)
 						}
 						break
+					}
+					case '.svg': {
+						if (!fs.existsSync(dest)) {
+							child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri])
+						}
 					}
 					default: {
 						if (!fs.existsSync(dest)) {

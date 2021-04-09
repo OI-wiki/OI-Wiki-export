@@ -1,4 +1,4 @@
-name: Build LaTeX document
+name: Build and Release LaTeX document
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         description: release tag name
         required: false
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: "0 0 * * 0"
 
 jobs:
   build:
@@ -19,6 +19,7 @@ jobs:
         with:
           latexmk_use_xelatex: true
           latexmk_shell_escape: true
+          args: "-pdf -file-line-error -halt-on-error -interaction=nonstopmode -8bit"
           extra_system_packages: |
             unzip
             wget
@@ -31,6 +32,8 @@ jobs:
             librsvg
             git
             py3-pygments
+            inkscape
+            libxml2
           pre_compile: |
             wget -q -O notosans.zip "https://noto-website-2.storage.googleapis.com/pkgs/NotoSans-hinted.zip"
             wget -q -O notoserif.zip "https://noto-website-2.storage.googleapis.com/pkgs/NotoSerif-hinted.zip"
