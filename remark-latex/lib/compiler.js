@@ -259,7 +259,7 @@ function compiler(options) {
 				}
 			}
 			case 'thematicBreak': { // 水平分割线
-				return '\\vskip 0.5em' // 在印刷物中使用水平分割线也须不是好的实践
+				return '\\vskip 0.5em' // 在印刷物中使用水平分割线也许不是好的实践
 			}
 			case 'blockquote': {
 				return '\\begin{quotation}\n{0}\\end{quotation}'.format(util.all(node, parse).join(''))
