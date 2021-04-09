@@ -165,7 +165,7 @@ function compiler(options) {
 						break
 					}
 				}
-				return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, '.jpg'), escape(node.alt || ''))
+				return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, is_svg ? '.pdf' : '.jpg'), escape(node.alt || ''))
 			} catch (e) {
 				console.log('Error occurred when processing image file `{0}`'.format(uri))
 				return ''

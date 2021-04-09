@@ -19,6 +19,7 @@
 
 - Roboto Mono
 - Noto 系列字体（包括 Noto Sans, Noto Serif, Noto Sans CJK SC, Noto Serif CJK SC）
+- CM Unicode 字体
 
 然后安装所需依赖：
 
