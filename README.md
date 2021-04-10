@@ -17,10 +17,9 @@
 
 所需字体：
 
-- XITS
-- 思源字体(推荐使用 https://github.com/adobe-fonts/source-han-super-otc )
-- Fandol
-- CM Unicode(https://ctan.org/pkg/cm-unicode?lang=en)
+- Roboto Mono
+- Noto 系列字体（包括 Noto Sans, Noto Serif, Noto Sans CJK SC, Noto Serif CJK SC）
+- CM Unicode 字体
 
 然后安装所需依赖：
 

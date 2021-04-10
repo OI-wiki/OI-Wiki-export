@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper,openany]{book}
 \usepackage[normalem]{ulem}
-\usepackage[boldfont,slantfont,CJKmath=true]{xeCJK}
+\usepackage{xeCJK}
 \usepackage{tocloft}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{unicode-math}
@@ -10,21 +10,52 @@
 \usepackage{enumitem}
 \usepackage{parskip}
 \usepackage{graphicx}
+\usepackage[export]{adjustbox}
 \usepackage{float}
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{tabu}
 \usepackage{longtable}
-\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
 \usepackage[cache=false]{minted}
 \usepackage{fvextra}
 \usepackage{framed}
+\usepackage{xcolor}
 \usepackage{footnotebackref}
 \usepackage{xpatch}
 \usepackage{titlesec}
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{datetime}
 \usepackage{caption}
+
+% Original \paragraph and \subparagraph will change the indentation and spacing rule
+% which is troublesome when succeeded by \begin{details}
+% Replace them by naive implementations to avoid these issues
+
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {2.3ex \@plus .2ex}%
+                                   {\normalfont\huge\bfseries}}
+\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\normalfont\LARGE\bfseries}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{3}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {1.5ex \@plus .2ex}%
+                                   {\Large\sffamily}}
+\renewcommand\paragraph{\@startsection {paragraph}{4}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {.75ex}%
+                                   {\large\sffamily}}
+\renewcommand\subparagraph{\@startsection {subparagraph}{5}{\z@}%
+                                   {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                   {.1ex}%
+                                   {\sffamily}}
+
+% because hyperref package will redefine \section, \subsection..., it should be loaded here
+\usepackage{hyperref}
+\hypersetup{colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode}
 
 % additional CJK characters for '←' and '→'
 \xeCJKsetcharclass{"2190}{"2192}{1}% 1: CJK
@@ -38,14 +69,14 @@
 \date{\today}
 \titleformat{\chapter}[display]{\Huge\bfseries}{第~\thechapter~章}{1em}{}
 
-\setmainfont{STIX Two Text}
-\setsansfont{CMU Sans Serif}
-\setmonofont{CMU Typewriter Text}
-\setmathfont[math-style=ISO,BoldFont={XITS Math Bold},BoldItalicFont={XITS Math Bold}]{STIX Two Math}
+\setmainfont[BoldFont={Noto Serif SemiBold}]{Noto Serif}
+\setsansfont[BoldFont={Noto Sans SemiBold}]{Noto Sans}
+\setmonofont[Scale=0.9]{Roboto Mono}  % scale is needed for visual balance between Chinese and English
+\setmathfont{CMU Serif}
 
-\setCJKmainfont[BoldFont={思源宋体 Bold},ItalicFont={FandolKai},BoldItalicFont={思源宋体 Heavy}]{思源宋体}
-\setCJKsansfont{思源黑体}
-\setCJKmonofont{FandolFang}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKmonofont{Noto Sans CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
 
 \pagestyle{fancy}
 
@@ -55,8 +86,8 @@
 
 \fancyhf{}
 \fancyhead[LE,RO]{\thepage}
-\fancyhead[RE]{\it\nouppercase\leftmark\rm}
-\fancyhead[LO]{\it\nouppercase\rightmark\rm}
+\fancyhead[RE]{\small\nouppercase\leftmark\rm}
+\fancyhead[LO]{\small\it\nouppercase\rightmark\rm}
 
 \setlength{\headheight}{12.5pt}
 
@@ -67,28 +98,113 @@
 \renewcommand{\tablename}{表}
 \renewcommand{\contentsname}{目录}
 \allowdisplaybreaks[4]
-\definecolor{anti-flashwhite}{rgb}{0.95, 0.95, 0.96}
 
-% mdframed
-\definecolor{warning-orange}{rgb}{0.9922,0.9567,0.9098}
-\definecolor{info-blue}{rgb}{0.9373,0.9529,1.0}
+% Using \includegraphics in quotation or details environment will cause errors
+% Former versions solve this problem by using [H] option to override floating behavior
+% However, this will cause problems in main text graphic positioning
+\newcommand{\includegraphicsEverywhere}[2]{%
+    \par
+    \ifinner
+    \begin{figure}[H]
+    \else
+    \begin{figure}[htbp]
+    \fi
+        \centering
+        \includegraphics[max width=0.9\textwidth, max height=0.45\textheight]{{#1}}
+        \caption{#2}
+    \end{figure}
+}
+
+\newmdenv[%
+    backgroundcolor=black!5!white,
+    topline=false,rightline=false,bottomline=false,
+    linewidth=2pt,
+    linecolor=black!80!white,
+]{authorBox}
+\newcommand{\authors}[1]{
+    \vskip.5em
+    \begin{authorBox}
+        \vskip.3em
+        \noindent\small\textbf{Authors: }%
+        \parbox[t]{0.92\textwidth}{#1}%
+        \vskip.3em
+    \end{authorBox}
+}
+
+\newmdenv[%
+    backgroundcolor=black!5!white,
+    topline=false,rightline=false,bottomline=false,
+    linewidth=4pt,
+    linecolor=black!80!white,
+    innertopmargin=1em,
+    innerbottommargin=1em,
+    innerleftmargin=1em,
+    innerrightmargin=1em,
+]{quotationBox}
+\renewenvironment{quotation}{%
+    \vskip0.5em
+    \begin{quotationBox}
+}{%
+    \end{quotationBox}
+}
+
+\definecolor{warning-orange}{RGB}{255, 145, 0}
+\definecolor{info-blue}{RGB}{68, 138, 255}
 \definecolor{Red}{rgb}{1,0,0}
 \definecolor{Blue}{rgb}{0,0,1}
-\newenvironment{details}[2]{\begin{mdframed}[backgroundcolor=#1,hidealllines=true]#2\end{mdframed}\relax}{\vspace{1em}}
+
+\newenvironment{details}[2]{%
+    \vskip.7em 
+    % Nested detail environment is buggy and ugly, flatten them!
+    \ifdefined\@inDetail%
+        \paragraph*{#2}\begingroup
+    \else
+        \begin{mdframed}[%
+            roundcorner=3pt,
+            linewidth=0pt,
+            backgroundcolor=#1!20!white,
+            frametitle={#2},
+            frametitlefont={\sffamily},
+            frametitlerule=false,
+            frametitlebackgroundcolor=#1!50!white,
+        ]%
+        \begingroup\def\@inDetail{}
+        %\ifinner Inner \else Outer \fi
+    \fi
+}{%
+    \endgroup
+    \ifdefined\@inDetail\else
+        \end{mdframed}\vskip.5em
+    \fi
+}
 
 \captionsetup[figure]{labelsep=space}
-% \captionsetup[table]{labelsep=space}
+\captionsetup[table]{labelsep=space}
 
-% framed settings
-\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.96}
-
+% hyperref settings
 \newcommand{\hyref}[2]{\href{#1}{\hyphenchar\font="200B #2}}
 
 % auto-wrap typewriter style
 \newcommand{\hytt}[1]{\texttt{\hyphenchar\font="200B #1}}
 
 % minted settings
-\setminted{bgcolor=anti-flashwhite}
+\setminted{fontsize=\small}
+\newmdenv[%
+    roundcorner=5pt,
+    linewidth=0pt,
+    backgroundcolor=black!5!white,
+]{grayRoundcornerBox}
+\BeforeBeginEnvironment{minted}{%
+    \bigskip
+    \ifdefined\@inDetail \else 
+        \begin{grayRoundcornerBox}
+    \fi
+}
+\AfterEndEnvironment{minted}{%
+    \ifdefined\@inDetail \else 
+        \end{grayRoundcornerBox}
+    \fi
+}
 
 % customize TOC
 \cftsetpnumwidth{2em}
@@ -98,43 +214,52 @@
 
 % image related
 \graphicspath{{images/}}
-\makeatletter
-\def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
-\makeatother
 
 % URL auto line break
-\makeatletter
 \def\UrlAlphabet{%
-	\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
-	\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
-	\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
-	\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
-	\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
-	\do\Y\do\Z%
+    \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+    \do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+    \do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+    \do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+    \do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+    \do\Y\do\Z%
 }
 \def\UrlDigits{\do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0}
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \g@addto@macro{\UrlBreaks}{\UrlAlphabet}
 \g@addto@macro{\UrlBreaks}{\UrlDigits}
+
+% metric adjustment
+\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
+\setlength{\parskip}{.2\baselineskip}
+\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
+\setlength{\parindent}{2em} % 中文缩进两个汉字位
+\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
+
+% patches to fix indent first paragraph, even in details environment
+% known bug: if put a enumerate environment in the first graph of details environment, 
+%            its vertical spacing may not behave as expected. 
+\let\@afterindentfalse\@afterindenttrue
+\newlength{\parindent@restore}
+\parindent@restore\parindent
+\patchcmd\mdf@trivlist{\itemindent\z@}{\itemindent\parindent@restore}{}{}
+\patchcmd\mdfframedtitleenv{%
+    \mdf@lrbox{\mdf@frametitlebox}%
+}{%
+    \mdf@lrbox{\mdf@frametitlebox}\parindent\z@%
+}{}{}
+
+% It is observed someone used these macros to input '<' and '>'
+\newcommand{\lt}{\symbol{"3C}}  % less than
+\newcommand{\gt}{\symbol{"3E}}  % greater than
+
 \makeatother
-
-% blockquote 2em indent
-\patchcmd{\quotation}{1.5em}{2em}{}{}
-
 \begin{document}
-	\maketitle
-	\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
-	\setlength{\parskip}{0\baselineskip}
-	\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
-	\makeatletter
-	\let\@afterindentfalse\@afterindenttrue
-	\@afterindenttrue
-	\makeatother
-	\setlength{\parindent}{2em} % 中文缩进两个汉字位
-	\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
-	\frontmatter
-	\tableofcontents
-	\clearpage
-	\mainmatter
-	\input{includes}
+    \maketitle
+    \frontmatter
+    \tableofcontents
+    \clearpage
+    \mainmatter
+    \input{includes}
+    %\input{test.tex}
 \end{document}

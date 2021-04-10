@@ -165,7 +165,7 @@ function compiler(options) {
 						break
 					}
 				}
-				return '\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\maxwidth{0.7\\linewidth}]{{{0}}}\n\\caption{{1}}\\end{figure}'.format(path.basename(dest, is_svg ? '.pdf' : '.jpg'), escape(node.alt || ''))
+				return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, is_svg ? '.pdf' : '.jpg'), escape(node.alt || ''))
 			} catch (e) {
 				console.log('Error occurred when processing image file `{0}`'.format(uri))
 				return ''
@@ -181,7 +181,14 @@ function compiler(options) {
 				return article
 			}
 			case 'paragraph': {
-				return '\\par {0}'.format(util.all(node, parse).join(''))
+				let parText = util.all(node, parse).join('')
+				if (parText.startsWith('author: ')) {
+					return '\\authors{{0}}'.format(parText.slice(8))
+				}
+				if (parText.startsWith('disqus:')) {
+					return ''
+				}
+				return '\\par {0}'.format(parText)
 			}
 			case 'heading': {
 				const block = ['chapter', 'section', 'subsection', 'subsubsection', 'paragraph', 'subparagraph']
@@ -252,10 +259,10 @@ function compiler(options) {
 				}
 			}
 			case 'thematicBreak': { // 水平分割线
-				return '\\begin{center}\\makebox[0.5\\textwidth]{\\hrulefill}\\end{center}'
+				return '\\vskip 0.5em' // 在印刷物中使用水平分割线也许不是好的实践
 			}
 			case 'blockquote': {
-				return '\\begin{shaded}\\begin{quotation}\n{0}\\end{quotation}\\end{shaded}'.format(util.all(node, parse).join(''))
+				return '\\begin{quotation}\n{0}\\end{quotation}'.format(util.all(node, parse).join(''))
 			}
 			case 'break': {
 				return '\n\n'
@@ -369,9 +376,12 @@ function compiler(options) {
 					.use(footnotes)
 					.parse(node.title ? node.title : type)
 				)
+				if (title.startsWith('\\par ')) {
+					title = title.slice(5)
+				}
 				options.nested = prevNested
 				let color = type === 'Warning' ? 'warning-orange' : 'info-blue'
-				return '\\vspace{6pt}\\begin{details}{{0}}{{1}}\n{2}\n\\end{details}\\vspace{6pt}'.format(color, title, util.all(node, parse).join(''))
+				return '\\begin{details}{{0}}{{1}}\n{2}\n\\end{details}'.format(color, title, util.all(node, parse).join(''))
 			}
 			default: {
 				console.error('Unsupported node type: {0}'.format(node.type))
