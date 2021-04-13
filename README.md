@@ -2,6 +2,10 @@
 
 将 OI-Wiki 导出为印刷质量的 pdf 的工具。
 
+## 下载
+
+可在 [GitHub Release](https://github.com/OI-wiki/OI-Wiki-export/releases) 中下载每周定期自动构建的 pdf 文件.
+
 ## 导出
 
 我们建议在 Linux 环境下进行导出操作。
