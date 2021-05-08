@@ -19,6 +19,7 @@ module.exports = {
 		if (text.startsWith('\\par')) {
 			return text.slice(4)
 		}
+		return text
 	},
 
 	// 粗略计算 text 字符串占用的长度，magic number 可以随便改
