@@ -49,7 +49,9 @@ jobs:
             unzip ./cm-unicode.zip
             cp -r notosans notoserif notosanscjk notoserifcjk robotomono cm-unicode/fonts/otf/* /usr/share/fonts
             fc-cache
-
+            cd remark-latex
+            npm i
+            cd ..
             cd oi-wiki-export
             npm i
             git clone https://github.com/OI-wiki/OI-wiki.git
