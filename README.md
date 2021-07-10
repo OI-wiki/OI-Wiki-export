@@ -18,6 +18,7 @@
 - libwebp
 - librsvg
 - pygments
+- inkscape
 
 所需字体：
 
