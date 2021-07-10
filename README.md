@@ -26,9 +26,12 @@
 - Noto 系列字体（包括 Noto Sans, Noto Serif, Noto Sans CJK SC, Noto Serif CJK SC）
 - CM Unicode 字体
 
-然后安装所需依赖：
+然后安装所需依赖，因为modules之间存在依赖关系，请严格按照顺序执行命令，否则可能会产生版本冲突：
 
 ```
+cd remark-latex
+npm install
+cd ..
 cd oi-wiki-export
 npm install
 ```
