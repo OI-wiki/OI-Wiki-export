@@ -94,6 +94,16 @@ function compiler(options) {
 			footnoteRefId[footnoteCount] = 0
 			footnoteRefs[node.identifier] = 0
 			footnote[footnoteCount] = util.nonParagraphBegin(util.all(node, parse).join('')).trim()
+
+			// 为尾注添加二维码
+			const regexp = /\\hyref\{.*?\}\{.*?\}/g;
+			let footnoteTmp = footnote[footnoteCount]
+			let array = [...footnoteTmp.matchAll(regexp)];
+			for(let i = 0; i < array.length;i ++) {
+				let subArray = String(array[i]).split("{")
+				let url = subArray[1].slice(0,subArray[1].length - 1);
+				footnote[footnoteCount] += '\\quad\\qrcode{{0}}'.format(url)
+			}
 		})
 		visit(tree, 'footnoteReference', function (node) {
 			++footnoteRefs[node.identifier]
@@ -171,8 +181,7 @@ function compiler(options) {
 				return ''
 			}
 		}
-
-		switch (node.type) {
+		switch (node.type) {	
 			case 'root': {
 				let article = util.trailingLineFeed(util.all(node, parse).join('\n'))
 				if (!options.nested) {
