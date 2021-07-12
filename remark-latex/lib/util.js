@@ -73,7 +73,7 @@ module.exports = {
 
 	// 判断内链
 	isInternalLink: function (url) {
-		return (url.toLowerCase().endsWith('.md') || url.startsWith('/') || url.startsWith('.')) && !url.startsWith('http://') && !url.startsWith('https://')
+		return (url.toLowerCase().endsWith('.md') || url.startsWith('/') || url.startsWith('.') || url.search('#') !== -1) && !url.startsWith('http://') && !url.startsWith('https://')
 	},
 
 	// 生成前缀（用作 LaTeX label）
