@@ -27,8 +27,13 @@ if (!String.prototype.format) {
 module.exports = compiler
 
 function compiler(options) {
+	let outLinkLable =  new Map() // 所有的外部链接，包括直接链接和引用式链接，键-值：链接-链接label
+	let beginFootnote = false
+	let hasFootnote = false // 判断之前有没有footnote
+	let test = true
 	let links = {} // 引用式链接，键-值：标识符-链接地址
 	let footnote = {} // 引用式脚注，键-值：序号（1 起始）-脚注内容
+	let qrCode = {} // 脚注的二维码
 	let indices = {} // 脚注序号，键-值：标识符-脚注序号
 	let identifiers = {} // indices 的逆映射
 	let footnoteRefs = {} // 脚注被引用的次数，键-值：标识符-引用次数
@@ -51,6 +56,9 @@ function compiler(options) {
 		article += parse(this.tree)
 		// 创建文章尾注
 		if (footnoteCount > 0) {
+			if(hasFootnote === false) {
+				article += '\n\\subsection*{参考资料与注释}'
+			}
 			article += '\n\\begin{enumerate}\n'
 			for (let id = 1; id <= footnoteCount; ++id) {
 				const fullLabel = options.prefix + identifiers[id]
@@ -65,6 +73,9 @@ function compiler(options) {
 						article += ' \\hyperref[endnoteref:{0}-{1}]{[{2}-{3}]}'.format(fullLabel, cnt, id, cnt)
 					}
 				}
+				// 为尾注增添二维码
+				addQRCode(id)
+				article += qrCode[id]
 				article += '\n'
 			}
 			article += '\\end{enumerate}\n'
@@ -84,26 +95,58 @@ function compiler(options) {
 		return ans
 	}
 
+	function addQRCode(id) {
+		// 为尾注添加二维码
+		const regexp = /\\hyref\{.*?\}\{.*?\}/g;
+		let footnoteTmp = footnote[id]
+		let array = [...footnoteTmp.matchAll(regexp)];
+		for(let i = 0; i < array.length;i ++) {
+			let subArray = String(array[i]).split("{")
+			let url = subArray[1].slice(0,subArray[1].length - 1);
+			qrCode[id] = '\\quad\\qrcode[height=0.5in]{{0}}'.format(url)
+		}
+	}
+
 	function parseDefinition(tree) {
+		
+		visit(tree, 'link', function (node){
+			if(test) {
+				if (util.isInternalLink(node.url) === false && outLinkLable.has(node.url) === false) {
+					++footnoteCount
+					outLinkLable.set(node.url, 'OutLink_{0}'.format(footnoteCount))
+					indices[outLinkLable.get(node.url)] = footnoteCount
+					identifiers[footnoteCount] = outLinkLable.get(node.url)
+					footnoteRefId[footnoteCount] = 0
+					footnoteRefs[outLinkLable.get(node.url)] = 0
+					const location = escape(node.url)
+					const children = util.all(node, parse).join('')
+					footnote[footnoteCount] = '\\hyref{{0}}{{1}}'.format(location, children)
+				}
+				footnoteRefs[outLinkLable.get(node.url)] ++
+			}
+		})
+
 		visit(tree, 'definition', function (node) {
 			links[node.identifier] = escape(node.url)
+			if (util.isInternalLink(node.url) === false && outLinkLable.has(node.url) === false) {
+				// console.log(node.identifier)
+				// indices[node.url] = ++footnoteCount
+				// identifiers[footnoteCount] = node.url
+				// console.log(outLinkIndices[node.url])
+				// footnoteRefId[footnoteCount] = 0
+				// footnoteRefs[node.url] = 0
+			}
+			// footnoteRefs[node.url] ++
 		})
 		visit(tree, 'footnoteDefinition', function (node) {
+			hasFootnote = true
+			test = false
+			console.log(test)
 			indices[node.identifier] = ++footnoteCount
 			identifiers[footnoteCount] = node.identifier
 			footnoteRefId[footnoteCount] = 0
 			footnoteRefs[node.identifier] = 0
 			footnote[footnoteCount] = util.nonParagraphBegin(util.all(node, parse).join('')).trim()
-
-			// 为尾注添加二维码
-			const regexp = /\\hyref\{.*?\}\{.*?\}/g;
-			let footnoteTmp = footnote[footnoteCount]
-			let array = [...footnoteTmp.matchAll(regexp)];
-			for(let i = 0; i < array.length;i ++) {
-				let subArray = String(array[i]).split("{")
-				let url = subArray[1].slice(0,subArray[1].length - 1);
-				footnote[footnoteCount] += '\\quad\\qrcode{{0}}'.format(url)
-			}
 		})
 		visit(tree, 'footnoteReference', function (node) {
 			++footnoteRefs[node.identifier]
@@ -124,10 +167,18 @@ function compiler(options) {
 				return (location !== '' && raw !== '') ? '\\hyperref[sect:{0}]{{1}}'.format(location, children) : ''
 			} else {
 				const location = escape(url)
+				// console.log(url)
+
+				const lable = outLinkLable.get(url) 
+				const index = indices[lable]
+				const fullLabel = options.prefix + lable
+				const refId = ++footnoteRefId[index]
+				
+
 				if (location === raw) {
-					return '\\hyref{{0}}{{1}}'.format(location, children)
+					return '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '')
 				} else {
-					return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) : ''
+					return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '') : ''
 				}
 			}
 		}
