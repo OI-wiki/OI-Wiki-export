@@ -204,24 +204,23 @@ function compiler(options) {
 				return (location !== '' && raw !== '') ? '\\hyperref[sect:{0}]{{1}}'.format(location, children) : ''
 			} else {
 				const location = escape(url)
-				const lable = outLinkLable.get(location) 
-				const index = indices[lable]
-				const fullLabel = options.prefix + lable
-				const refId = ++footnoteRefId[index]
-				const id = outLinkLable.get(location)
-				if(inFootnote || id < outLinkBeginCount) {
+				if(outLinkLable.has(location) === false || inFootnote) {
 					if (location === raw) {
 						return '\\hyref{{0}}{{1}}'.format(location, children)
 					} else {
 						return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) : ''
 					}	
+				} 
+				const lable = outLinkLable.get(location) 
+				const index = indices[lable]
+				const fullLabel = options.prefix + lable
+				const refId = ++footnoteRefId[index]
+				if (location === raw) {
+					return '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '')
 				} else {
-					if (location === raw) {
-						return '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '')
-					} else {
-						return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '') : ''
-					}
+					return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '') : ''
 				}
+			
 			}
 		}
 
