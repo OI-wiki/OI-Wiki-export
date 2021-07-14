@@ -82,9 +82,7 @@ function compiler(options) {
 				const url = getUrlFromFootnote(id)
 				for(let i = 0;i < url.length;i ++) {
 					url[i] = url[i].replace("\\textasciitilde{}","~")
-					console.log(String(url[i]).length2())
 					if(String(url[i].length2()) > 200) continue
-					console.log(url[i])
 					let urlFormat = '\\quad\\qrcode[height=0.5in]{{0}}'.format(url[i])
 					article += urlFormat
 				}
