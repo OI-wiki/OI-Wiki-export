@@ -24,11 +24,6 @@ if (!String.prototype.format) {
 	}
 }
 
-String.prototype.length2 = function() { 
-	var cArr = this.match(/[^\x00-\xff]/ig);
-	return this.length + (cArr == null ? 0 : cArr.length * 100); 
-}
-
 module.exports = compiler
 
 function compiler(options) {
@@ -68,22 +63,26 @@ function compiler(options) {
 			for (let id = 1; id <= footnoteCount; ++id) {
 				const fullLabel = options.prefix + identifiers[id]
 				if (footnoteRefs[identifiers[id]] === 1) {
-					article += '\\renewcommand{\\labelenumi}{\\hyperref[endnoteref:{0}-1]{[\\theenumi]}}\n'.format(fullLabel)
+					article += `\\renewcommand{\\labelenumi}{\\hyperref[endnoteref:${fullLabel}-1]{[\\theenumi]}}\n`
 				} else {
 					article += '\\renewcommand{\\labelenumi}{[\\theenumi]}\n'
 				}
 				article += '\\item\\label{endnote:{0}}'.format(fullLabel) + footnote[id]
 				if (footnoteRefs[identifiers[id]] >= 2) {
 					for (let cnt = 1; cnt <= footnoteRefs[identifiers[id]]; ++cnt) {
-						article += ' \\hyperref[endnoteref:{0}-{1}]{[{2}-{3}]}'.format(fullLabel, cnt, id, cnt)
+						article += ` \\hyperref[endnoteref:${fullLabel}-${cnt}]{[${id}-${cnt}]}`
 					}
 				}
+				article += '\\hfill ' // align qrcode to right
 				// 为尾注增添二维码
 				const url = getUrlFromFootnote(id)
-				for(let i = 0;i < url.length;i ++) {
-					url[i] = url[i].replace("\\textasciitilde{}","~")
-					if(String(url[i].length2()) > 200) continue
-					let urlFormat = '\\quad\\qrcode[height=0.5in]{{0}}'.format(url[i])
+				for(let i = 0; i < url.length; i ++) {
+					url[i] = url[i].replace("\\textasciitilde{}", "~")
+					// ban cjk urls, due to the fact that they are not supported by latex qrcode
+					if (url[i].split('').map(c => util.isCjk(c)).filter(c => c).length > 0) {
+						url[i] = encodeURI(url[i])
+					}
+					let urlFormat = `\\quad \\qrcode[height=1cm]{${url[i]}}`
 					article += urlFormat
 				}
 				article += '\n'
@@ -156,16 +155,16 @@ function compiler(options) {
 				outLinkBeginCount = footnoteCount + 1
 			}
 			links[node.identifier] = escape(node.url)
-			const location = escape(node.url)
-			if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
-				++footnoteCount
-				outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
-				indices[outLinkLable.get(location)] = footnoteCount
-				identifiers[footnoteCount] = outLinkLable.get(location)
-				footnoteRefId[footnoteCount] = 0
-				footnoteRefs[outLinkLable.get(location)] = 0
-			}
-			footnoteRefs[outLinkLable.get(location)] ++
+			// const location = escape(node.url)
+			// if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
+			// 	++footnoteCount
+			// 	outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
+			// 	indices[outLinkLable.get(location)] = footnoteCount
+			// 	identifiers[footnoteCount] = outLinkLable.get(location)
+			// 	footnoteRefId[footnoteCount] = 0
+			// 	footnoteRefs[outLinkLable.get(location)] = 0
+			// }
+			// footnoteRefs[outLinkLable.get(location)] ++
 		})
 
 		visit(tree, 'link', function (node){
@@ -377,11 +376,11 @@ function compiler(options) {
 			}
 			case 'linkReference': {
 				if (links[node.identifier]) {
-					location = links[node.identifier]
-					const id = indices[location]
-					const children = util.all(node, parse).join('')
-					footnote[id] = '\\hyref{{0}}{{1}}'.format(links[node.identifier], children)
-					console.log(footnote[id])
+					// location = links[node.identifier]
+					// const id = indices[location]
+					// const children = util.all(node, parse).join('')
+					// footnote[id] = '\\hyref{{0}}{{1}}'.format(links[node.identifier], children)
+					// console.log(footnote[id])
 					return makeLink(links[node.identifier])
 				}
 				return ''
