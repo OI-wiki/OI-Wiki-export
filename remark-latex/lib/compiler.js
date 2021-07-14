@@ -164,8 +164,6 @@ function compiler(options) {
 				identifiers[footnoteCount] = outLinkLable.get(location)
 				footnoteRefId[footnoteCount] = 0
 				footnoteRefs[outLinkLable.get(location)] = 0
-				const children = util.all(node, parse).join('')
-				footnote[footnoteCount] = '\\hyref{{0}}{{1}}'.format(location, children)
 			}
 			footnoteRefs[outLinkLable.get(location)] ++
 		})
@@ -379,6 +377,11 @@ function compiler(options) {
 			}
 			case 'linkReference': {
 				if (links[node.identifier]) {
+					location = links[node.identifier]
+					const id = indices[location]
+					const children = util.all(node, parse).join('')
+					footnote[id] = '\\hyref{{0}}{{1}}'.format(links[node.identifier], children)
+					console.log(footnote[id])
 					return makeLink(links[node.identifier])
 				}
 				return ''
