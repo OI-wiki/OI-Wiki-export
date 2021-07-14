@@ -24,13 +24,17 @@ if (!String.prototype.format) {
 	}
 }
 
+String.prototype.length2 = function() { 
+	var cArr = this.match(/[^\x00-\xff]/ig);
+	return this.length + (cArr == null ? 0 : cArr.length * 100); 
+}
+
 module.exports = compiler
 
 function compiler(options) {
 	let outLinkLable =  new Map() // 所有的外部链接，包括直接链接和引用式链接，键-值：链接-链接label
-	let beginFootnote = false
 	let hasFootnote = false // 判断之前有没有footnote
-	let test = true
+	let outLinkBeginCount = 0;
 	let links = {} // 引用式链接，键-值：标识符-链接地址
 	let footnote = {} // 引用式脚注，键-值：序号（1 起始）-脚注内容
 	let qrCode = {} // 脚注的二维码
@@ -39,6 +43,7 @@ function compiler(options) {
 	let footnoteRefs = {} // 脚注被引用的次数，键-值：标识符-引用次数
 	let footnoteRefId = {} // 脚注当前被引用第几次，键-值：脚注序号-第几次引用
 	let footnoteCount = 0 // 脚注数量
+	let inFootnote = false
 
 	parser.prototype.compile = wrapper
 	return parser
@@ -74,8 +79,15 @@ function compiler(options) {
 					}
 				}
 				// 为尾注增添二维码
-				addQRCode(id)
-				article += qrCode[id]
+				const url = getUrlFromFootnote(id)
+				for(let i = 0;i < url.length;i ++) {
+					url[i] = url[i].replace("\\textasciitilde{}","~")
+					console.log(String(url[i]).length2())
+					if(String(url[i].length2()) > 200) continue
+					console.log(url[i])
+					let urlFormat = '\\quad\\qrcode[height=0.5in]{{0}}'.format(url[i])
+					article += urlFormat
+				}
 				article += '\n'
 			}
 			article += '\\end{enumerate}\n'
@@ -95,62 +107,89 @@ function compiler(options) {
 		return ans
 	}
 
-	function addQRCode(id) {
-		// 为尾注添加二维码
+	function getUrlFromFootnote(id) {
 		const regexp = /\\hyref\{.*?\}\{.*?\}/g;
 		let footnoteTmp = footnote[id]
 		let array = [...footnoteTmp.matchAll(regexp)];
+		let url = new Array()
 		for(let i = 0; i < array.length;i ++) {
-			let subArray = String(array[i]).split("{")
-			let url = subArray[1].slice(0,subArray[1].length - 1);
-			qrCode[id] = '\\quad\\qrcode[height=0.5in]{{0}}'.format(url)
+			let subArray = String(array[i]).split("hyref")
+			// 括号匹配
+			let leftCnt = 0, rightCnt = 0
+			let position = -1
+			for(let j = 0; j < subArray[1].length; j ++) {
+				if(subArray[1][j] === '{') leftCnt++;
+				if(subArray[1][j] === '}') rightCnt++;
+				if(leftCnt != 0 && leftCnt === rightCnt) {
+					position = j
+					break
+				}
+			}
+			url[i] = subArray[1].slice(1, position);
+			
 		}
+		return url
 	}
 
 	function parseDefinition(tree) {
 		
-		visit(tree, 'link', function (node){
-			if(test) {
-				if (util.isInternalLink(node.url) === false && outLinkLable.has(node.url) === false) {
-					++footnoteCount
-					outLinkLable.set(node.url, 'OutLink_{0}'.format(footnoteCount))
-					indices[outLinkLable.get(node.url)] = footnoteCount
-					identifiers[footnoteCount] = outLinkLable.get(node.url)
-					footnoteRefId[footnoteCount] = 0
-					footnoteRefs[outLinkLable.get(node.url)] = 0
-					const location = escape(node.url)
-					const children = util.all(node, parse).join('')
-					footnote[footnoteCount] = '\\hyref{{0}}{{1}}'.format(location, children)
-				}
-				footnoteRefs[outLinkLable.get(node.url)] ++
-			}
-		})
-
-		visit(tree, 'definition', function (node) {
-			links[node.identifier] = escape(node.url)
-			if (util.isInternalLink(node.url) === false && outLinkLable.has(node.url) === false) {
-				// console.log(node.identifier)
-				// indices[node.url] = ++footnoteCount
-				// identifiers[footnoteCount] = node.url
-				// console.log(outLinkIndices[node.url])
-				// footnoteRefId[footnoteCount] = 0
-				// footnoteRefs[node.url] = 0
-			}
-			// footnoteRefs[node.url] ++
-		})
 		visit(tree, 'footnoteDefinition', function (node) {
+			inFootnote = true
 			hasFootnote = true
-			test = false
-			console.log(test)
 			indices[node.identifier] = ++footnoteCount
 			identifiers[footnoteCount] = node.identifier
 			footnoteRefId[footnoteCount] = 0
 			footnoteRefs[node.identifier] = 0
 			footnote[footnoteCount] = util.nonParagraphBegin(util.all(node, parse).join('')).trim()
+			let url = getUrlFromFootnote(footnoteCount);
+			for(let i = 0; i < url.length;i ++ ) {
+				outLinkLable.set(url[i], footnoteCount)
+			}
+			inFootnote = false
 		})
+
 		visit(tree, 'footnoteReference', function (node) {
 			++footnoteRefs[node.identifier]
 		})
+
+		
+		visit(tree, 'definition', function (node) {
+			if(outLinkBeginCount == 0) {
+				outLinkBeginCount = footnoteCount + 1
+			}
+			links[node.identifier] = escape(node.url)
+			const location = escape(node.url)
+			if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
+				++footnoteCount
+				outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
+				indices[outLinkLable.get(location)] = footnoteCount
+				identifiers[footnoteCount] = outLinkLable.get(location)
+				footnoteRefId[footnoteCount] = 0
+				footnoteRefs[outLinkLable.get(location)] = 0
+				const children = util.all(node, parse).join('')
+				footnote[footnoteCount] = '\\hyref{{0}}{{1}}'.format(location, children)
+			}
+			footnoteRefs[outLinkLable.get(location)] ++
+		})
+
+		visit(tree, 'link', function (node){
+			if(outLinkBeginCount == 0) {
+				outLinkBeginCount = footnoteCount + 1
+			}
+			const location = escape(node.url)
+			if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
+				++footnoteCount
+				outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
+				indices[outLinkLable.get(location)] = footnoteCount
+				identifiers[footnoteCount] = outLinkLable.get(location)
+				footnoteRefId[footnoteCount] = 0
+				footnoteRefs[outLinkLable.get(location)] = 0
+				const children = util.all(node, parse).join('')
+				footnote[footnoteCount] = '\\hyref{{0}}{{1}}'.format(location, children)
+			}
+			footnoteRefs[outLinkLable.get(location)] ++
+		})
+
 	}
 
 	function parse(node) {
@@ -167,18 +206,23 @@ function compiler(options) {
 				return (location !== '' && raw !== '') ? '\\hyperref[sect:{0}]{{1}}'.format(location, children) : ''
 			} else {
 				const location = escape(url)
-				// console.log(url)
-
-				const lable = outLinkLable.get(url) 
+				const lable = outLinkLable.get(location) 
 				const index = indices[lable]
 				const fullLabel = options.prefix + lable
 				const refId = ++footnoteRefId[index]
-				
-
-				if (location === raw) {
-					return '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '')
+				const id = outLinkLable.get(location)
+				if(inFootnote || id < outLinkBeginCount) {
+					if (location === raw) {
+						return '\\hyref{{0}}{{1}}'.format(location, children)
+					} else {
+						return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) : ''
+					}	
 				} else {
-					return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '') : ''
+					if (location === raw) {
+						return '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '')
+					} else {
+						return (location !== '' && raw !== '') ? '\\hyref{{0}}{{1}}'.format(location, children) + '\\textsuperscript{\\label{endnoteref:{0}-{1}}\\hyperref[endnote:{2}]{[{3}{4}]}}'.format(fullLabel, refId, fullLabel, index, footnoteRefs[node.identifier] > 1 ? '-{0}'.format(refId) : '') : ''
+					}
 				}
 			}
 		}
