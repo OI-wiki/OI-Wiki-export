@@ -156,16 +156,16 @@ function compiler(options) {
 				outLinkBeginCount = footnoteCount + 1
 			}
 			links[node.identifier] = escape(node.url)
-			const location = escape(node.url)
-			if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
-				++footnoteCount
-				outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
-				indices[outLinkLable.get(location)] = footnoteCount
-				identifiers[footnoteCount] = outLinkLable.get(location)
-				footnoteRefId[footnoteCount] = 0
-				footnoteRefs[outLinkLable.get(location)] = 0
-			}
-			footnoteRefs[outLinkLable.get(location)] ++
+			// const location = escape(node.url)
+			// if (util.isInternalLink(node.url) === false && outLinkLable.has(location) === false) {
+			// 	++footnoteCount
+			// 	outLinkLable.set(location, 'OutLink_{0}'.format(footnoteCount))
+			// 	indices[outLinkLable.get(location)] = footnoteCount
+			// 	identifiers[footnoteCount] = outLinkLable.get(location)
+			// 	footnoteRefId[footnoteCount] = 0
+			// 	footnoteRefs[outLinkLable.get(location)] = 0
+			// }
+			// footnoteRefs[outLinkLable.get(location)] ++
 		})
 
 		visit(tree, 'link', function (node){
@@ -377,11 +377,11 @@ function compiler(options) {
 			}
 			case 'linkReference': {
 				if (links[node.identifier]) {
-					location = links[node.identifier]
-					const id = indices[location]
-					const children = util.all(node, parse).join('')
-					footnote[id] = '\\hyref{{0}}{{1}}'.format(links[node.identifier], children)
-					console.log(footnote[id])
+					// location = links[node.identifier]
+					// const id = indices[location]
+					// const children = util.all(node, parse).join('')
+					// footnote[id] = '\\hyref{{0}}{{1}}'.format(links[node.identifier], children)
+					// console.log(footnote[id])
 					return makeLink(links[node.identifier])
 				}
 				return ''
