@@ -73,15 +73,16 @@ function compiler(options) {
 						article += ` \\hyperref[endnoteref:${fullLabel}-${cnt}]{[${id}-${cnt}]}`
 					}
 				}
+				article += '\\hfill ' // align qrcode to right
 				// 为尾注增添二维码
 				const url = getUrlFromFootnote(id)
 				for(let i = 0; i < url.length; i ++) {
 					url[i] = url[i].replace("\\textasciitilde{}", "~")
 					// ban cjk urls, due to the fact that they are not supported by latex qrcode
 					if (url[i].split('').map(c => util.isCjk(c)).filter(c => c).length > 0) {
-						continue
+						url[i] = encodeURI(url[i])
 					}
-					let urlFormat = '\\quad\\textcolor{black}{\\hypersetup{urlcolor=.}\\qrcode[height=1cm]{{0}}}'.format(url[i])
+					let urlFormat = `\\quad \\qrcode[height=1cm]{${url[i]}}`
 					article += urlFormat
 				}
 				article += '\n'
