@@ -57,7 +57,7 @@ function compiler(options) {
 		// 创建文章尾注
 		if (footnoteCount > 0) {
 			if(hasFootnote === false) {
-				article += '\n\\subsection*{参考资料与注释}'
+				article += '\n\\subsubsection{参考资料与注释}'
 			}
 			article += '\n\\begin{enumerate}\n'
 			for (let id = 1; id <= footnoteCount; ++id) {
