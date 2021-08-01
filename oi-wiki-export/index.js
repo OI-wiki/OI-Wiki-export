@@ -12,6 +12,7 @@ const path = require('path')
 const yaml = require('js-yaml')
 const escape = require('escape-latex')
 const child_process = require('child_process')
+const snippet = require('./snippet')
 
 const prefixRegEx = /[^a-zA-Z0-9]/ig
 
