@@ -21,7 +21,7 @@ async function process_snippet (file) {
   const res = (await Promise.all(content
     .split('\n')
     .map(async (line) => {
-      if (line.startsWith(SNIPPET_TOKEN)) {
+      if (line.trim().startsWith(SNIPPET_TOKEN)) {
         const res = resolvePath(line)
         line = await fs.readFile(res, 'utf8')
       }
