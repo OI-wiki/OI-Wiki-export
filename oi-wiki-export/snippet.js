@@ -34,6 +34,6 @@ async function process_snippet (file) {
 module.exports = {}
 module.exports.snippet = async function snippet (root) {
   oi_wiki_root = root
-  const files = await glob(`${path.resolve(root)}/**.md`)
+  const files = await glob(`${path.resolve(root)}/**/*.md`)
   await Promise.all(files.map(process_snippet))
 }
