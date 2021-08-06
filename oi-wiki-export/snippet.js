@@ -5,8 +5,8 @@ const SNIPPET_TOKEN = '--8<-- '
 
 let oi_wiki_root = '.'
 
-function resolvePath (snip) {
-  let str = snip.substring(SNIPPET_TOKEN.length)
+function resolvePath (snip, spacesAtStart) {
+  let str = snip.substring(SNIPPET_TOKEN.length + spacesAtStart)
   if ((str.startsWith('"') && str.endsWith('"')) ||
     (str.startsWith("'") && str.endsWith("'"))) {
     str = str.substring(1, str.length - 1)
@@ -24,7 +24,7 @@ async function process_snippet (file) {
       const spacesAtStart = line.length - line.trimLeft().length
       const spaceString = ' '.repeat(spacesAtStart)
       if (line.trim().startsWith(SNIPPET_TOKEN)) {
-        const res = resolvePath(line)
+        const res = resolvePath(line, spacesAtStart)
         line = await fs.readFile(res, 'utf8')
         line = line.replace(/\n/g, '\n' + spaceString)
       }
