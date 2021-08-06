@@ -21,9 +21,12 @@ async function process_snippet (file) {
   const res = (await Promise.all(content
     .split('\n')
     .map(async (line) => {
+      const spacesAtStart = line.length - line.trimLeft().length
+      const spaceString = ' '.repeat(spacesAtStart)
       if (line.trim().startsWith(SNIPPET_TOKEN)) {
         const res = resolvePath(line)
         line = await fs.readFile(res, 'utf8')
+        line = line.replace(/\n/g, '\n' + spaceString)
       }
       return line
     })))
