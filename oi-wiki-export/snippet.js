@@ -26,7 +26,7 @@ async function process_snippet (file) {
       if (line.trim().startsWith(SNIPPET_TOKEN)) {
         const res = resolvePath(line, spacesAtStart)
         line = await fs.readFile(res, 'utf8')
-        line = line.replace(/\n/g, '\n' + spaceString)
+        line = line.split('\n').map(l => spaceString + l).join('\n')
       }
       return line
     })))
