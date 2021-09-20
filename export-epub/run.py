@@ -61,14 +61,14 @@ print(len(sys.argv))
 if(len(sys.argv) == 2):
     path = sys.argv[1] 
 print(path)
-os.system("mkdir " + path + "tmpdir")
+os.system("mkdir -p " + path + "tmpdir")
 f = open(path+"mkdocs.yml")
 # print (os.getcwd())
 y = yaml.safe_load(f)
 nav = y['nav']
 # print(nav)
 dfs(nav, "")
-order = "python3 " + path + "./EpubMerge/epubmerge.py --title=" + "OI-Wiki" + " "
+order = "python3 ./EpubMerge/epubmerge.py --title=" + "OI-Wiki" + " "
 for pair in nav:
     # print(pair)
     subTitle = getTitle(next(iter(pair)))
