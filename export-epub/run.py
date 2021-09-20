@@ -62,9 +62,18 @@ if(len(sys.argv) == 2):
     path = sys.argv[1] 
 print(path)
 os.system("mkdir -p " + path + "tmpdir")
-f = open(path+"mkdocs.yml")
+f1 = open(path+"mkdocs.yml")
+f2 = open(path+"mkdocs_tmp.yml", "w")
+lines = f1.readlines()
+for line in lines:
+    if(line.find("Theme") != -1):
+        break
+    f2.write(line)
+f2.close()
+f2 = open(path+"mkdocs_tmp.yml")
+
 # print (os.getcwd())
-y = yaml.safe_load(f)
+y = yaml.safe_load(f2)
 nav = y['nav']
 # print(nav)
 dfs(nav, "")
