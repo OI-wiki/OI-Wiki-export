@@ -57,10 +57,22 @@ def dfs(root, title):
         os.system(order)
         
 
-print(len(sys.argv))
+# 处理文件路径
 if(len(sys.argv) == 2):
     path = sys.argv[1] 
 print(path)
+
+# 处理OI-wiki的格式
+nowPath = os.getcwd()
+print(nowPath)
+os.chdir(path)
+newPath = os.getcwd()
+os.system("npm i")
+os.system("npm install git://github.com/OI-wiki/remark-details.git#export_epub")
+os.system("npx remark . -o")
+os.chdir(nowPath)
+
+# 处理yaml内容
 os.system("mkdir -p " + path + "tmpdir")
 f1 = open(path+"mkdocs.yml")
 f2 = open(path+"mkdocs_tmp.yml", "w")
