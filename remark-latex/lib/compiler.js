@@ -184,7 +184,7 @@ function compiler (options) {
 
       if (util.isInternalLink(url)) {
         const location = util.toPrefix(util.joinRelative(url, options))
-        return (location !== '' && raw !== '') ? '\\hyperref[sect:{0}]{{1}}'.format(location, children) : ''
+        return (location !== '' && raw !== '') ? '\\hyperref[sect:{0}]{{1}} （第 \\pageref*{sect:{0}} 页）'.format(location, children) : ''
       } else {
         const location = escape(url)
         if (outLinkLable.has(location) === false || inFootnote) {
