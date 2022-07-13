@@ -55,7 +55,7 @@ async function main () {
 
   console.log('Config file: ' + yamlFile)
 
-  // 处理 OI Wiki 目前使用的两种特殊 YAML type
+  // 处理 OI Wiki 目前使用的三种特殊 YAML type
   const ConfigYamlType1 = new yaml.Type('tag:yaml.org,2002:python/name:pymdownx.emoji.to_svg', {
     kind: 'mapping',
     construct: function (data) {
@@ -68,7 +68,14 @@ async function main () {
       return data
     }
   })
-  const CONFIG_SCHEMA = yaml.Schema.create([ConfigYamlType1, ConfigYamlType2])
+  const ConfigYamlType3 = new yaml.Type('tag:yaml.org,2002:python/name:pymdownx.slugs.uslugify', {
+    kind: 'mapping',
+    construct: function (data) {
+      return data 
+    }
+  })
+  
+  const CONFIG_SCHEMA = yaml.Schema.create([ConfigYamlType1, ConfigYamlType2, ConfigYamlType3])
 
   const config = yaml.load(await fs.readFile(yamlFile, 'utf8'), { schema: CONFIG_SCHEMA })
   const catalog = config.nav // 文档目录
