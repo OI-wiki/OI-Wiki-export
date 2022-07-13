@@ -55,22 +55,21 @@ async function main () {
 
   console.log('Config file: ' + yamlFile)
 
-  // 处理 OI Wiki 目前使用的两种特殊 YAML type
-  const ConfigYamlType1 = new yaml.Type('tag:yaml.org,2002:python/name:pymdownx.emoji.to_svg', {
-    kind: 'mapping',
-    construct: function (data) {
-      return data
-    }
-  })
-  const ConfigYamlType2 = new yaml.Type('tag:yaml.org,2002:python/name:pymdownx.arithmatex.fence_mathjax_format', {
-    kind: 'mapping',
-    construct: function (data) {
-      return data
-    }
-  })
-  const CONFIG_SCHEMA = yaml.Schema.create([ConfigYamlType1, ConfigYamlType2])
+  const yamlFileContent = await fs.readFile(yamlFile, 'utf8');
 
-  const config = yaml.load(await fs.readFile(yamlFile, 'utf8'), { schema: CONFIG_SCHEMA })
+  // fix YAMLException: unknown tag
+  const types = yamlFileContent.match(/!!python\/name:.*/g).map(
+      s =>
+          new yaml.Type(s.replace('!!', 'tag:yaml.org,2002:'), {
+            kind: 'mapping',
+            construct: function (data) {
+              return data
+            }
+          })
+  )
+  const CONFIG_SCHEMA = yaml.Schema.create(types)
+
+  const config = yaml.load(yamlFileContent, { schema: CONFIG_SCHEMA })
   const catalog = config.nav // 文档目录
 
   let includes = ''
