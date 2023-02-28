@@ -405,7 +405,7 @@ function compiler (options) {
 \\endfoot
 \\bottomrule
 \\endlastfoot
-{2}\\end{longtabu}`.format(
+{2}\n\\end{longtabu}`.format(
             Array.from(Array(node.align.length).keys()).map(id => ('X[' + width[id] + ',' + (node.align[id] === null ? 'c' : node.align[id].substr(0, 1)) + ',m]')).join(''),
             parse(node.children[0]),
             // 每行之间的分割线
