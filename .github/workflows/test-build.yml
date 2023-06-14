@@ -27,6 +27,7 @@ jobs:
             libwebp
             librsvg
             git
+            python3
             py3-pygments
             inkscape
             libxml2
@@ -51,6 +52,8 @@ jobs:
             cd oi-wiki-export
             npm i
             git clone https://github.com/OI-wiki/OI-wiki.git
+            python3 increase-mem-limit.py
+            fmtutil-sys --all
             node index.js ./OI-wiki
 
           root_file: |
