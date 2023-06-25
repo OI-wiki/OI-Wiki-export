@@ -1,0 +1,26 @@
+{
+  "name": "remark-latex",
+  "version": "0.13.0",
+  "description": "A tool to compile mdast to LaTeX, remastered.",
+  "main": "index.js",
+  "dependencies": {
+    "escape-latex": "^1.2.0",
+    "unist-util-visit": "^2.0.3",
+    "remark-footnotes": "^1.0.0",
+    "unified": "^9.0.0",
+    "remark-parse": "^6.0.2",
+    "remark-math": "^1.0.5",
+    "remark-details": "^1.1.0",
+    "sync-request": "^6.1.0",
+    "to-vfile": "^6.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "remark",
+    "latex",
+    "markdown"
+  ]
+}

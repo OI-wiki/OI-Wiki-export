@@ -1,0 +1,140 @@
+\documentclass[10pt,a4paper,openany]{book}
+\usepackage[normalem]{ulem}
+\usepackage[boldfont,slantfont,CJKmath=true]{xeCJK}
+\usepackage{tocloft}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{unicode-math}
+\usepackage[left=0.6in,right=0.6in,top=0.8in,bottom=0.8in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{fontspec}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{longtable}
+\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,anchorcolor=blue,citecolor=blue,breaklinks=true,hyperfootnotes=true,unicode]{hyperref}
+\usepackage[cache=false]{minted}
+\usepackage{fvextra}
+\usepackage{framed}
+\usepackage{footnotebackref}
+\usepackage{xpatch}
+\usepackage{titlesec}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{datetime}
+\usepackage{caption}
+
+% additional CJK characters for '←' and '→'
+\xeCJKsetcharclass{"2190}{"2192}{1}% 1: CJK
+\xeCJKsetup{xCJKecglue}
+
+% date in Chinese
+\renewcommand{\today}{\number\year 年 \number\month 月 \number\day 日}
+
+\title{OI Wiki (Beta)}
+\author{OI Wiki 项目组}
+\date{\today}
+\titleformat{\chapter}[display]{\Huge\bfseries}{第~\thechapter~章}{1em}{}
+
+\setmainfont{STIX Two Text}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\setmathfont[math-style=ISO,BoldFont={XITS Math Bold},BoldItalicFont={XITS Math Bold}]{STIX Two Math}
+
+\setCJKmainfont[BoldFont={Source Han Serif SC Bold},ItalicFont={KaiTi},BoldItalicFont={Source Han Serif SC Heavy}]{Source Han Serif SC}
+\setCJKsansfont{Source Han Sans SC}
+\setCJKmonofont{FangSong}
+
+\pagestyle{fancy}
+
+\renewcommand{\chaptername}{第~\thechapter~章}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername\quad #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}}
+
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\it\nouppercase\leftmark\rm}
+\fancyhead[LO]{\it\nouppercase\rightmark\rm}
+
+\setlength{\headheight}{12.5pt}
+
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\contentsname}{目录}
+\allowdisplaybreaks[4]
+\definecolor{anti-flashwhite}{rgb}{0.95, 0.95, 0.96}
+
+% mdframed
+\definecolor{warning-orange}{rgb}{0.9922,0.9567,0.9098}
+\definecolor{info-blue}{rgb}{0.9373,0.9529,1.0}
+\definecolor{Red}{rgb}{1,0,0}
+\definecolor{Blue}{rgb}{0,0,1}
+\newenvironment{details}[2]{\begin{mdframed}[backgroundcolor=#1,hidealllines=true]#2\end{mdframed}\relax}{\vspace{1em}}
+
+\captionsetup[figure]{labelsep=space}
+% \captionsetup[table]{labelsep=space}
+
+% framed settings
+\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.96}
+
+\newcommand{\hyref}[2]{\href{#1}{\hyphenchar\font="200B #2}}
+
+% auto-wrap typewriter style
+\newcommand{\hytt}[1]{\texttt{\hyphenchar\font="200B #1}}
+
+% minted settings
+\setminted{bgcolor=anti-flashwhite}
+
+% customize TOC
+\cftsetpnumwidth{2em}
+\cftsetindents{chapter}{0em}{2em}
+\cftsetindents{section}{2em}{3em}
+\cftsetindents{subsection}{5em}{4em}
+
+% image related
+\graphicspath{{images/}}
+\makeatletter
+\def\maxwidth#1{\ifdim\Gin@nat@width>#1 #1\else\Gin@nat@width\fi}
+\makeatother
+
+% URL auto line break
+\makeatletter
+\def\UrlAlphabet{%
+	\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j%
+	\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t%
+	\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D%
+	\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N%
+	\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X%
+	\do\Y\do\Z%
+}
+\def\UrlDigits{\do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9\do\0}
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\g@addto@macro{\UrlBreaks}{\UrlAlphabet}
+\g@addto@macro{\UrlBreaks}{\UrlDigits}
+\makeatother
+
+% blockquote 2em indent
+\patchcmd{\quotation}{1.5em}{2em}{}{}
+
+\begin{document}
+	\maketitle
+	\renewcommand{\baselinestretch}{1.2}\normalsize % 行距设置
+	\setlength{\parskip}{0\baselineskip}
+	\renewcommand{\headrulewidth}{0mm} % 页眉横线宽度
+	\makeatletter
+	\let\@afterindentfalse\@afterindenttrue
+	\@afterindenttrue
+	\makeatother
+	\setlength{\parindent}{2em} % 中文缩进两个汉字位
+	\setlength{\tabcolsep}{2pt} % 表格列间距 2pt
+	\frontmatter
+	\tableofcontents
+	\clearpage
+	\mainmatter
+	\input{example}
+\end{document}
