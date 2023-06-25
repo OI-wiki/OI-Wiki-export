@@ -293,3 +293,5 @@ images
 *.pdf
 
 .vscode
+
+*.typ

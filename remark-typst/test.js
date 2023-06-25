@@ -5,7 +5,7 @@ const parse = require('remark-parse')
 const math = require('remark-math')
 const details = require('remark-details')
 const footnotes = require('remark-footnotes')
-const latex = require('./index')
+const typst = require('./index')
 const fs = require('fs')
 const vfile = require('to-vfile')
 const path = require('path')
@@ -27,7 +27,7 @@ unified()
   .use(math)
   .use(details)
   .use(footnotes)
-  .use(latex, {
+  .use(typst, {
     prefix: filename.replace(prefixRegEx, '').replace(/md$/, ''),
     depth: 0,
     current: filename,
@@ -40,6 +40,6 @@ unified()
     if (err) {
       throw err
     }
-    file.extname = '.tex'
+    file.extname = '.typ'
     vfile.writeSync(file)
   })

@@ -2,8 +2,8 @@
 
 const compiler = require('./lib/compiler')
 
-module.exports = latex
+module.exports = typst
 
-function latex (options) {
+function typst (options) {
   this.Compiler = compiler(options || {})
 }

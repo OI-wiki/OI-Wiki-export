@@ -16,8 +16,8 @@ module.exports = {
 
   // 不以 \par 开头
   nonParagraphBegin: function (text) {
-    if (text.startsWith('\\par')) {
-      return text.slice(4)
+    if (text.startsWith('#par[')) {
+      return text.slice(5, text.length - 1)
     }
     return text
   },
