@@ -5,7 +5,7 @@ const parse = require('remark-parse')
 const math = require('remark-math')
 const details = require('remark-details')
 const footnotes = require('remark-footnotes')
-const latex = require('remark-latex')
+const typst = require('remark-typst')
 const fs = require('fs').promises
 const vfile = require('to-vfile')
 const path = require('path')
@@ -38,10 +38,10 @@ async function main () {
 
   await snippet.snippet(oiwikiRoot)
 
-  console.log('Checking for tex/ directory')
+  console.log('Checking for typ/ directory')
 
   try {
-    await fs.mkdir('tex')
+    await fs.mkdir('typ')
     await fs.mkdir('images')
   } catch (e) {
 
@@ -74,12 +74,12 @@ async function main () {
 
   let includes = ''
   for (const id in catalog) {
-    const texModule = path.join('tex', id.toString())
-    await fs.writeFile(texModule + '.tex', await exportRecursive(catalog[id], 0))
-    includes += '\\input{' + texModule + '}\n' // 输出 includes.tex 章节目录文件
+    const texModule = path.join('typ', id.toString())
+    await fs.writeFile(texModule + '.typ', await exportRecursive(catalog[id], 0))
+    includes += '#include "' + texModule + '"\n' // 输出 includes.typ 章节目录文件
   }
 
-  await fs.writeFile('includes.tex', includes)
+  await fs.writeFile('includes.typ', includes)
   console.log('Complete')
 
   async function convertMarkdown (filename, depth) {
@@ -98,7 +98,7 @@ async function main () {
       .use(math)
       .use(details)
       .use(footnotes)
-      .use(latex, {
+      .use(typst, {
         prefix: filename.replace(prefixRegEx, '').replace(/md$/, ''), // 根据路径生成 ID，用作 LaTeX label
         depth: depth, // 标题 h1 深度
         current: filename, // 带 md 后缀的文件名
@@ -111,9 +111,9 @@ async function main () {
         if (err) {
           throw err
         }
-        file.dirname = 'tex'
+        file.dirname = 'typ'
         file.stem = filename.replace(prefixRegEx, '')
-        file.extname = '.tex'
+        file.extname = '.typ'
         vfile.writeSync(file)
       })
   }
@@ -125,10 +125,10 @@ async function main () {
     depth = Math.min(depth, block.length)
     for (const key in object) {
       console.log('Exporting: ' + key)
-      result += '\\' + block[depth] + '{' + escape(key) + '}\n'
+      result += '='.repeat(depth + 1) + ' ' + escape(key) + '\n'
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
-        result += '\\input{' + escape(getTexModuleName(object[key])) + '}\n'
+        result += '#include "' + escape(getTexModuleName(object[key])) + '"\n'
       } else { // 对应子目录
         for (const id in object[key]) {
           result += await exportRecursive(object[key][id], depth + 1)
@@ -139,7 +139,7 @@ async function main () {
   }
 
   function getTexModuleName (name) {
-    return path.join('tex', path.join(oiwikiRoot, 'docs', name).replace(prefixRegEx, ''))
+    return path.join('typ', path.join(oiwikiRoot, 'docs', name).replace(prefixRegEx, ''))
   }
 }
 

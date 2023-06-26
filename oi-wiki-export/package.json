@@ -14,7 +14,6 @@
     "rehype-stringify": "^8.0.0",
     "remark-details": "^1.1.0",
     "remark-footnotes": "^1.0.0",
-    "remark-latex": "file:../remark-latex",
     "remark-math": "^1.0.5",
     "remark-parse": "^6.0.2",
     "remark-rehype": "^7.0.0",

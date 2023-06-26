@@ -1,6 +1,7 @@
 node_modules/*
 oi-wiki-export/node_modules/*
 remark-latex/node_modules/*
+remark-typst/node_modules/*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -287,7 +288,7 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 
-oi-wiki-export/tex/
+oi-wiki-export/typ/
 
 images
 *.pdf
