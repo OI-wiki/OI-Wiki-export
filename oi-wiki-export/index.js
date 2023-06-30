@@ -5,12 +5,12 @@ const parse = require('remark-parse')
 const math = require('remark-math')
 const details = require('remark-details')
 const footnotes = require('remark-footnotes')
-const typst = require('remark-typst')
+const typst = require('../remark-typst/index')
 const fs = require('fs').promises
 const vfile = require('to-vfile')
 const path = require('path')
 const yaml = require('js-yaml')
-const escape = require('escape-latex')
+const escape = require('../escape-typst/src/index')
 const child_process = require('child_process')
 const snippet = require('./snippet')
 
@@ -76,7 +76,7 @@ async function main () {
   for (const id in catalog) {
     const texModule = path.join('typ', id.toString())
     await fs.writeFile(texModule + '.typ', await exportRecursive(catalog[id], 0))
-    includes += '#include "' + texModule + '"\n' // 输出 includes.typ 章节目录文件
+    includes += '#include "' + texModule + '.typ"\n' // 输出 includes.typ 章节目录文件
   }
 
   await fs.writeFile('includes.typ', includes)
@@ -128,7 +128,7 @@ async function main () {
       result += '='.repeat(depth + 1) + ' ' + escape(key) + '\n'
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
-        result += '#include "' + escape(getTexModuleName(object[key])) + '"\n'
+        result += '#include "' + escape(getTexModuleName(object[key])) + '.typ"\n'
       } else { // 对应子目录
         for (const id in object[key]) {
           result += await exportRecursive(object[key][id], depth + 1)
@@ -139,7 +139,7 @@ async function main () {
   }
 
   function getTexModuleName (name) {
-    return path.join('typ', path.join(oiwikiRoot, 'docs', name).replace(prefixRegEx, ''))
+    return path.join(oiwikiRoot, 'docs', name).replace(prefixRegEx, '')
   }
 }
 

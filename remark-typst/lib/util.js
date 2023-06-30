@@ -1,6 +1,6 @@
 'use strict'
 
-const escape = require('escape-latex')
+const escape = require('../../escape-typst/src/index')
 const path = require('path')
 
 module.exports = {
@@ -17,7 +17,8 @@ module.exports = {
   // 不以 \par 开头
   nonParagraphBegin: function (text) {
     if (text.startsWith('#par[')) {
-      return text.slice(5, text.length - 1)
+      const trimmed = text.trim()
+      return trimmed.slice(5, trimmed.length - 1)
     }
     return text
   },

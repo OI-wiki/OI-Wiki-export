@@ -1,6 +1,6 @@
 {
   "name": "remark-typst",
-  "version": "0.14.0",
+  "version": "0.13.0",
   "description": "A tool to compile mdast to Typst, remastered.",
   "main": "index.js",
   "dependencies": {
