@@ -1,6 +1,6 @@
 # OI Wiki: Export to PDF
 
-为 OI Wiki 的 LaTeX PDF 自动化导出工具开发的 Markdown 到 LaTeX 编译器。
+为 OI Wiki 的 Typst PDF 自动化导出工具开发的 Markdown 到 Typst 编译器。
 
 ## 使用方法
 
@@ -12,7 +12,7 @@ const vfile = require('to-vfile')
 
 unified()
 	.use(parse) // 调用 remark 解析引擎
-	.use(latex, { // 编译到 LaTeX
+	.use(typst, { // 编译到 Typst
 		prefix: filename.replace(prefixRegEx, "").replace(/md$/, ""), // 文件名（不含 md 后缀）
 		depth: depth, // 指定 <h1> 对应标题深度（0, 1, 2 分别表示 \chapter, \section, \subsection），用于全书的结构组织
 		current: filename, // 文件名（含 md 后缀）
@@ -23,11 +23,11 @@ unified()
 		if (err) {
 			throw err
 		}
-		file.dirname = 'tex'
+		file.dirname = 'typ'
 		file.stem = filename.replace(prefixRegEx, "")
-		file.extname = '.tex'
+		file.extname = '.typ'
 		vfile.writeSync(file)
-	}) // 保存到文件（md 后缀换成 tex）
+	}) // 保存到文件（md 后缀换成 typ）
 ```
 
 ## 依赖
