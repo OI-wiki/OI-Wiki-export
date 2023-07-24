@@ -7,7 +7,7 @@
 ```js
 const unified = require('unified')
 const parse = require('remark-parse')
-const latex = require('remark-latex')
+const typst = require('remark-typst')
 const vfile = require('to-vfile')
 
 unified()
