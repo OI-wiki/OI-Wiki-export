@@ -290,8 +290,11 @@ TSWLatexianTemp*
 
 oi-wiki-export/typ/
 oi-wiki-export/includes.typ
+oi-wiki-export/images/
 
-images
+remark-latex/
+
 *.pdf
 
 .vscode
+
