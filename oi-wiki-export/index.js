@@ -10,7 +10,7 @@ const fs = require('fs').promises
 const vfile = require('to-vfile')
 const path = require('path')
 const yaml = require('js-yaml')
-const escape = require('../escape-typst/src/index')
+const escape = require('../remark-typst/escape-typst/src/index')
 const child_process = require('child_process')
 const snippet = require('./snippet')
 
@@ -125,7 +125,13 @@ async function main () {
     depth = Math.min(depth, block.length)
     for (const key in object) {
       console.log('Exporting: ' + key)
-      result += '='.repeat(depth + 1) + ' ' + escape(key) + '\n'
+      result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
+      // TODO: let top section be indexible
+      // if (object[key] instanceof Array) {
+      //   // console.log(object[key][1])
+      // } else {
+      //   result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
+      // }
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
         result += '#include "' + escape(getTexModuleName(object[key])) + '.typ"\n'

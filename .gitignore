@@ -289,10 +289,9 @@ TSWLatexianTemp*
 #*Notes.bib
 
 oi-wiki-export/typ/
+oi-wiki-export/includes.typ
 
 images
 *.pdf
 
 .vscode
-
-*.typ
