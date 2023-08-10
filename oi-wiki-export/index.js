@@ -126,7 +126,7 @@ async function main () {
     for (const key in object) {
       console.log('Exporting: ' + key)
       result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
-      // TODO: let top section be indexible
+      // TODO: make top sections indexible
       // if (object[key] instanceof Array) {
       //   // console.log(object[key][1])
       // } else {
