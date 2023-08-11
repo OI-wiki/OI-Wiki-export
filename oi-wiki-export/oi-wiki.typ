@@ -1,7 +1,11 @@
 // Functions for OI-Wiki remark-typst
 
-// TODO: transparentize codeblocks inside details
-// #let s = state("in_details", false)
+/* BEGIN constants */
+#let ROOT_EM = 10.5pt
+#let MAX_IMAGE_WIDTH = 21cm - 1in - ROOT_EM * 2 * 2
+#let MAX_IMAGE_HEIGHT = (29.7cm - 1.5in) / 2
+#let BLOCKQUOTE_CONTENT_WIDTH = 21cm - 1in - ROOT_EM
+/* END constants */
 
 #let antiflash-white = cmyk(0%, 0%, 0%, 5%)
 
@@ -21,15 +25,22 @@
   #h(1fr)
 ]
 
-#let blockquote(content) = grid(
-  columns: (1em, auto),
+#let blockquote(content) = {
+  let cont_block = block.with(width: 100%, fill: antiflash-white, inset: (top: .5em, right: 1em, bottom: .5em, left: 1em), radius: (right: .5em,))
 
-  // TODO: auto-sized left decoration bar
-  // layout(size => style(styles => 
-    rect(height: auto, fill: cmyk(0%, 0%, 0%, 50%), radius: (left: .5em)),
-  // )),
-  block(width: 100%, fill: antiflash-white, inset: (top: .5em, right: 1em, bottom: .5em, left: 1em), radius: (right: .5em,))[#content]
-)
+  grid(
+    columns: (1em, auto),
+
+    // TODO: parametrically (not hard-coded) auto-sized left decoration bar
+    // issue: https://github.com/typst/typst/issues/113
+    layout(size => style(styles => {
+      let h_cont = measure(cont_block(width: BLOCKQUOTE_CONTENT_WIDTH)[#content], styles).height
+
+      rect(height: h_cont, fill: cmyk(0%, 0%, 0%, 50%), radius: (left: .5em))
+    })),
+    cont_block[#content]
+  )
+}
 // #let blockquote(content) = block(width: 100%, fill: antiflash-white, inset: (top: .5em, right: 1em, bottom: .5em, left: 1em), radius: .5em, stroke: (left: 1em + cmyk(0%, 0%, 0%, 75%)))[#content]
 
 #let details(color: (bright: cmyk, dark: cmyk), ..items) = {
@@ -38,6 +49,7 @@
     panic("#details function needs exactly two content blocks")
   }
 
+  // TODO: transparentize codeblocks inside details
   // let inner_codeblock = locate(loc => query(
   //   codeblock,
   //   loc,
@@ -96,12 +108,16 @@
   // }
 }
 
-// Auto-sized figure based on #measure function.
+// Auto-sized figure based on measurement.
 #let figauto(src: str, alt: str) = style(styles => {
-  let img = image(src)
+  let img = image(src, fit: "contain")
   // Current measurement is merely based on pixel width, and not actual size (px / dpi)
-  let measured_width = measure(img, styles).width
-  set image(width: calc.min(measured_width / 2, 21cm - 1in - 10.5pt * 2 * 2))
+  // issue: https://github.com/typst/typst/issues/436
+  let (width, height) = measure(img, styles)
+  set image(
+    width: calc.min(width / 2, MAX_IMAGE_WIDTH), 
+    height: calc.min(height / 2, MAX_IMAGE_HEIGHT),
+  )
 
   figure(img, caption: alt)
 })
