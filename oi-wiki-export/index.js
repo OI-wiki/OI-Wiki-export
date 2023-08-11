@@ -123,25 +123,47 @@ async function main () {
     const block = ['chapter', 'section', 'subsection', 'subsubsection', 'paragraph', 'subparagraph'] // 各层次对应的 TeX 命令
     let result = ''
     depth = Math.min(depth, block.length)
+    if (depth === 0) {
+      result += '#pagebreak(to: "odd")\n'
+    }
     for (const key in object) {
       console.log('Exporting: ' + key)
-      result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
-      // TODO: make top sections indexible
-      // if (object[key] instanceof Array) {
-      //   // console.log(object[key][1])
-      // } else {
-      //   result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
-      // }
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
+        result += '{0} {1} <{2}>\n'.format(
+          '='.repeat(depth + 1), 
+          escape(key), 
+          getTexModuleName(object[key]))
         result += '#include "' + escape(getTexModuleName(object[key])) + '.typ"\n'
       } else { // 对应子目录
+        result += '{0} {1} <{2}>\n'.format(
+          '='.repeat(depth + 1), 
+          escape(key), 
+          getInnerMostHeading(object[key], depth))
         for (const id in object[key]) {
           result += await exportRecursive(object[key][id], depth + 1)
         }
       }
     }
     return result
+  }
+
+  function getInnerMostHeading (obj, depth) {  
+    // console.log(obj)
+    // console.log(depth)
+
+    if (obj instanceof Array) {
+      return getInnerMostHeading(obj[0], depth)
+    } 
+    if (obj instanceof Object) {
+      return getInnerMostHeading(Object.values(obj)[0], depth - 1)
+    }
+    if (typeof obj === 'string') {
+      let idx = obj.lastIndexOf('/')
+      return getTexModuleName(obj.slice(0, (idx === -1) ? obj.length : idx))
+    }
+
+    return ''
   }
 
   function getTexModuleName (name) {
