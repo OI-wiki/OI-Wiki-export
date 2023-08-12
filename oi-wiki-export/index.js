@@ -6,6 +6,7 @@ const math = require('remark-math')
 const details = require('remark-details')
 const footnotes = require('remark-footnotes')
 const typst = require('../remark-typst/index')
+const mathjax = require('../remark-typst/remark-mathjax/index')
 const fs = require('fs').promises
 const vfile = require('to-vfile')
 const path = require('path')
@@ -96,6 +97,7 @@ async function main () {
     unified()
       .use(parse)
       .use(math)
+      .use(mathjax)
       .use(details)
       .use(footnotes)
       .use(typst, {

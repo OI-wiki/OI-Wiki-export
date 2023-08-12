@@ -111,7 +111,7 @@
 // Auto-sized figure based on measurement.
 #let figauto(src: str, alt: str) = style(styles => {
   let img = image(src, fit: "contain")
-  // Current measurement is merely based on pixel width, and not actual size (px / dpi)
+  // Current measurement are merely based on pixel width, and not actual size (px / dpi)
   // issue: https://github.com/typst/typst/issues/436
   let (width, height) = measure(img, styles)
   set image(
@@ -121,3 +121,25 @@
 
   figure(img, caption: alt)
 })
+
+#let dispmath(svg: str) = style(styles => {
+  let img = image.decode(svg)
+  let (width, height) = measure(img, styles)
+  set image(width: width / 1.27, height: height / 1.27)
+
+  align(center)[#img]
+})
+
+#let inlinemath(svg: str) = box(
+  // TODO: fix the height of inline mathematics
+  // height: 1em,
+  baseline: 20%,
+
+  style(styles => {
+    let img = image.decode(svg)
+    let (width, height) = measure(img, styles)
+    set image(width: width / 1.27, height: height / 1.27)
+
+    img
+  })
+)
