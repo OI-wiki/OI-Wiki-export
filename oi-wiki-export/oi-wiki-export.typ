@@ -14,10 +14,12 @@
 #set page(
   paper: "a4",
   margin: (top: .8in, inside: .4in, bottom: .7in, outside: .6in),
-  header-ascent: 40%,
+  header-ascent: 40%
 )
 
 #v(2fr)
+
+#show math.equation: set text(font: ("New Computer Modern Math", "FZKai-Z03S"))
 
 #text(
   size: 36pt,
@@ -47,7 +49,7 @@
 )
 
 #set par(
-  leading: 0.75em,
+  leading: 0.8em,
   first-line-indent: 2em,
   // TODO: CJK-style first line indent
   // issues: https://github.com/typst/typst/issues/311
@@ -58,7 +60,7 @@
 //   outset: (left: 2em, right: -2em),
 // )
 
-#set block(spacing: 0.75em)
+#set block(spacing: 0.8em)
 
 #set strong(delta: 0)
 #show strong: set text(
@@ -67,7 +69,7 @@
 )
 
 #set heading(numbering: "1.1")
-#show heading: set block(spacing: 1.25em)
+#show heading: set block(spacing: 1em)
 #show heading: set text(
   font: ("Linux Biolinum", "FZHei-B01S"),
   weight: 551,
@@ -84,11 +86,11 @@
 )
 
 #show raw: set text(
-  // Current text size of raw block is being set to 0.8rem
+  // FIXME: current text size of raw block is being set to 0.8rem
   // So we scale it back a little
   // issue: https://github.com/typst/typst/issues/1331
   size: 1.1em,
-  font: ("DejaVu Sans Mono", "FZHei-B01S")
+  font: ("DejaVu Sans Mono", "FZKai-Z03S")
 )
 /* END article formatting */
 
@@ -111,10 +113,9 @@
 
 #set page(
   header: {
-    counter(footnote).update(0)
-
-    let heading_format(..headings) = {
+    let sect_number(..headings) = {
       let levels = headings.pos()
+
       if levels.len() > 1 {
         [#levels.at(0).#levels.at(1)]
       } else {
@@ -124,15 +125,12 @@
     
     locate(loc => {
       if calc.odd(loc.page()) {
-        // TODO: find first-level headings in current page, not the last page
-        let curr_chapter = query(
-          selector(heading.where(level: 1)),
-          loc,
-        )
-        // New chapter?
-        // if curr_chapter != () {
-        //   return [#curr_chapter]
-        // }
+        // TODO: programatically hide headings on new chapters
+        // issue: https://github.com/typst/typst/issues/1613
+        // let curr_chapter = query(
+        //   selector(heading.where(level: 1)),
+        //   loc,
+        // )
 
         let curr_section = query(
           selector(heading.where(level: 2)).before(loc), 
@@ -144,8 +142,9 @@
 
         [
           #set text(size: 9pt, number-width: "tabular")
+
           #emph[
-            #counter(heading).display(heading_format)
+            #counter(heading).display(sect_number)
             #h(1em)
             #smallcaps(curr_section.last().body)
           ]
@@ -160,6 +159,7 @@
 
         [
           #set text(9pt, number-width: "tabular")
+
           #counter(page).display("1")
           #h(1fr)
           第~#counter(heading.where(level: 1)).display("1")~章#h(1em)#elems.last().body
@@ -170,8 +170,7 @@
 )
 
 #show heading.where(level: 1): it => block(
-  above: 0em,
-  below: 0em,
+  spacing: 0em,
 )[
   #set text(
     size: 36pt,
@@ -182,36 +181,37 @@
     first-line-indent: 0em,
   )
 
-  #v(4em)
+  #v(3em)
   第~#counter(heading).display()~章
   #v(1em)
   #it.body
-  #v(4em)
+  #v(3em)
 ]
 
-#let fullwidth_bullet = block(
-  width: 1em, 
-  height: 1em,
-)[
-  #move(
-    dx: (10.5pt - 10.5pt / 3) / 2, 
-    dy: (10.5pt - 10.5pt / 3) / 2,
-  )[
-    #circle(
-      radius: 10.5pt / 2 / 3, 
-      fill: black,
-      stroke: none,
-      inset: 0pt,
-    )
-  ]
-]
 
-#set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
-#show list: set block(spacing: 0.75em)
+// TODO: aligned enum indices & list bullets?
+// #let fullwidth_bullet = block(
+//   width: 1em, 
+//   height: 1em,
 
-// TODO: aligned list indices
+//   move(
+//     dx: (10.5pt - 10.5pt / 3) / 2, 
+//     dy: (10.5pt - 10.5pt / 3) / 2,
+
+//     circle(
+//       radius: 10.5pt / 2 / 3, 
+//       fill: black,
+//       stroke: none,
+//       inset: 0pt,
+//     )
+//   )
+// )
+// #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
+
+#set list(indent: 2em)
+#show list: set block(spacing: 0.8em)
 #set enum(indent: 2em)
-#show enum: set block(spacing: 0.75em)
+#show enum: set block(spacing: 0.8em)
 
 #set footnote(numbering: "[1]")
 #show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
