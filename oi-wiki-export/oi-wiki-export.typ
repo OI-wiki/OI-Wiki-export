@@ -189,7 +189,7 @@
 ]
 
 
-// TODO: aligned enum indices & list bullets?
+// TODO: aligned enum indices & list bullets
 // #let fullwidth_bullet = block(
 //   width: 1em, 
 //   height: 1em,
