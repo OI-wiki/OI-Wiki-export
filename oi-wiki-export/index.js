@@ -97,7 +97,8 @@ async function main () {
     unified()
       .use(parse)
       .use(math)
-      .use(mathjax)
+      // TODO: svg approach?
+      // .use(mathjax)
       .use(details)
       .use(footnotes)
       .use(typst, {
@@ -122,14 +123,20 @@ async function main () {
 
   // 递归处理各个 chapter
   async function exportRecursive (object, depth) {
-    const block = ['chapter', 'section', 'subsection', 'subsubsection', 'paragraph', 'subparagraph'] // 各层次对应的 TeX 命令
     let result = ''
-    depth = Math.min(depth, block.length)
+
+    depth = Math.min(depth, 6)
+    
     if (depth === 0) {
       result += '#pagebreak(to: "odd")\n'
     }
+    if (depth === 1) {
+      result += '#counter(footnote).update(0)\n'
+    }
+    
     for (const key in object) {
       console.log('Exporting: ' + key)
+      // FIXME: correct label names
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
         result += '{0} {1} <{2}>\n'.format(
@@ -147,6 +154,7 @@ async function main () {
         }
       }
     }
+
     return result
   }
 
@@ -164,7 +172,6 @@ async function main () {
       let idx = obj.lastIndexOf('/')
       return getTexModuleName(obj.slice(0, (idx === -1) ? obj.length : idx))
     }
-
     return ''
   }
 
