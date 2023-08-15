@@ -1,7 +1,20 @@
 node_modules/*
-oi-wiki-export/node_modules/*
-remark-latex/node_modules/*
+
+remark-latex/
+
 remark-typst/node_modules/*
+
+oi-wiki-export/node_modules/*
+oi-wiki-export/typ/
+oi-wiki-export/images/
+oi-wiki-export/includes.typ
+oi-wiki-export/tests.typ
+
+*.pdf
+
+.vscode
+
+known-issues.txt
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -287,14 +300,3 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
-
-oi-wiki-export/typ/
-oi-wiki-export/includes.typ
-oi-wiki-export/images/
-
-remark-latex/
-
-*.pdf
-
-.vscode
-known-issues.txt
