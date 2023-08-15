@@ -86,10 +86,10 @@
 )
 
 #show raw: set text(
-  // FIXME: current text size of raw block is being set to 0.8rem
-  // So we scale it back a little
+  // NOTE: current text size of raw block is being set to 0.8rem
+  // So we scale it back a little (to 9pt)
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.1em,
+  size: 1.07em,
   font: ("DejaVu Sans Mono", "FZKai-Z03S")
 )
 /* END article formatting */
