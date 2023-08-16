@@ -102,20 +102,20 @@
 })
 
 // NOTE: svg approach?
-// #let dispmath(svg: str) = style(styles => {
-//   let img = image.decode(svg)
-//   let (width, height) = measure(img, styles)
-//   set image(width: width, height: height)
+#let dispmath(svg: str) = style(styles => {
+  let img = image.decode(svg)
+  let (width, height) = measure(img, styles)
+  set image(width: width / 2, height: height / 2)
 
-//   align(center)[#img]
-// })
+  align(center)[#img]
+})
 
-// #let inlinemath(svg: str) = box(
-//   style(styles => {
-//     let img = image.decode(svg)
-//     let (width, height) = measure(img, styles)
-//     set image(width: width, height: height)
+#let inlinemath(svg: str) = box(
+  style(styles => {
+    let img = image.decode(svg)
+    let (width, height) = measure(img, styles)
+    set image(width: width / 2, height: height / 2)
 
-//     img
-//   })
-// )
+    img
+  })
+)
