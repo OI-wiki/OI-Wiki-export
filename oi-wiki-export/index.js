@@ -35,11 +35,11 @@ async function main () {
   const oiwikiRoot = process.argv[2] // OI Wiki 根目录
   const yamlFile = path.join(oiwikiRoot, 'mkdocs.yml') // YAML 配置文件
 
-  console.log('Processing snippets')
+  console.log('[INFO] Processing snippets')
 
   await snippet.snippet(oiwikiRoot)
 
-  console.log('Checking for typ/ directory')
+  console.log('[INFO] Checking for typ/ directory')
 
   try {
     await fs.mkdir('typ')
@@ -47,14 +47,14 @@ async function main () {
   } catch (e) {
 
   }
-  console.log('Exporting OI Wiki from directory: ' + oiwikiRoot)
+  console.log('[INFO] Exporting OI Wiki from directory: ' + oiwikiRoot)
 
   if (!await exists(yamlFile)) {
-    console.log('Error: config file \'mkdocs.yml\' does not exist')
+    console.error('[ERROR] Error: config file \'mkdocs.yml\' does not exist')
     process.exit()
   }
 
-  console.log('Config file: ' + yamlFile)
+  console.log('[INFO] Config file: ' + yamlFile)
 
   const yamlFileContent = await fs.readFile(yamlFile, 'utf8');
 
@@ -81,16 +81,16 @@ async function main () {
   }
 
   await fs.writeFile('includes.typ', includes)
-  console.log('Complete')
+  console.log('[INFO] Complete')
 
   async function convertMarkdown (filename, depth) {
     if (!filename.endsWith('.md')) {
-      console.log('Error: File \'' + filename + '\' is not a markdown file')
+      console.error('Error: File \'' + filename + '\' is not a markdown file')
       process.exit()
     }
 
     if (!await exists(filename)) {
-      console.log('Error: File \'' + filename + '\' does not exist')
+      console.error('Error: File \'' + filename + '\' does not exist')
       process.exit()
     }
 
@@ -135,7 +135,7 @@ async function main () {
     }
     
     for (const key in object) {
-      console.log('Exporting: ' + key)
+      console.log('[INFO] Exporting: ' + key)
       // FIXME: correct label names
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
