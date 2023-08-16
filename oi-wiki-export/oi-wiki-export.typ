@@ -2,7 +2,20 @@
 
 /* BEGIN constants */
 #let ROOT_EM = 10.5pt
+#let antiflash-white = cmyk(0%, 0%, 0%, 5%)
 /* END constants */
+
+/* BEGIN functions */
+#let sect_number(..headings) = {
+  let levels = headings.pos()
+
+  if levels.len() > 1 {
+    [#levels.at(0).#levels.at(1)]
+  } else {
+    []
+  }
+}
+/* END functions */
 
 /* BEGIN meta formatting */
 #set text(
@@ -14,7 +27,7 @@
 #set page(
   paper: "a4",
   margin: (top: .8in, inside: .4in, bottom: .7in, outside: .6in),
-  header-ascent: 40%
+  header-ascent: .3in,
 )
 
 #v(2fr)
@@ -112,82 +125,74 @@
 #counter(page).update(0)
 
 #set page(
-  header: {
-    let sect_number(..headings) = {
-      let levels = headings.pos()
+  header: locate(loc => {
+    if calc.odd(loc.page()) {
+      // TODO: programatically hide headings on new chapters
+      // issue: https://github.com/typst/typst/issues/1613
+      // let chapters = query(selector(heading.where(level: 1)).before(loc), loc)
+      // let curr_heading = counter(heading).at(loc).at(0)
 
-      if levels.len() > 1 {
-        [#levels.at(0).#levels.at(1)]
-      } else {
-        []
+      let curr_section = query(
+        selector(heading.where(level: 2)).before(loc), 
+        loc
+      )
+      if curr_section == () {
+        return []
       }
+
+      [
+        #set text(size: 9pt, number-width: "tabular")
+
+        #emph[
+          #counter(heading).display(sect_number)
+          #h(1em)
+          #smallcaps(curr_section.last().body)
+        ]
+        #h(1fr)
+        #counter(page).display("1")
+      ]
+    } else {
+      let elems = query(
+        selector(heading.where(level: 1)).before(loc),
+        loc,
+      )
+
+      [
+        #set text(9pt, number-width: "tabular")
+
+        #counter(page).display("1")
+        #h(1fr)
+        第~#counter(heading.where(level: 1)).display("1")~章#h(1em)#elems.last().body
+      ]
     }
-    
-    locate(loc => {
-      if calc.odd(loc.page()) {
-        // TODO: programatically hide headings on new chapters
-        // issue: https://github.com/typst/typst/issues/1613
-        // let curr_chapter = query(
-        //   selector(heading.where(level: 1)),
-        //   loc,
-        // )
-
-        let curr_section = query(
-          selector(heading.where(level: 2)).before(loc), 
-          loc
-        )
-        if curr_section == () {
-          return []
-        }
-
-        [
-          #set text(size: 9pt, number-width: "tabular")
-
-          #emph[
-            #counter(heading).display(sect_number)
-            #h(1em)
-            #smallcaps(curr_section.last().body)
-          ]
-          #h(1fr)
-          #counter(page).display("1")
-        ]
-      } else {
-        let elems = query(
-          selector(heading.where(level: 1)).before(loc),
-          loc,
-        )
-
-        [
-          #set text(9pt, number-width: "tabular")
-
-          #counter(page).display("1")
-          #h(1fr)
-          第~#counter(heading.where(level: 1)).display("1")~章#h(1em)#elems.last().body
-        ]
-      }
-    })
-  }
+  })
 )
 
-#show heading.where(level: 1): it => block(
-  spacing: 0em,
-)[
-  #set text(
-    size: 36pt,
-    font: ("Linux Biolinum", "FZHei-B01S"),
-    weight: 551,
-  )
-  #set par(
-    first-line-indent: 0em,
+#show heading.where(level: 1): it => {
+  set page(
+    header: none,
+    fill: antiflash-white,
   )
 
-  #v(3em)
-  第~#counter(heading).display()~章
-  #v(1em)
-  #it.body
-  #v(3em)
-]
+  block(
+    spacing: 0em,
+  )[
+    #set text(
+      size: 36pt,
+      font: ("Linux Biolinum", "FZHei-B01S"),
+      weight: 551,
+    )
+    #set par(
+      first-line-indent: 0em,
+    )
 
+    #v(1fr)
+    第~#counter(heading).display()~章
+    #v(1em)
+    #it.body
+    #v(2fr)
+  ]
+}
 
 // TODO: aligned enum indices & list bullets
 // #let fullwidth_bullet = block(
