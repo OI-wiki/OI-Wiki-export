@@ -37,7 +37,7 @@ jobs:
             wget -q -O notoserifcjk.zip "https://noto-website-2.storage.googleapis.com/pkgs/NotoSerifCJKsc-hinted.zip"
             wget -q -O notosanscjk.zip "https://noto-website-2.storage.googleapis.com/pkgs/NotoSansCJKsc-hinted.zip"
             wget -q -O robotomono.zip "https://fonts.google.com/download?family=Roboto%20Mono"
-            wget -q "http://mirrors.ctan.org/fonts/cm-unicode.zip"
+            wget -q "https://mirror.math.princeton.edu/pub/CTAN/fonts/cm-unicode.zip"
             unzip -q notosans.zip -d notosans
             unzip -q notoserif.zip -d notoserif
             unzip -q notosanscjk.zip -d notosanscjk
