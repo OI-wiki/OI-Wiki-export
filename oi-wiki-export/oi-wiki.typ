@@ -2,9 +2,13 @@
 
 /* BEGIN constants */
 #let ROOT_EM = 10.5pt
-#let MAX_IMAGE_WIDTH = 21cm - 1in - ROOT_EM * 2 * 2
-#let MAX_IMAGE_HEIGHT = (29.7cm - 1.5in) / 2
-#let BLOCKQUOTE_CONTENT_WIDTH = 21cm - 1in - ROOT_EM
+#let VISIBLE_WIDTH = 21cm - 1in
+#let VISIBLE_HEIGHT = 29.7cm - 1.5in
+// #let MAX_IMAGE_WIDTH = VISIBLE_WIDTH - ROOT_EM * 4
+// #let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 2
+// #let ENDPOINT = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
+// #let MAX_RATIO = MAX_IMAGE_WIDTH / ENDPOINT
+#let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM
 /* END constants */
 
 #let antiflash-white = cmyk(0%, 0%, 0%, 5%)
@@ -87,25 +91,49 @@
   raw(code, block: true, lang: lang)
 }
 
-// Auto-sized figure based on measurement.
+// Auto-sized figure.
+// TODO: optimized image size
+// issue: https://github.com/typst/typst/issues/436
 #let figauto(src: str, alt: str) = style(styles => {
-  let img = image(src, fit: "contain")
-  // TODO: optimized image size
-  // issue: https://github.com/typst/typst/issues/436
+  let img = image(src)
   let (width, height) = measure(img, styles)
-  set image(
-    width: calc.min(width / 2, MAX_IMAGE_WIDTH), 
-    height: calc.min(height / 2, MAX_IMAGE_HEIGHT),
-  )
 
+  let hori = VISIBLE_WIDTH.pt()
+  let radius = hori / 2
+  let ratio = width / height
+  let vert = hori / ratio
+  let diag = calc.sqrt(radius * radius + vert * vert)
+  let factor = diag / radius
+  
+  set image(width: calc.min(width / 2, VISIBLE_WIDTH / factor))
   figure(img, caption: alt)
+
+  // NOTE: trigonometry?
+  // if width / height > MAX_RATIO {
+  //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH))
+  //   figure(img, caption: alt)
+  // } else {
+  //   let r   = MAX_RATIO / 2
+  //   let v   = MAX_RATIO / (width / height)
+  //   let b1  = calc.sqrt((v - 1) * (v - 1) + r * r)
+  //   let c1  = calc.sqrt(v * v + r * r)
+  //   let a   = 1
+  //   let b   = r
+  //   let B   = calc.acos((a * a + c1 * c1 - b1 * b1) / (2 * a * c1))
+  //   let A   = calc.asin(a * calc.sin(B) / b)
+  //   let C   = 180deg - A - B
+  //   let c   = (a * calc.sin(C) / calc.sin(A))
+  //   let f   = c1 / c
+  //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH / f))
+  //   figure(img, caption: alt)
+  // }
 })
 
-// NOTE: svg approach?
+// FIXME: correct size of SVG equations
 #let dispmath(svg: str) = style(styles => {
   let img = image.decode(svg)
   let (width, height) = measure(img, styles)
-  set image(width: width / 2, height: height / 2)
+  set image(width: width, height: height)
 
   align(center)[#img]
 })
@@ -114,7 +142,7 @@
   style(styles => {
     let img = image.decode(svg)
     let (width, height) = measure(img, styles)
-    set image(width: width / 2, height: height / 2)
+    set image(width: width, height: height)
 
     img
   })
