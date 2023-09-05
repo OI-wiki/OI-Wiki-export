@@ -97,8 +97,6 @@ async function main () {
     unified()
       .use(parse)
       .use(math)
-      // NOTE: svg approach?
-      // .use(mathjax)
       .use(details)
       .use(footnotes)
       .use(typst, {
