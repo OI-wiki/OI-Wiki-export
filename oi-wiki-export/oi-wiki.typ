@@ -4,11 +4,11 @@
 #let ROOT_EM = 10.5pt
 #let VISIBLE_WIDTH = 21cm - 1in
 #let VISIBLE_HEIGHT = 29.7cm - 1.5in
+#let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM
 // #let MAX_IMAGE_WIDTH = VISIBLE_WIDTH - ROOT_EM * 4
 // #let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 2
 // #let ENDPOINT = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
 // #let MAX_RATIO = MAX_IMAGE_WIDTH / ENDPOINT
-#let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM
 /* END constants */
 
 #let antiflash-white = cmyk(0%, 0%, 0%, 5%)
@@ -17,21 +17,29 @@
 
 #let info-blue = (bright: cmyk(15%, 10%, 0%, 0%), dark: cmyk(30%, 20%, 0%, 0%))
 
-// NOTE: there ARE thematic (section) breaks in paperprints!
+// There ARE thematic (section) breaks in paperprints!
 // Although they are usually represented by three asterisks (a dinkus).
 #let horizontalrule = block(
   h(1fr) + sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op + h(1fr)
 )
 
 #let blockquote(content) = {
-  let cont_block = block.with(width: 100%, fill: antiflash-white, inset: (top: .5em, right: 1em, bottom: .5em, left: 1em), radius: (right: .5em,))
+  let cont_block = block.with(
+    width: 100%, 
+    fill: antiflash-white, 
+    inset: (top: .5em, right: 1em, bottom: .5em, left: 1em), 
+    radius: (right: .5em,)
+  )
 
   grid(
     columns: (1em, auto),
     // TODO: parametrically (not hard-coded) auto-sized left decoration bar
     // issue: https://github.com/typst/typst/issues/113
     layout(size => style(styles => {
-      let h_cont = measure(cont_block(width: BLOCKQUOTE_CONTENT_WIDTH)[#content], styles).height
+      let h_cont = measure(
+        cont_block(width: BLOCKQUOTE_CONTENT_WIDTH)[#content], 
+        styles
+      ).height
 
       rect(height: h_cont, fill: cmyk(0%, 0%, 0%, 50%), radius: (left: .5em))
     })),
@@ -105,10 +113,10 @@
   let diag = calc.sqrt(radius * radius + vert * vert)
   let factor = diag / radius
   
-  set image(width: calc.min(width / 2, VISIBLE_WIDTH / factor))
+  set image(width: calc.min(width, VISIBLE_WIDTH / factor))
   figure(img, caption: alt)
 
-  // NOTE: trigonometry?
+  // TODO: trigonometry?
   // if width / height > MAX_RATIO {
   //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH))
   //   figure(img, caption: alt)
