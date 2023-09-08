@@ -46,7 +46,7 @@ async function main () {
   } catch (e) {
 
   }
-  console.log('Exporting OI Wiki from directory: ' + oiwikiRoot)
+  console.log('[Info] Exporting OI Wiki from directory: ' + oiwikiRoot)
 
   if (!await exists(yamlFile)) {
     console.log('Error: config file \'mkdocs.yml\' does not exist')
@@ -124,7 +124,7 @@ async function main () {
     let result = ''
     depth = Math.min(depth, block.length)
     for (const key in object) {
-      console.log('Exporting: ' + key)
+      console.log('[Info] Exporting: ' + key)
       result += '\\' + block[depth] + '{' + escape(key) + '}\n'
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
