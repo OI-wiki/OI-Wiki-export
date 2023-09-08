@@ -92,7 +92,7 @@ module.exports = {
     if (dir.startsWith('/')) {
       return path.join(options.root, dir.slice(1))
     } else if (dir.startsWith('.') && !dir.endsWith('md')) {
-      return path.join(options.path, dir.replace(/^\.\//, '../'))
+      return path.join(options.path, dir.replace(/^\.\.\//, './../').replace(/^\.\//, '../'))
     } else {
       return path.join(options.path.split('/').slice(0, -2).join('/'), dir)
     }

@@ -226,7 +226,7 @@ function compiler (options) {
           ext = path.extname(loc)
         }
         const is_svg = ext === '.svg'
-        dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + (is_svg ? '.pdf' : '.jpg'))
+        dest = path.join('images', util.toPrefix(path.join(path.dirname(uri), path.basename(uri, path.extname(uri)))) + (is_svg ? '.pdf' : '.png'))
         // convert
         switch (ext) {
           case '.jpg':
@@ -237,7 +237,14 @@ function compiler (options) {
             break
           }
           case '.svg': {
-            if (!fs.existsSync(dest)) {
+            console.log(`[SVG] Exporting SVG at path ${uri}`)
+            if (fs.existsSync(uri + '.printable')) {
+              console.log(`[SVG] Detected printable version at ${uri}.printable`)
+              if (!fs.existsSync(dest)) {
+                fs.copyFileSync(uri + '.printable', dest)
+              }
+            }
+            else if (!fs.existsSync(dest)) {
               child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri])
             }
           }
@@ -249,7 +256,7 @@ function compiler (options) {
             break
           }
         }
-        return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, is_svg ? '.pdf' : '.jpg'), escape(node.alt || ''))
+        return '\\includegraphicsEverywhere{{{0}}}{{1}}'.format(path.basename(dest, is_svg ? '.pdf' : '.png'), escape(node.alt || ''))
       } catch (e) {
         console.log('Error occurred when processing image file `{0}`'.format(uri))
         return ''
