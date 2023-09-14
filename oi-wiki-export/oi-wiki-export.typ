@@ -1,5 +1,9 @@
 // Base template for oi-wiki-export
 
+/* BEGIN plugins */
+#let typst-qrcode-wasm = plugin("./typst_qrcode_wasm.wasm")
+/* END plugins */
+
 /* BEGIN constants */
 #let ROOT_EM = 10.5pt
 #let antiflash-white = cmyk(0%, 0%, 0%, 5%)
@@ -15,6 +19,11 @@
     []
   }
 }
+
+#let qrcode(arg) = image.decode(
+  str(typst-qrcode-wasm.generate(bytes(arg))),
+  width: .5in,
+)
 /* END functions */
 
 /* BEGIN meta formatting */
@@ -61,13 +70,12 @@
   font: ("Linux Libertine", "FZShuSong-Z01S"),
 )
 
+// NOTE: CJK-style first line indent is still in progress
+// issues: https://github.com/typst/typst/issues/311
+//         https://github.com/typst/typst/issues/1410
 #set par(
   leading: 0.8em,
   first-line-indent: 2em,
-  // TODO: CJK-style first line indent
-  // issues: https://github.com/typst/typst/issues/311
-  //         https://github.com/typst/typst/issues/1410
-  // hanging-indent: -2em,
 )
 // #show par: set block(
 //   outset: (left: 2em, right: -2em),
@@ -99,7 +107,7 @@
 )
 
 #show raw: set text(
-  // NOTE: current text size of raw block is being set to 0.8rem
+  // Current text size of raw block is being set to 0.8rem
   // So we scale it back a little (to 9pt)
   // issue: https://github.com/typst/typst/issues/1331
   size: 1.07em,
@@ -127,7 +135,7 @@
 #set page(
   header: locate(loc => {
     if calc.odd(loc.page()) {
-      // TODO: programatically hide headings on new chapters
+      // NOTE: not able to programatically hide headings on new chapters for now
       // issue: https://github.com/typst/typst/issues/1613
       // let chapters = query(selector(heading.where(level: 1)).before(loc), loc)
       // let curr_heading = counter(heading).at(loc).at(0)
@@ -168,6 +176,11 @@
   })
 )
 
+#show heading: it => {
+  it
+  par(text(size: .5em, ""))
+}
+
 #show heading.where(level: 1): it => {
   set page(
     header: none,
@@ -194,7 +207,7 @@
   ]
 }
 
-// TODO: aligned enum indices & list bullets
+// NOTE: aligned enum indices & list bullets?
 // #let fullwidth_bullet = block(
 //   width: 1em, 
 //   height: 1em,
@@ -218,13 +231,17 @@
 #set enum(indent: 2em)
 #show enum: set block(spacing: 0.8em)
 
-#set footnote(numbering: "[1]")
-#show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
-#show footnote.entry: it => {
-  let loc = it.note.location()
-  numbering("1. ", ..counter(footnote).at(loc))
-  it.note.body
-}
+// #set footnote(numbering: "1")
+// #show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
+// #show footnote.entry: it => {
+//   let loc = it.note.location()
+//   numbering("1. ", ..counter(footnote).at(loc))
+//   it.note.body
+// }
+
+#show link: set text(
+  fill: cmyk(0%, 100%, 100%, 0%)
+)
 
 #include "includes.typ"
 /* END main */
