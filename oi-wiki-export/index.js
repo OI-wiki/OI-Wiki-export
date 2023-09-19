@@ -6,7 +6,6 @@ const math = require('remark-math')
 const details = require('remark-details')
 const footnotes = require('remark-footnotes')
 const typst = require('../remark-typst/index')
-const mathjax = require('../remark-typst/remark-mathjax/index')
 const fs = require('fs').promises
 const vfile = require('to-vfile')
 const path = require('path')
@@ -16,6 +15,7 @@ const child_process = require('child_process')
 const snippet = require('./snippet')
 
 const prefixRegEx = /[^a-zA-Z0-9]/ig
+const history = new Array()
 
 async function exists (file) {
   try {
@@ -59,15 +59,14 @@ async function main () {
   const yamlFileContent = await fs.readFile(yamlFile, 'utf8');
 
   // fix YAMLException: unknown tag
-  const types = yamlFileContent.match(/!!python\/name:.*/g).map(
-      s =>
-          new yaml.Type(s.replace('!!', 'tag:yaml.org,2002:'), {
-            kind: 'mapping',
-            construct: function (data) {
-              return data
-            }
-          })
-  )
+  const types = yamlFileContent
+    .match(/!!python\/name:.*/g)
+    .map(s => new yaml.Type(s.replace('!!', 'tag:yaml.org,2002:'), {
+      kind: 'mapping',
+      construct: function (data) {
+        return data
+      }
+    }))
   const CONFIG_SCHEMA = yaml.Schema.create(types)
 
   const config = yaml.load(yamlFileContent, { schema: CONFIG_SCHEMA })
@@ -81,9 +80,9 @@ async function main () {
   }
 
   await fs.writeFile('includes.typ', includes)
-  console.log('[INFO] Complete')
+  console.log('[INFO] Export successful.')
 
-  async function convertMarkdown (filename, depth) {
+  async function convertMarkdown (filename, depth, title) {
     if (!filename.endsWith('.md')) {
       console.error('Error: File \'' + filename + '\' is not a markdown file')
       process.exit()
@@ -100,13 +99,14 @@ async function main () {
       .use(details)
       .use(footnotes)
       .use(typst, {
-        prefix: filename.replace(prefixRegEx, '').replace(/md$/, ''), // 根据路径生成 ID，用作 LaTeX label
+        prefix: filename.replace(prefixRegEx, '').replace(/md$/, ''), // 根据路径生成 ID，用作 label
         depth: depth, // 标题 h1 深度
         current: filename, // 带 md 后缀的文件名
         root: path.join(oiwikiRoot, 'docs'), // docs/ 目录
         nested: false,
-        forceEscape: false,
-        path: filename.replace(/\.md$/, '/') // 由文件名转换而来的路径
+        forceLinebreak: false,
+        path: filename.replace(/\.md$/, '/'), // 由文件名转换而来的路径
+        title: title,
       })
       .process(await vfile.read(filename), function (err, file) {
         if (err) {
@@ -134,19 +134,31 @@ async function main () {
     
     for (const key in object) {
       console.log('[INFO] Exporting: ' + key)
-      // FIXME: correct label names
       if (typeof object[key] === 'string') { // 对应页面
-        await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1)
+        await convertMarkdown(path.join(oiwikiRoot, 'docs', object[key]), depth + 1, object[key])
+
+        const moduleName = escape(getTypstModuleName(object[key]))
+
         result += '{0} {1} <{2}>\n'.format(
           '='.repeat(depth + 1), 
-          escape(key), 
-          getTexModuleName(object[key]))
-        result += '#include "' + escape(getTexModuleName(object[key])) + '.typ"\n'
+          escape(key),
+          moduleName.slice(0, moduleName.length - 2))
+
+        result += '#include "' + moduleName + '.typ"\n'
       } else { // 对应子目录
-        result += '{0} {1} <{2}>\n'.format(
-          '='.repeat(depth + 1), 
-          escape(key), 
-          getInnerMostHeading(object[key], depth))
+        const dirName = getInnermostHeading(object[key], depth)
+
+        if (depth === 0) {
+          history.length = 0
+          history.push(dirName)
+          result += '= {0} <{1}>\n'.format(escape(key), dirName)
+        } else if (history.includes(dirName)) {
+          result += '{0} {1}\n'.format('='.repeat(depth + 1), escape(key))
+        } else {
+          history.push(dirName)
+          result += '{0} {1} <{2}>\n'.format('='.repeat(depth + 1), escape(key), dirName)
+        }
+
         for (const id in object[key]) {
           result += await exportRecursive(object[key][id], depth + 1)
         }
@@ -156,24 +168,24 @@ async function main () {
     return result
   }
 
-  function getInnerMostHeading (obj, depth) {  
+  function getInnermostHeading (obj, depth) {  
     // console.log(obj)
     // console.log(depth)
 
     if (obj instanceof Array) {
-      return getInnerMostHeading(obj[0], depth)
+      return getInnermostHeading(obj[0], depth)
     } 
     if (obj instanceof Object) {
-      return getInnerMostHeading(Object.values(obj)[0], depth - 1)
+      return getInnermostHeading(Object.values(obj)[0], depth - 1)
     }
     if (typeof obj === 'string') {
       let idx = obj.lastIndexOf('/')
-      return getTexModuleName(obj.slice(0, (idx === -1) ? obj.length : idx))
+      return getTypstModuleName(obj.slice(0, (idx === -1) ? obj.length : idx))
     }
     return ''
   }
 
-  function getTexModuleName (name) {
+  function getTypstModuleName (name) {
     return path.join(oiwikiRoot, 'docs', name).replace(prefixRegEx, '')
   }
 }

@@ -6,7 +6,7 @@
 
 /* BEGIN constants */
 #let ROOT_EM = 10.5pt
-#let antiflash-white = cmyk(0%, 0%, 0%, 5%)
+#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 10%))
 /* END constants */
 
 /* BEGIN functions */
@@ -29,6 +29,7 @@
 /* BEGIN meta formatting */
 #set text(
   lang: "zh",
+  region: "cn",
 )
 /* END meta formatting */
 
@@ -41,17 +42,17 @@
 
 #v(2fr)
 
-#show math.equation: set text(font: ("New Computer Modern Math", "FZKai-Z03S"))
+#show math.equation: set text(font: ("New Computer Modern Math", "AR PL UKai"))
 
 #text(
   size: 36pt,
-  font: ("Linux Biolinum", "FZHei-B01S"),
-  weight: 551,
+  font: ("New Computer Modern", "Noto Serif CJK SC"),
+  weight: 700,
 )[OI Wiki (Beta)]
 
 #text(
   size: 18pt,
-  font: ("Linux Libertine", "FZShuSong-Z01S"),
+  font: ("New Computer Modern", "Noto Serif CJK SC"),
 )[
   OI Wiki 项目组
 
@@ -60,14 +61,14 @@
 
 #v(1fr)
 
-#pagebreak()
+#pagebreak(to: "odd")
 /* END cover */
 
 /* BEGIN article formatting */
 #set text(
   lang: "zh",
   size: ROOT_EM,
-  font: ("Linux Libertine", "FZShuSong-Z01S"),
+  font: ("New Computer Modern", "Noto Serif CJK SC"),
 )
 
 // NOTE: CJK-style first line indent is still in progress
@@ -85,33 +86,40 @@
 
 #set strong(delta: 0)
 #show strong: set text(
-  font: ("Linux Biolinum", "FZHei-B01S"),
+  font: ("Linux Biolinum", "Noto Sans CJK SC"),
+  // Linux Biolinum:  400      |----->700
+  // Noto Sans CJK:   400 500<-|      700
+  // Source Code Pro: 400 500  |->600 700
+  //                          551
   weight: 551,
 )
 
 #set heading(numbering: "1.1")
 #show heading: set block(spacing: 1em)
 #show heading: set text(
-  font: ("Linux Biolinum", "FZHei-B01S"),
-  weight: 551,
+  font: ("New Computer Modern", "Noto Serif CJK SC"),
+  weight: 700,
 )
-#show heading.where(level: 1): set text(size: 36pt)
 #show heading.where(level: 2): set text(size: 24pt)
 #show heading.where(level: 3): set text(size: 18pt)
-#show heading.where(level: 4): set text(size: 15pt)
+#show heading.where(level: 4): set text(size: 15.75pt)
 #show heading.where(level: 5): set text(size: 13.75pt)
 #show heading.where(level: 6): set text(size: 12pt)
 
 #show emph: set text(
-  font: ("Linux Libertine", "FZKai-Z03S")
+  font: ("New Computer Modern", "AR PL UKai")
 )
 
 #show raw: set text(
-  // Current text size of raw block is being set to 0.8rem
-  // So we scale it back a little (to 9pt)
+  // Current text size of raw block is set to 0.8rem
+  // So we scale it back a little
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.07em,
-  font: ("DejaVu Sans Mono", "FZKai-Z03S")
+  size: 1.25em,
+  font: ("Source Code Pro", "AR PL UKai"),
+)
+#show raw.where(block: false): it => highlight(
+  fill: antiflash-white.bright,
+  it
 )
 /* END article formatting */
 
@@ -125,6 +133,8 @@
     #h(1fr)
   ]
 )
+
+#show heading.where(level: 1): set text(size: 36pt)
 
 #outline(indent: 2em)
 /* END outline */
@@ -170,40 +180,37 @@
 
         #counter(page).display("1")
         #h(1fr)
-        第~#counter(heading.where(level: 1)).display("1")~章#h(1em)#elems.last().body
+        第#counter(heading.where(level: 1)).display("一")章#h(1em)#elems.last().body
       ]
     }
   })
 )
 
-#show heading: it => {
-  it
-  par(text(size: .5em, ""))
-}
+// #show heading: it => {
+//   it
+//   par(text(size: .5em, ""))
+// }
 
 #show heading.where(level: 1): it => {
   set page(
     header: none,
-    fill: antiflash-white,
+    fill: antiflash-white.bright,
+  )
+  set text(
+    size: 36pt,
+    font: ("New Computer Modern", "Noto Serif CJK SC"),
+    weight: 700,
+  )
+  set par(
+    first-line-indent: 0em,
   )
 
-  block(
-    spacing: 0em,
-  )[
-    #set text(
-      size: 36pt,
-      font: ("Linux Biolinum", "FZHei-B01S"),
-      weight: 551,
-    )
-    #set par(
-      first-line-indent: 0em,
-    )
-
+  [
     #v(1fr)
-    第~#counter(heading).display()~章
+    第#counter(heading).display("一")章
     #v(1em)
     #it.body
-    #v(2fr)
+    #v(1fr)
   ]
 }
 
@@ -239,9 +246,15 @@
 //   it.note.body
 // }
 
-#show link: set text(
-  fill: cmyk(0%, 100%, 100%, 0%)
-)
+#show footnote.entry: it => {
+  show parbreak: []
+  it
+}
+
+#show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
+#set ref(supplement: el => {
+  [#el.body→小节]
+})
 
 #include "includes.typ"
 /* END main */
