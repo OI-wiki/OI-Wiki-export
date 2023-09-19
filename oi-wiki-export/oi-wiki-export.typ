@@ -10,16 +10,6 @@
 /* END constants */
 
 /* BEGIN functions */
-#let sect_number(..headings) = {
-  let levels = headings.pos()
-
-  if levels.len() > 1 {
-    [#levels.at(0).#levels.at(1)]
-  } else {
-    []
-  }
-}
-
 #let qrcode(arg) = image.decode(
   str(typst-qrcode-wasm.generate(bytes(arg))),
   width: .5in,
@@ -33,16 +23,17 @@
 )
 /* END meta formatting */
 
-/* BEGIN cover */
+/* BEGIN front cover */
 #set page(
   paper: "a4",
   margin: (top: .8in, inside: .4in, bottom: .7in, outside: .6in),
   header-ascent: .3in,
+  fill: antiflash-white.bright,
 )
 
-#v(2fr)
+#v(1fr)
 
-#show math.equation: set text(font: ("New Computer Modern Math", "AR PL UKai"))
+#show math.equation: set text(font: ("New Computer Modern Math", "LXGW Wenkai"))
 
 #text(
   size: 36pt,
@@ -62,7 +53,7 @@
 #v(1fr)
 
 #pagebreak(to: "odd")
-/* END cover */
+/* END front cover */
 
 /* BEGIN article formatting */
 #set text(
@@ -75,19 +66,19 @@
 // issues: https://github.com/typst/typst/issues/311
 //         https://github.com/typst/typst/issues/1410
 #set par(
-  leading: 0.8em,
+  leading: .8em,
   first-line-indent: 2em,
 )
 // #show par: set block(
 //   outset: (left: 2em, right: -2em),
 // )
 
-#set block(spacing: 0.8em)
+#set block(spacing: .8em)
 
 #set strong(delta: 0)
 #show strong: set text(
-  font: ("Linux Biolinum", "Noto Sans CJK SC"),
-  // Linux Biolinum:  400      |----->700
+  font: ("Public Sans", "Noto Sans CJK SC"),
+  // Public Sans:     400 500  |->600 700
   // Noto Sans CJK:   400 500<-|      700
   // Source Code Pro: 400 500  |->600 700
   //                          551
@@ -95,27 +86,27 @@
 )
 
 #set heading(numbering: "1.1")
-#show heading: set block(spacing: 1em)
+#show heading: set block(above: 1.6em, below: .8em)
 #show heading: set text(
   font: ("New Computer Modern", "Noto Serif CJK SC"),
   weight: 700,
 )
-#show heading.where(level: 2): set text(size: 24pt)
+#show heading.where(level: 2): set text(size: 22pt)
 #show heading.where(level: 3): set text(size: 18pt)
-#show heading.where(level: 4): set text(size: 15.75pt)
-#show heading.where(level: 5): set text(size: 13.75pt)
+#show heading.where(level: 4): set text(size: 16pt)
+#show heading.where(level: 5): set text(size: 14pt)
 #show heading.where(level: 6): set text(size: 12pt)
 
 #show emph: set text(
-  font: ("New Computer Modern", "AR PL UKai")
+  font: ("New Computer Modern", "LXGW Wenkai")
 )
 
 #show raw: set text(
   // Current text size of raw block is set to 0.8rem
   // So we scale it back a little
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.25em,
-  font: ("Source Code Pro", "AR PL UKai"),
+  size: 1.125em,
+  font: ("Source Code Pro", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(
   fill: antiflash-white.bright,
@@ -127,6 +118,7 @@
 #counter(page).update(0)
 
 #set page(
+  fill: none,
   header: [
     #set text(9pt)
     #counter(page).display("i")
@@ -156,6 +148,16 @@
       )
       if curr_section == () {
         return []
+      }
+
+      let sect_number(..headings) = {
+        let levels = headings.pos()
+      
+        if levels.len() > 1 {
+          [#levels.at(0).#levels.at(1)]
+        } else {
+          []
+        }
       }
 
       [
@@ -208,7 +210,7 @@
   [
     #v(1fr)
     第#counter(heading).display("一")章
-    #v(1em)
+
     #it.body
     #v(1fr)
   ]
@@ -233,10 +235,10 @@
 // )
 // #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
 
-#set list(indent: 2em)
-#show list: set block(spacing: 0.8em)
-#set enum(indent: 2em)
-#show enum: set block(spacing: 0.8em)
+#set list(indent: 1em)
+#show list: set block(spacing: .8em)
+#set enum(indent: 1em)
+#show enum: set block(spacing: .8em)
 
 // #set footnote(numbering: "1")
 // #show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
@@ -258,3 +260,11 @@
 
 #include "includes.typ"
 /* END main */
+
+/* BEGIN back cover */
+// #pagebreak(to: "odd")
+// 
+// #set page(
+//   
+// )
+/* END back cover */
