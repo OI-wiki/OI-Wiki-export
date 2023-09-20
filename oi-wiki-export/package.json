@@ -1,6 +1,6 @@
 {
   "name": "oi-wiki-export",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A tool to export all OI Wiki documents.",
   "main": "index.js",
   "scripts": {
@@ -9,17 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "escape-latex": "^1.2.0",
-    "js-yaml": "^3.14.0",
-    "rehype-stringify": "^8.0.0",
-    "remark-details": "^1.1.0",
-    "remark-footnotes": "^1.0.0",
-    "remark-math": "^1.0.5",
-    "remark-parse": "^6.0.2",
-    "remark-rehype": "^7.0.0",
+    "js-yaml": "^4.1.0",
+    "remark-details": "^4.1.1",
+    "remark-gfm": "^3.0.1",
+    "remark-math": "^5.1.1",
+    "remark-parse": "^10.0.2",
     "tiny-glob": "^0.2.9",
-    "to-vfile": "^6.1.0",
-    "unified": "^9.0.0",
-    "unified-stream": "^1.0.6"
-  }
+    "to-vfile": "^8.0.0",
+    "unified": "^10.1.0",
+    "unified-stream": "^3.0.0"
+  },
+  "type": "module"
 }
