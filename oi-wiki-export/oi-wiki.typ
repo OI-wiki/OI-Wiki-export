@@ -62,18 +62,22 @@
   ]
 }
 
-#let kbd(string) = box(
-  inset: (x: .25em, top: .2em, bottom: .3em),
-  fill: antiflash-white.bright,
-  stroke: (
-    bottom: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 2pt, cap: "round", join: "round"), 
-    x: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 1pt, cap: "round", join: "round"), 
-  ),
-  radius: .25em,
-  baseline: .2em,
+#let kbd(string) = {
+  let key = box(
+    inset: (x: .25em, top: .2em, bottom: .3em),
+    fill: antiflash-white.bright,
+    stroke: (
+      bottom: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 2pt, cap: "round", join: "round"), 
+      x: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 1pt, cap: "round", join: "round"), 
+    ),
+    radius: .25em,
+    baseline: .2em,
 
-  raw(string)
-)
+    raw(string)
+  )
+
+  [ #key ]
+}
 
 #let authors(authors) = blockquote[Authors: #authors]
 
@@ -189,7 +193,7 @@
 #let dispmath(svg: str) = style(styles => {
   let img = image.decode(svg)
   let (width, height) = measure(img, styles)
-  set image(width: width, height: height)
+  set image(width: width * (12 / 16), height: height * (12 / 16))
 
   align(center)[#img]
 })
@@ -198,7 +202,7 @@
   style(styles => {
     let img = image.decode(svg)
     let (width, height) = measure(img, styles)
-    set image(width: width, height: height)
+    set image(width: width * (12 / 16), height: height * (12 / 16))
 
     img
   })

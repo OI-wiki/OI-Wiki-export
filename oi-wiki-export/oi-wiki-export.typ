@@ -194,6 +194,8 @@
 // }
 
 #show heading.where(level: 1): it => {
+  pagebreak(to: "odd")
+
   set page(
     header: none,
     fill: antiflash-white.bright,
@@ -214,6 +216,11 @@
     #it.body
     #v(1fr)
   ]
+}
+
+#show heading.where(level: 2): it => {
+  counter(footnote).update(0)
+  it
 }
 
 // NOTE: aligned enum indices & list bullets?
