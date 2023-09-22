@@ -1,19 +1,22 @@
 'use strict'
 
+import { join } from 'path'
+import { promises as fs } from 'fs'
+
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkMath from 'remark-math'
 import remarkDetails from 'remark-details'
 import remarkGfm from 'remark-gfm'
-import remarkTypst from '../remark-typst/index.js'
-import { promises as fs } from 'fs'
 import { read, writeSync } from 'to-vfile'
-import { join } from 'path'
 import { Type, Schema, load } from 'js-yaml'
-import escape from '../remark-typst/escape-typst/src/index.js'
+
 import { snippet as _snippet } from './snippet.js'
+import remarkTypst from '../remark-typst/index.js'
+import escape from '../remark-typst/escape-typst/src/index.js'
 
 const prefixRegEx = /[^a-zA-Z0-9]/ig
+
 const labelHistory = new Array()
 
 async function exists(file) {

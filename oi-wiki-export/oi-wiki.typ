@@ -189,7 +189,6 @@
   // }
 })
 
-// FIXME: correct size of SVG equations
 #let dispmath(svg: str) = style(styles => {
   let img = image.decode(svg)
   let (width, height) = measure(img, styles)
