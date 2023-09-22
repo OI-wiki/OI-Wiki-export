@@ -54,6 +54,8 @@ jobs:
 
       - name: Build Typst document
         run: |
+          cd oi-wiki-export
+          ./patch.sh
           node index.js ../OI-wiki
           typst compile oi-wiki-export.typ
           
