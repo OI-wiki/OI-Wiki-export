@@ -23,7 +23,7 @@
 #let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 10%))
 
 // There ARE thematic (section) breaks in paperprints!
-// Although they are usually represented by three asterisks (a dinkus).
+// Although they are usually represented by three asterisks a.k.a. a dinkus.
 #let horizontalrule = block(
   h(1fr) + sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op + h(1fr)
 )
@@ -40,18 +40,19 @@
     #v(.375em)
     #grid(
       columns: (.25em, auto),
-      // NOTE: parametrically (not hard-coded) size measurement is in progess
+      // HACK: parameterized (not hard-coded) size measurement is in progess
       // issue: https://github.com/typst/typst/issues/113
       layout(size => style(styles => {
         let h_cont = measure(
           cont_block(width: BLOCKQUOTE_CONTENT_WIDTH)[#content],
           styles
         ).height
-        rect(
+        block(
+          width: 100%,
           height: h_cont,
           fill: cmyk-gray,
-          radius: .25em
-        )
+          radius: .25em,
+        )[]
       })),
       cont_block[
         #set text(fill: cmyk-gray)
