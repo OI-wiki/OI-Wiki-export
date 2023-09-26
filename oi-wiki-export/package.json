@@ -13,10 +13,10 @@
     "remark-details": "^4.1.1",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
-    "remark-parse": "^10.0.2",
+    "remark-parse": "^10.0.1",
     "tiny-glob": "^0.2.9",
     "to-vfile": "^8.0.0",
-    "unified": "^10.1.0",
+    "unified": "^10.1.2",
     "unified-stream": "^3.0.0"
   },
   "type": "module"
