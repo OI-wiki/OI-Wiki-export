@@ -237,7 +237,14 @@ function compiler (options) {
             break
           }
           case '.svg': {
-            if (!fs.existsSync(dest)) {
+            console.log(`[SVG] Exporting SVG at path ${uri}`)
+            if (fs.existsSync(uri.replace(/\.svg$/, ".printable.svg"))) {
+              console.log(`[SVG] Detected printable version of ${uri}`)
+              if (!fs.existsSync(dest)) {
+                child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri.replace(/\.svg$/, ".printable.svg")])
+              }
+            }
+            else if (!fs.existsSync(dest)) {
               child_process.execFileSync('inkscape', [`--export-filename=${dest}`, uri])
             }
           }
