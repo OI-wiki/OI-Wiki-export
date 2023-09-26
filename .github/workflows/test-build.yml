@@ -39,8 +39,6 @@ jobs:
           sudo mv lxgw-wenkai-v1.300 /usr/share/fonts/
           unzip -q -d source-code-pro OTF-source-code-pro-2.042R-u_1.062R-i.zip
           sudo mv source-code-pro/OTF /usr/share/fonts/source-code-pro
-          unzip -q -d public-sans public-sans-v2.001.zip
-          sudo mv public-sans/fonts/otf /usr/share/fonts/public-sans
           fc-cache
           
           git clone https://github.com/OI-wiki/OI-wiki.git
@@ -53,7 +51,6 @@ jobs:
       - name: Build Typst document
         run: |
           cd oi-wiki-export
-          ./patch.sh
           node index.js ../OI-wiki
           typst -v compile oi-wiki-export.typ
           
