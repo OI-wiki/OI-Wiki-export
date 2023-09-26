@@ -62,31 +62,29 @@
   font: ("New Computer Modern", "Noto Serif CJK SC"),
 )
 
-// NOTE: CJK-style first line indent is still in progress
+// HACK: CJK-style first line indent is still in progress
+// we are currently using the JS building tools to solve this
 // issues: https://github.com/typst/typst/issues/311
 //         https://github.com/typst/typst/issues/1410
 #set par(
   leading: .8em,
-  first-line-indent: 2em,
+//  first-line-indent: 2em,
 )
-// #show par: set block(
-//   outset: (left: 2em, right: -2em),
-// )
 
 #set block(spacing: .8em)
 
 #set strong(delta: 0)
 #show strong: set text(
-  font: ("Public Sans", "Noto Sans CJK SC"),
-  // Public Sans:     400 500  |->600 700
-  // Noto Sans CJK:   400 500<-|      700
-  // Source Code Pro: 400 500  |->600 700
-  //                          551
+  font: ("New Computer Modern", "Noto Sans CJK SC"),
+  // New Computer Modern: 400      |----->700
+  // Noto Sans CJK:       400 500<-|      700
+  // Source Code Pro:     400 500  |->600 700
+  //                              551
   weight: 551,
 )
 
 #set heading(numbering: "1.1")
-#show heading: set block(above: 1.6em, below: .8em)
+#show heading: set block(above: 1.2em, below: .8em)
 #show heading: set text(
   font: ("New Computer Modern", "Noto Serif CJK SC"),
   weight: 700,
@@ -223,7 +221,7 @@
   it
 }
 
-// NOTE: aligned enum indices & list bullets?
+// TODO: aligned enum indices & list bullets?
 // #let fullwidth_bullet = block(
 //   width: 1em, 
 //   height: 1em,
