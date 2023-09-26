@@ -1,8 +1,8 @@
 node_modules/*
 
-remark-latex/
+OI-wiki/
 
-remark-typst/node_modules/*
+remark-latex/
 
 oi-wiki-export/node_modules/*
 oi-wiki-export/typ/
