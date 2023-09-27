@@ -103,7 +103,7 @@
   // Current text size of raw block is set to 0.8rem
   // So we scale it back a little
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.125em,
+  size: 1.25em,
   font: ("Source Code Pro", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(

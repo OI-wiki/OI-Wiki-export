@@ -80,7 +80,7 @@
   [ #key ]
 }
 
-#let authors(authors) = blockquote[Authors: #authors]
+#let authors(authors) = blockquote[#strong[Authors: ]#authors]
 
 #let codeblock(lang: str, unwrapped: false, code) = {
   block(
