@@ -14,9 +14,16 @@ import { Type, Schema, load } from 'js-yaml'
 import { snippet as _snippet } from './snippet.js'
 import remarkTypst from '../remark-typst/index.js'
 import escape from '../remark-typst/escape-typst/src/index.js'
+// import remarkTabbed from '../remark-tabbed/lib/index.js'
 
-const prefixRegEx = /[^a-zA-Z0-9]/ig
+const PREFIX_REGEX = /[^a-zA-Z0-9]/ig
 
+const INFO = "\x1b[1;32m[INFO]\x1b[0m "
+const ERROR = "\x1b[1;31m[ERROR]\x1b[0m "
+
+// Traversed non-page labels.
+// Used to avoid multiple label definition, which typst will
+// consider to be an error.
 const labelHistory = new Array()
 
 async function exists(file) {
@@ -37,26 +44,24 @@ async function main() {
   const oiwikiRoot = process.argv[2] // OI Wiki 根目录
   const yamlFile = join(oiwikiRoot, 'mkdocs.yml') // YAML 配置文件
 
-  console.log('[INFO] Processing snippets')
+  console.log(INFO + 'Processing snippets')
 
   await _snippet(oiwikiRoot)
 
-  console.log('[INFO] Checking for typ/ directory')
+  console.log(INFO + 'Checking for typ/ directory')
 
   try {
     await fs.mkdir('typ')
     await fs.mkdir('images')
-  } catch (e) {
-
-  }
-  console.log('[INFO] Exporting OI Wiki from directory: ' + oiwikiRoot)
+  } catch (e) {}
+  console.log(INFO + 'Exporting OI Wiki from directory: ' + oiwikiRoot)
 
   if (!await exists(yamlFile)) {
-    console.error('[ERROR] Error: config file \'mkdocs.yml\' does not exist')
+    console.error(ERROR + 'Config file \'mkdocs.yml\' does not exist')
     process.exit()
   }
 
-  console.log('[INFO] Config file: ' + yamlFile)
+  console.log(INFO + 'Config file: ' + yamlFile)
 
   const yamlFileContent = await fs.readFile(yamlFile, 'utf8');
 
@@ -69,9 +74,9 @@ async function main() {
         return data
       }
     }))
-  const CONFIG_SCHEMA = new Schema(types)
+  const configSchema = new Schema(types)
 
-  const config = load(yamlFileContent, { schema: CONFIG_SCHEMA })
+  const config = load(yamlFileContent, { schema: configSchema })
   const catalog = config.nav // 文档目录
 
   let includes = ''
@@ -82,26 +87,27 @@ async function main() {
   }
 
   await fs.writeFile('includes.typ', includes)
-  console.log('[INFO] Export successful.')
+  console.log(INFO + 'Export successful.')
 
   async function convertMarkdown(filename, depth, title) {
     if (!filename.endsWith('.md')) {
-      console.error('Error: File \'' + filename + '\' is not a markdown file')
-      process.exit()
+      console.error(ERROR + 'File \'' + filename + '\' is not a markdown file')
+      process.exit(1)
     }
 
     if (!await exists(filename)) {
-      console.error('Error: File \'' + filename + '\' does not exist')
-      process.exit()
+      console.error(ERROR + 'File \'' + filename + '\' does not exist')
+      process.exit(1)
     }
 
     unified()
       .use(remarkParse)
-      .use(remarkDetails)
       .use(remarkMath)
       .use(remarkGfm)
+      .use(remarkDetails)
+      // .use(remarkTabbed)
       .use(remarkTypst, {
-        prefix: filename.replace(prefixRegEx, '').replace(/md$/, ''), // 根据路径生成 ID，用作 label
+        prefix: filename.replace(PREFIX_REGEX, '').replace(/md$/, ''), // 根据路径生成 ID，用作 label
         depth: depth, // 标题 h1 深度
         current: filename, // 带 md 后缀的文件名
         root: join(oiwikiRoot, 'docs'), // docs/ 目录
@@ -115,7 +121,7 @@ async function main() {
           throw err
         }
         file.dirname = 'typ'
-        file.stem = filename.replace(prefixRegEx, '')
+        file.stem = filename.replace(PREFIX_REGEX, '')
         file.extname = '.typ'
         writeSync(file)
       })
@@ -127,7 +133,7 @@ async function main() {
     depth = Math.min(depth, 6)
 
     for (const key in object) {
-      console.log('[INFO] Exporting: ' + key)
+      console.log(INFO + 'Exporting: ' + key)
 
       if (typeof object[key] === 'string') { // 对应页面
         await convertMarkdown(join(oiwikiRoot, 'docs', object[key]), depth + 1, object[key])
@@ -171,18 +177,21 @@ async function main() {
       }
       return label
     }
+
     if (obj instanceof Object) {
       return getLabel(Object.values(obj)[0])
     }
+    
     if (typeof obj === 'string') {
       const idx = obj.lastIndexOf('/')
       return (idx !== -1) ? getModuleName(obj.slice(0, idx)) : ''
     }
+    
     /* otherwise */ return ''
   }
 
   function getModuleName(name) {
-    return join(oiwikiRoot, 'docs', name).replace(prefixRegEx, '')
+    return join(oiwikiRoot, 'docs', name).replace(PREFIX_REGEX, '')
   }
 }
 
