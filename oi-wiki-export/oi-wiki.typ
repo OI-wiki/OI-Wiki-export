@@ -136,7 +136,7 @@
 #let figauto(
   src: str, 
   alt: str, 
-  // tight: false,
+  tight: false,
 ) = style(styles => {
   let img = image(src)
   let (width, height) = measure(img, styles)

@@ -28,11 +28,11 @@ jobs:
           sudo apt install curl git unzip imagemagick libwebp-dev librsvg2-dev fonts-noto-cjk fonts-noto-cjk-extra
           
           curl -OL https://github.com/typst/typst/releases/download/v0.8.0/typst-x86_64-unknown-linux-musl.tar.xz
-          curl -OL https://github.com/megakite/texmath/releases/download/v0.12.8.3-20230920/texmath
+          curl -OL https://github.com/megakite/texmath/releases/download/v0.12.8.3-20230929/texmath-arg
           xz -dc typst-x86_64-unknown-linux-musl.tar.xz | tar -x
           sudo mv ./typst-x86_64-unknown-linux-musl/typst /bin/
-          chmod +x texmath
-          sudo mv texmath /bin/texmath-arg
+          chmod +x texmath-arg
+          sudo mv texmath-arg /bin/
           
           curl -OL https://github.com/lxgw/LxgwWenKai/releases/download/v1.300/lxgw-wenkai-v1.300.tar.gz
           curl -OL https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip
