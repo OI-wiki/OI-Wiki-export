@@ -15,12 +15,12 @@
 #let VISIBLE_HEIGHT = 29.7cm - 1.5in
 #let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM * 2
 #let MAX_IMAGE_WIDTH = VISIBLE_WIDTH - ROOT_EM * 8
-#let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 4
+#let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 8
 // #let ENDPOINT = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
 // #let MAX_RATIO = MAX_IMAGE_WIDTH / ENDPOINT
 /* END constants */
 
-#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 10%))
+#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
 
 // There ARE thematic (section) breaks in paperprints!
 // Although they are usually represented by three asterisks a.k.a. a dinkus.
@@ -32,7 +32,6 @@
   let cmyk-gray = cmyk(0%, 0%, 0%, 70%)
 
   let cont_block = block.with(
-    width: 100%,
     inset: (left: 1.75em, y: .25em),
   )
 
@@ -65,41 +64,44 @@
 
 #let kbd(string) = {
   let key = box(
-    inset: (x: .25em, top: .2em, bottom: .3em),
+    outset: .25em,
     fill: antiflash-white.bright,
     stroke: (
       bottom: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 2pt, cap: "round", join: "round"), 
       x: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 1pt, cap: "round", join: "round"), 
     ),
     radius: .25em,
-    baseline: .2em,
 
     raw(string)
   )
 
-  [ #key ]
+  [#h(.5em)#key#h(.5em)]
 }
 
 #let authors(authors) = blockquote[#strong[Authors: ]#authors]
 
 #let codeblock(lang: str, unwrapped: false, code) = {
+  let radius = if unwrapped {
+    (bottom: .5em)
+  } else {
+    .5em
+  }
+  let stroke = if unwrapped {
+    (
+      top: (thickness: 1pt, paint: antiflash-white.dark, dash: "dashed"),
+      bottom: 1pt + antiflash-white.dark,
+      x: 1pt + antiflash-white.dark
+    )
+  } else {
+    1pt + antiflash-white.dark
+  }
+
   block(
     width: 100%,
-    radius: if not unwrapped {
-      .5em
-    } else {
-      (bottom: .5em)
-    },
+    radius: radius,
     inset: (x: 1em, y: .5em),
     fill: antiflash-white.bright,
-    stroke: if not unwrapped {
-      1pt + antiflash-white.dark
-    } else {
-      (
-        bottom: 1pt + antiflash-white.dark,
-        x: 1pt + antiflash-white.dark
-      )
-    },
+    stroke: stroke,
 
     raw(block: true, lang: lang, code)
   )
@@ -109,14 +111,14 @@
 // #let codeblock(lang: str, unwrapped: false, code) = {
 //   let frame = code-frame.with(
 //     fill: antiflash-white,
-//    stroke: if not unwrapped {
-//      (bottom: 1pt + color.dark, left: 1pt + color.dark, right: 1pt + color.dark, )
-//    } else {
-//      none
-//    },
-//    inset: (x: 1em, y: .5em),
-//    radius: if not unwrapped {
-//      .5em
+//     stroke: if not unwrapped {
+//       (bottom: 1pt + color.dark, left: 1pt + color.dark, right: 1pt + color.dark, )
+//     } else {
+//       none
+//     },
+//     inset: (x: 1em, y: .5em),
+//     radius: if not unwrapped {
+//       .5em
 //     } else {
 //       (bottom: .5em)
 //     }
@@ -131,45 +133,50 @@
 // Auto-sized figure.
 // NOTE: optimized image size is in progress
 // issue: https://github.com/typst/typst/issues/436
-#let figauto(src: str, alt: str) = style(styles => {
+#let figauto(
+  src: str, 
+  alt: str, 
+  // tight: false,
+) = style(styles => {
   let img = image(src)
   let (width, height) = measure(img, styles)
 
-  // NOTE: basic scaling
   if width / height > MAX_IMAGE_WIDTH / MAX_IMAGE_HEIGHT {
     // let normalized_width = calc.sqrt(MAX_IMAGE_WIDTH.pt() * width.pt()) / MAX_IMAGE_WIDTH.pt()
     // set image(width: calc.min(normalized_width, 1) * MAX_IMAGE_WIDTH)
-    set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH))
-    [
-      #v(.8em)
-      #align(center, img)
-      #v(.8em)
-    ]
     // figure(img, caption: alt)
+
+    set image(width: calc.min(width, MAX_IMAGE_WIDTH))
+    // if tight {
+    //   v(.8em) + align(center, img) + v(.8em)
+    // } else {
+      v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
+    // }
   } else {
     // let normalized_height = calc.sqrt(MAX_IMAGE_HEIGHT.pt() * height.pt()) / MAX_IMAGE_HEIGHT.pt()
     // set image(width: calc.min(normalized_height, 1) * MAX_IMAGE_HEIGHT)
-    set image(height: calc.min(height / 2, MAX_IMAGE_HEIGHT))
-    [
-      #v(.8em)
-      #align(center, img)
-      #v(.8em)
-    ]
     // figure(img, caption: alt)
+    
+    set image(height: calc.min(height, MAX_IMAGE_HEIGHT))
+    // if tight {
+    //   v(.8em) + align(center, img) + v(.8em)
+    // } else {
+      v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
+    // }
   }
 
-  // NOTE: trigonometric solution
+  // BEGIN trigonometric solution
   // let hori = VISIBLE_WIDTH.pt()
   // let radius = hori / 2
   // let ratio = width / height
   // let vert = hori / ratio
   // let diag = calc.sqrt(radius * radius + vert * vert)
   // let factor = diag / radius
-
   // set image(width: calc.min(width, VISIBLE_WIDTH / factor))
   // figure(img, caption: alt)
+  // END trigonometric solution
 
-  // NOTE: another trigonometric solution
+  // BEGIN another trigonometric solution
   // if width / height > MAX_RATIO {
   //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH))
   //   figure(img, caption: alt)
@@ -188,6 +195,7 @@
   //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH / f))
   //   figure(img, caption: alt)
   // }
+  // END another trigonometric solution
 })
 
 #let dispmath(svg: str) = style(styles => {
@@ -197,7 +205,6 @@
 
   align(center)[#img]
 })
-
 #let inlinemath(svg: str) = box(
   style(styles => {
     let img = image.decode(svg)
@@ -215,9 +222,10 @@
 
 #let links-grid(..content) = {
   set text(9pt)
+  set par(leading: .5em)
 
   grid(
-    columns: (1fr, 1in, 1fr, .5in),
+    columns: (1fr, .75in, 1fr, .5in),
     rows: .5in,
 
     ..content

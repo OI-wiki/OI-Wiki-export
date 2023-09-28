@@ -1,16 +1,16 @@
 /* BEGIN constants */
-#let note-color     = (bright: cmyk(20%, 10%, 0%,  0%), dark: cmyk(40%, 20%, 0%,  0%))
-#let abstract-color = (bright: cmyk(20%, 0%,  0%,  0%), dark: cmyk(40%, 0%,  0%,  0%))
-#let info-color     = (bright: cmyk(20%, 0%,  10%, 0%), dark: cmyk(40%, 0%,  20%, 0%))
-#let tip-color      = (bright: cmyk(20%, 0%,  20%, 0%), dark: cmyk(40%, 0%,  40%, 0%))
-#let success-color  = (bright: cmyk(10%, 0%,  20%, 0%), dark: cmyk(20%, 0%,  40%, 0%))
-#let question-color = (bright: cmyk(0%,  0%,  20%, 0%), dark: cmyk(0%,  0%,  40%, 0%))
-#let warning-color  = (bright: cmyk(0%,  10%, 20%, 0%), dark: cmyk(0%,  20%, 40%, 0%))
-#let failure-color  = (bright: cmyk(0%,  20%, 20%, 0%), dark: cmyk(0%,  40%, 40%, 0%))
-#let danger-color   = (bright: cmyk(0%,  20%, 10%, 0%), dark: cmyk(0%,  40%, 20%, 0%))
-#let bug-color      = (bright: cmyk(0%,  20%, 0%,  0%), dark: cmyk(0%,  40%, 0%,  0%))
-#let example-color  = (bright: cmyk(10%, 20%, 0%,  0%), dark: cmyk(20%, 40%, 0%,  0%))
-#let quote-color    = (bright: cmyk(20%, 20%, 0%,  0%), dark: cmyk(40%, 40%, 0%,  0%))
+#let note-color     = (bright: cmyk(10%, 5%,  0%,  0%), dark: cmyk(40%, 20%, 0%,  0%))
+#let abstract-color = (bright: cmyk(10%, 0%,  0%,  0%), dark: cmyk(40%, 0%,  0%,  0%))
+#let info-color     = (bright: cmyk(10%, 0%,  5%,  0%), dark: cmyk(40%, 0%,  20%, 0%))
+#let tip-color      = (bright: cmyk(10%, 0%,  10%, 0%), dark: cmyk(40%, 0%,  40%, 0%))
+#let success-color  = (bright: cmyk(5%,  0%,  10%, 0%), dark: cmyk(20%, 0%,  40%, 0%))
+#let question-color = (bright: cmyk(0%,  0%,  10%, 0%), dark: cmyk(0%,  0%,  40%, 0%))
+#let warning-color  = (bright: cmyk(0%,  5%,  10%, 0%), dark: cmyk(0%,  20%, 40%, 0%))
+#let failure-color  = (bright: cmyk(0%,  10%, 10%, 0%), dark: cmyk(0%,  40%, 40%, 0%))
+#let danger-color   = (bright: cmyk(0%,  10%, 5%,  0%), dark: cmyk(0%,  40%, 20%, 0%))
+#let bug-color      = (bright: cmyk(0%,  10%, 0%,  0%), dark: cmyk(0%,  40%, 0%,  0%))
+#let example-color  = (bright: cmyk(5%,  10%, 0%,  0%), dark: cmyk(20%, 40%, 0%,  0%))
+#let quote-color    = (bright: cmyk(10%, 10%, 0%,  0%), dark: cmyk(40%, 40%, 0%,  0%))
 
 #let note-icon      = image.decode("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m3.1 5.07c.14 0 .28.05.4.16l1.27 1.27c.23.22.23.57 0 .78l-1 1-2.05-2.05 1-1c.1-.11.24-.16.38-.16m-1.97 1.74 2.06 2.06-6.06 6.06H7.07v-2.06l6.06-6.06Z\"/></svg>")
 #let abstract-icon  = image.decode("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M17 9H7V7h10m0 6H7v-2h10m-3 6H7v-2h7M12 3a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m7 0h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z\"/></svg>")
@@ -26,7 +26,7 @@
 #let quote-icon     = image.decode("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M14 17h3l2-4V7h-6v6h3M6 17h3l2-4V7H5v6h3l-2 4Z\"/></svg>")
 /* END constants */
 
-#let details(unwrap: false, type: str, ..items) = {
+#let details(type: str, unwrap: false, ..items) = {
   let items = items.pos()
   if items.len() != 2 {
     panic("#details receives exactly two content blocks")
@@ -62,7 +62,10 @@
     #block(
       width: 100%,
       fill: color.bright,
-      stroke: (top: 1pt + color.dark, x: 1pt + color.dark),
+      stroke: (
+        top: 1pt + color.dark,
+        x: 1pt + color.dark
+      ),
       below: 0em,
       inset: (x: 1em, y: .5em),
       radius: (top: .5em),
@@ -77,7 +80,11 @@
     #if not unwrap {
       block(
         width: 100%,
-        stroke: (bottom: 1pt + color.dark, x: 1pt + color.dark),
+        stroke: (
+          top: (thickness: 1pt, paint: color.dark, dash: "dashed"),
+          bottom: 1pt + color.dark, 
+          x: 1pt + color.dark
+        ),
         above: 0em,
         inset: (x: 1em, y: .5em),
         radius: (bottom: .5em),

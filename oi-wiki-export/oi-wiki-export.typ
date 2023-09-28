@@ -6,7 +6,7 @@
 
 /* BEGIN constants */
 #let ROOT_EM = 10.5pt
-#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 10%))
+#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
 /* END constants */
 
 /* BEGIN functions */
@@ -31,28 +31,33 @@
   fill: antiflash-white.bright,
 )
 
-#v(1fr)
+// OI-Wiki logo
+#align(center + horizon)[
+  #image.decode("<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z\"></path></svg>", height: 5cm)
 
-#show math.equation: set text(font: ("New Computer Modern Math", "LXGW Wenkai"))
+  #text(
+    size: 36pt,
+    font: ("New Computer Modern", "Noto Serif CJK SC"),
+    weight: 700,
+  )[OI Wiki (Beta)]
+  
+  #v(5cm)
 
-#text(
-  size: 36pt,
-  font: ("New Computer Modern", "Noto Serif CJK SC"),
-  weight: 700,
-)[OI Wiki (Beta)]
+  #text(
+    size: 18pt,
+    font: ("New Computer Modern", "Noto Serif CJK SC"),
+  )[
+    OI Wiki 项目组
 
-#text(
-  size: 18pt,
-  font: ("New Computer Modern", "Noto Serif CJK SC"),
-)[
-  OI Wiki 项目组
-
-  #datetime.today().display("[year] 年 [month padding:none] 月 [day padding:none] 日")
+    #datetime.today().display("[year] 年 [month padding:none] 月 [day padding:none] 日")
+  ]
 ]
 
-#v(1fr)
-
 #pagebreak(to: "odd")
+
+#set page(
+  fill: none,
+)
 /* END front cover */
 
 /* BEGIN article formatting */
@@ -62,12 +67,12 @@
   font: ("New Computer Modern", "Noto Serif CJK SC"),
 )
 
-// HACK: CJK-style first line indent is still in progress
-// we are currently using the JS building tools to solve this
-// issues: https://github.com/typst/typst/issues/311
-//         https://github.com/typst/typst/issues/1410
 #set par(
   leading: .8em,
+// HACK: CJK-style first line indent is still in progress
+// we are currently using JS building tools to solve this
+// issues: https://github.com/typst/typst/issues/311
+//         https://github.com/typst/typst/issues/1410
 //  first-line-indent: 2em,
 )
 
@@ -78,33 +83,41 @@
   font: ("New Computer Modern", "Noto Sans CJK SC"),
   // New Computer Modern: 400      |----->700
   // Noto Sans CJK:       400 500<-|      700
-  // Source Code Pro:     400 500  |->600 700
+  // DejaVu Sans Mono:    400      |----->700
   //                              551
   weight: 551,
 )
 
 #set heading(numbering: "1.1")
-#show heading: set block(above: 1.2em, below: .8em)
+#show heading: set block(spacing: 0em)
 #show heading: set text(
   font: ("New Computer Modern", "Noto Serif CJK SC"),
   weight: 700,
 )
+#show heading.where(level: 1): set text(size: 36pt)
 #show heading.where(level: 2): set text(size: 22pt)
 #show heading.where(level: 3): set text(size: 18pt)
 #show heading.where(level: 4): set text(size: 16pt)
 #show heading.where(level: 5): set text(size: 14pt)
 #show heading.where(level: 6): set text(size: 12pt)
+#show heading: it => {
+  v(1fr, weak: true) + v(1.8em) + it + v(.2em)
+}
 
 #show emph: set text(
   font: ("New Computer Modern", "LXGW Wenkai")
 )
 
+#show math.equation: set text(
+  font: ("New Computer Modern Math", "LXGW Wenkai")
+)
+
 #show raw: set text(
-  // Current text size of raw block is set to 0.8rem
-  // So we scale it back a little
+  // NOTE: Default text size of raw block is 0.8rem
+  // So we scale it back a little (to ~9pt in body)
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.25em,
-  font: ("Source Code Pro", "LXGW Wenkai"),
+  size: 1.071em,
+  font: ("DejaVu Sans Mono", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(
   fill: antiflash-white.bright,
@@ -116,15 +129,12 @@
 #counter(page).update(0)
 
 #set page(
-  fill: none,
   header: [
     #set text(9pt)
     #counter(page).display("i")
     #h(1fr)
   ]
 )
-
-#show heading.where(level: 1): set text(size: 36pt)
 
 #outline(indent: 2em)
 /* END outline */
@@ -186,11 +196,6 @@
   })
 )
 
-// #show heading: it => {
-//   it
-//   par(text(size: .5em, ""))
-// }
-
 #show heading.where(level: 1): it => {
   pagebreak(to: "odd")
 
@@ -240,10 +245,18 @@
 // )
 // #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
 
-#set list(indent: 1em)
-#show list: set block(spacing: .8em)
-#set enum(indent: 1em)
-#show enum: set block(spacing: .8em)
+#set list(
+  indent: 1em,
+  body-indent: 0pt,
+  marker: box(width: 1em)[•],
+)
+#show list: set block(width: 100%, spacing: .8em)
+#set enum(
+  indent: 1em,
+  body-indent: 0pt,
+  numbering: n => box(width: 1em)[#n.],
+)
+#show enum: set block(width: 100%, spacing: .8em)
 
 // #set footnote(numbering: "1")
 // #show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
@@ -254,22 +267,34 @@
 // }
 
 #show footnote.entry: it => {
+  set text(9pt)
   show parbreak: []
   it
 }
 
 #show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
 #set ref(supplement: el => {
-  [#el.body→小节]
+  // Width of New Computer Modern's whitespace is 333 units.
+  [#el.body→#h(-.333em)]
 })
 
 #include "includes.typ"
 /* END main */
 
 /* BEGIN back cover */
-// #pagebreak(to: "odd")
-// 
-// #set page(
-//   
-// )
+#pagebreak(to: "odd")
+
+#set page(
+  header: [],
+  fill: antiflash-white.bright,
+)
+
+#v(3fr)
+
+#align(
+  center,
+  text(size: 18pt, style: "italic")[https://oi-wiki.org]
+)
+
+#v(1fr)
 /* END back cover */
