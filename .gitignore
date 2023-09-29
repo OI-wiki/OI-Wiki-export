@@ -1,20 +1,13 @@
-node_modules/*
-
 OI-wiki/
 
-remark-latex/
-
-oi-wiki-export/node_modules/*
-oi-wiki-export/typ/
-oi-wiki-export/images/
-oi-wiki-export/includes.typ
-oi-wiki-export/tests.typ
+oi-wiki-export-typst/node_modules/
+oi-wiki-export-typst/typ/
+oi-wiki-export-typst/images/
+oi-wiki-export-typst/includes.typ
 
 *.pdf
 
 .vscode
-
-known-issues.txt
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

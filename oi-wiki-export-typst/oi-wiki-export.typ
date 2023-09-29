@@ -31,8 +31,8 @@
   fill: antiflash-white.bright,
 )
 
-// OI-Wiki logo
 #align(center + horizon)[
+  // OI-Wiki logo
   #image.decode("<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z\"></path></svg>", height: 5cm)
 
   #text(
@@ -69,11 +69,11 @@
 
 #set par(
   leading: .8em,
-// HACK: CJK-style first line indent is still in progress
-// we are currently using JS building tools to solve this
-// issues: https://github.com/typst/typst/issues/311
-//         https://github.com/typst/typst/issues/1410
-//  first-line-indent: 2em,
+  // HACK: CJK-style first line indent is still in progress
+  // we are currently using JS build tools to solve this
+  // issues: https://github.com/typst/typst/issues/311
+  //         https://github.com/typst/typst/issues/1410
+  // first-line-indent: 2em,
 )
 
 #set block(spacing: .8em)
@@ -100,9 +100,12 @@
 #show heading.where(level: 4): set text(size: 16pt)
 #show heading.where(level: 5): set text(size: 14pt)
 #show heading.where(level: 6): set text(size: 12pt)
-#show heading: it => {
-  v(1fr, weak: true) + v(1.8em) + it + v(.2em)
-}
+#show heading: it => [
+  // #v(1fr, weak: true)
+  #v(1.8em)
+  #it
+  #v(.2em)
+]
 
 #show emph: set text(
   font: ("New Computer Modern", "LXGW Wenkai")
@@ -247,14 +250,14 @@
 
 #set list(
   indent: 1em,
-  body-indent: 0pt,
-  marker: box(width: 1em)[•],
+  // body-indent: 0pt,
+  // marker: box(width: 1em)[•],
 )
 #show list: set block(width: 100%, spacing: .8em)
 #set enum(
   indent: 1em,
-  body-indent: 0pt,
-  numbering: n => box(width: 1em)[#n.],
+  // body-indent: 0pt,
+  // numbering: n => box(width: 1em)[#n.],
 )
 #show enum: set block(width: 100%, spacing: .8em)
 
@@ -274,7 +277,7 @@
 
 #show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
 #set ref(supplement: el => {
-  // Width of New Computer Modern's whitespace is 333 units.
+  // Width of New Computer Modern's whitespace is 333 units / em
   [#el.body→#h(-.333em)]
 })
 
@@ -293,7 +296,7 @@
 
 #align(
   center,
-  text(size: 18pt, style: "italic")[https://oi-wiki.org]
+  text(size: 18pt)[https://oi-wiki.org]
 )
 
 #v(1fr)

@@ -1,8 +1,8 @@
 // Functions for OI-Wiki remark-typst
 
 /* BEGIN packages */
-#import "@preview/codelst:1.0.0": code-frame, sourcecode
 #import "pymdownx-details.typ": *
+// #import "@preview/codelst:1.0.0": code-frame, sourcecode
 /* END plugins */
 
 /* BEGIN packages */
@@ -148,9 +148,9 @@
 
     set image(width: calc.min(width, MAX_IMAGE_WIDTH))
     // if tight {
-    //   v(.8em) + align(center, img) + v(.8em)
+      v(.8em) + align(center, img) + v(.8em)
     // } else {
-      v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
+    //  v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
     // }
   } else {
     // let normalized_height = calc.sqrt(MAX_IMAGE_HEIGHT.pt() * height.pt()) / MAX_IMAGE_HEIGHT.pt()
@@ -159,9 +159,9 @@
     
     set image(height: calc.min(height, MAX_IMAGE_HEIGHT))
     // if tight {
-    //   v(.8em) + align(center, img) + v(.8em)
+      v(.8em) + align(center, img) + v(.8em)
     // } else {
-      v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
+    //  v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
     // }
   }
 

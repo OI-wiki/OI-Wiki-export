@@ -48,19 +48,19 @@ jobs:
           cd remark-typst
           npm install
           cd ..
-          cd oi-wiki-export
+          cd oi-wiki-export-typst
           npm install
 
       - name: Build Typst document
         run: |
-          cd oi-wiki-export
+          cd oi-wiki-export-typst
           node index.js ../OI-wiki
           typst -v compile oi-wiki-export.typ
 
       - name: Create Tag
         id: create_tag
         run: |
-          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")_typst
           if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
           git tag $tag_name
           git push --tags
@@ -84,6 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./oi-wiki-export/oi-wiki-export.pdf
+          asset_path: ./oi-wiki-export-typst/oi-wiki-export.pdf
           asset_name: OI-wiki.pdf
           asset_content_type: application/pdf
