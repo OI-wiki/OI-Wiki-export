@@ -22,7 +22,6 @@
 
 - Noto CJK 系列字体（包括 Noto Sans CJK SC 和 Noto Serif CJK SC）
 - 霞鹜文楷（[LXGW WenKai](https://github.com/lxgw/LxgwWenKai)）
-- Source Code Pro
 
 然后安装所需依赖，因为modules之间存在依赖关系，请严格按照顺序执行命令，否则可能会产生版本冲突：
 
@@ -30,7 +29,7 @@
 cd remark-typst
 npm install
 cd ..
-cd oi-wiki-export
+cd oi-wiki-export-typst
 npm install
 ```
 
