@@ -4,6 +4,7 @@ oi-wiki-export-typst/node_modules/
 oi-wiki-export-typst/typ/
 oi-wiki-export-typst/images/
 oi-wiki-export-typst/includes.typ
+oi-wiki-export-typst/playground.typ
 
 *.pdf
 
