@@ -2,6 +2,7 @@
 
 /* BEGIN packages */
 #import "pymdownx-details.typ": *
+#import "@preview/tablex:0.0.5": *
 // #import "@preview/codelst:1.0.0": code-frame, sourcecode
 /* END plugins */
 
@@ -80,7 +81,11 @@
 
 #let authors(authors) = blockquote[#strong[Authors: ]#authors]
 
-#let codeblock(lang: str, unwrapped: false, code) = {
+#let codeblock(
+  lang: str,
+  unwrapped: false, 
+  code
+) = {
   let radius = if unwrapped {
     (bottom: .5em)
   } else {
@@ -96,18 +101,51 @@
     1pt + antiflash-white.dark
   }
 
-  block(
-    width: 100%,
-    radius: radius,
-    inset: (x: 1em, y: .5em),
-    fill: antiflash-white.bright,
-    stroke: stroke,
+  // BEGIN plain code block
+  // block(
+  //   width: 100%,
+  //   radius: radius,
+  //   inset: (x: 1em, y: .5em),
+  //   fill: antiflash-white.bright,
+  //   stroke: stroke,
+  //   raw(block: true, lang: lang, code)
+  // )
+  // END plain code block
 
-    raw(block: true, lang: lang, code)
+  // Code block with line numbers
+  // Issue: https://github.com/typst/typst/issues/344
+  // Reference: https://gist.github.com/mpizenberg/c6ed7bc3992ee5dfed55edce508080bb
+  grid(
+    columns: 2,
+    column-gutter: -100%,
+    
+    block(
+      width: 100%,
+      radius: radius,
+      inset: (x: 4em, y: .5em),
+      fill: antiflash-white.bright,
+      stroke: stroke,
+      
+      {
+        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.071em, fill: antiflash-white.dark)
+        
+        for (i, line) in code.replace("\t", "  ").split("\n").enumerate() {
+          box(width: 0pt, inset: (right: 2em), align(right, str(i + 1)))
+          hide(line)
+          linebreak()
+        }
+      }
+    ),
+    block(
+      width: 100%,
+      inset: (x: 4em, y: .5em),
+
+      raw(block: true, lang: lang, code)
+    )
   )
 }
 
-// FIXME: weird line numbers
+// BEGIN codeblock using codelst
 // #let codeblock(lang: str, unwrapped: false, code) = {
 //   let frame = code-frame.with(
 //     fill: antiflash-white,
@@ -129,6 +167,7 @@
 //     raw(lang: lang, code)
 //   )
 // }
+// END codeblock using codelst
 
 // Auto-sized figure.
 // NOTE: optimized image size is in progress
@@ -142,10 +181,6 @@
   let (width, height) = measure(img, styles)
 
   if width / height > MAX_IMAGE_WIDTH / MAX_IMAGE_HEIGHT {
-    // let normalized_width = calc.sqrt(MAX_IMAGE_WIDTH.pt() * width.pt()) / MAX_IMAGE_WIDTH.pt()
-    // set image(width: calc.min(normalized_width, 1) * MAX_IMAGE_WIDTH)
-    // figure(img, caption: alt)
-
     set image(width: calc.min(width, MAX_IMAGE_WIDTH))
     // if tight {
       v(.8em) + align(center, img) + v(.8em)
@@ -153,10 +188,6 @@
     //  v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
     // }
   } else {
-    // let normalized_height = calc.sqrt(MAX_IMAGE_HEIGHT.pt() * height.pt()) / MAX_IMAGE_HEIGHT.pt()
-    // set image(width: calc.min(normalized_height, 1) * MAX_IMAGE_HEIGHT)
-    // figure(img, caption: alt)
-    
     set image(height: calc.min(height, MAX_IMAGE_HEIGHT))
     // if tight {
       v(.8em) + align(center, img) + v(.8em)
@@ -237,3 +268,34 @@
 
   align(horizon, content)
 )
+
+#let tablex-custom(
+  columns: (),
+  aligns: (),
+
+  ..cells
+) = {
+  set text(9pt)
+
+  align(
+    center,
+    block(
+      radius: .5em,
+      inset: (x: .5em),
+      stroke: 1pt + antiflash-white.dark,
+      tablex(
+        columns: columns,
+        column-gutter: 1fr,
+        // NOTE: repeat-header has no effect when the table is in a container
+        // it is also a little buggy right now, so we are not enabling it at this moment
+        // issue: https://github.com/PgBiel/typst-tablex/issues/43
+        // repeat-header: true,
+        align: (col, row) => aligns.at(col),
+        stroke: 1pt + antiflash-white.dark,
+        auto-vlines: false,
+
+        ..cells
+      )
+    )
+  )
+}

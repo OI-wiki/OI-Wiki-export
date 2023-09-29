@@ -150,8 +150,6 @@
     if calc.odd(loc.page()) {
       // NOTE: not able to programatically hide headings on new chapters for now
       // issue: https://github.com/typst/typst/issues/1613
-      // let chapters = query(selector(heading.where(level: 1)).before(loc), loc)
-      // let curr_heading = counter(heading).at(loc).at(0)
 
       let curr_section = query(
         selector(heading.where(level: 2)).before(loc), 
@@ -229,7 +227,7 @@
   it
 }
 
-// TODO: aligned enum indices & list bullets?
+// TODO: aligned enum indices & list bullets
 // #let fullwidth_bullet = block(
 //   width: 1em, 
 //   height: 1em,
@@ -247,7 +245,6 @@
 //   )
 // )
 // #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
-
 #set list(
   indent: 1em,
   // body-indent: 0pt,
@@ -260,14 +257,6 @@
   // numbering: n => box(width: 1em)[#n.],
 )
 #show enum: set block(width: 100%, spacing: .8em)
-
-// #set footnote(numbering: "1")
-// #show footnote: set text(fill: cmyk(0%, 100%, 0%, 0%))
-// #show footnote.entry: it => {
-//   let loc = it.note.location()
-//   numbering("1. ", ..counter(footnote).at(loc))
-//   it.note.body
-// }
 
 #show footnote.entry: it => {
   set text(9pt)
