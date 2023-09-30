@@ -91,8 +91,8 @@
 #set heading(numbering: "1.1")
 #show heading: set block(spacing: 0em)
 #show heading: set text(
-  font: ("New Computer Modern", "Noto Serif CJK SC"),
-  weight: 700,
+  font: ("New Computer Modern", "Noto Sans CJK SC"),
+  weight: 551,
 )
 #show heading.where(level: 1): set text(size: 25pt)
 #show heading.where(level: 2): set text(size: 20pt)
@@ -106,6 +106,11 @@
   #it
   #v(.2em)
 ]
+#show heading.where(level: 2): it => {
+  v(2em)
+  align(center)[#it]
+  v(2em)
+}
 
 #show emph: set text(
   font: ("New Computer Modern", "LXGW Wenkai")
