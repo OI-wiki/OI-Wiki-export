@@ -87,9 +87,9 @@
   code
 ) = {
   let radius = if unwrapped {
-    (bottom: .5em)
+    (bottom: .1em)
   } else {
-    .5em
+    .1em
   }
   let stroke = if unwrapped {
     (
@@ -156,9 +156,9 @@
 //     },
 //     inset: (x: 1em, y: .5em),
 //     radius: if not unwrapped {
-//       .5em
+//       .1em
 //     } else {
-//       (bottom: .5em)
+//       (bottom: .1em)
 //     }
 //   )
 // 
@@ -280,7 +280,7 @@
   align(
     center,
     block(
-      radius: .5em,
+      radius: .1em,
       inset: (x: .5em),
       stroke: 1pt + antiflash-white.dark,
       tablex(

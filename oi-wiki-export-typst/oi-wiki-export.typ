@@ -94,12 +94,12 @@
   font: ("New Computer Modern", "Noto Serif CJK SC"),
   weight: 700,
 )
-#show heading.where(level: 1): set text(size: 36pt)
-#show heading.where(level: 2): set text(size: 22pt)
-#show heading.where(level: 3): set text(size: 18pt)
-#show heading.where(level: 4): set text(size: 16pt)
-#show heading.where(level: 5): set text(size: 14pt)
-#show heading.where(level: 6): set text(size: 12pt)
+#show heading.where(level: 1): set text(size: 25pt)
+#show heading.where(level: 2): set text(size: 20pt)
+#show heading.where(level: 3): set text(size: 17pt)
+#show heading.where(level: 4): set text(size: 14pt)
+#show heading.where(level: 5): set text(size: 12pt)
+#show heading.where(level: 6): set text(size: 10pt)
 #show heading: it => [
   // #v(1fr, weak: true)
   #v(1.8em)
