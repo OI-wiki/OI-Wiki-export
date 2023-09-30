@@ -127,7 +127,7 @@
       stroke: stroke,
       
       {
-        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.071em, fill: antiflash-white.dark)
+        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.125em, fill: antiflash-white.dark)
         
         for (i, line) in code.replace("\t", "  ").split("\n").enumerate() {
           box(width: 0pt, inset: (right: 2em), align(right, str(i + 1)))
