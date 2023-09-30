@@ -138,8 +138,13 @@
     #h(1fr)
   ]
 )
-
-#outline(indent: 2em)
+#show outline.entry.where(
+  level: 1
+): it => {
+  v(20pt, weak: true)
+  text(size: 14pt)[#strong(it)]
+}
+#outline(indent: auto)
 /* END outline */
 
 /* BEGIN main */
