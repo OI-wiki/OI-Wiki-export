@@ -5,7 +5,7 @@
 /* END plugins */
 
 /* BEGIN constants */
-#let ROOT_EM = 10.5pt
+#let ROOT_EM = 10pt
 #let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
 /* END constants */
 
@@ -119,7 +119,7 @@
   // NOTE: Default text size of raw block is 0.8rem
   // So we scale it back a little (to ~9pt in body)
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.071em,
+  size: 1.125em,
   font: ("DejaVu Sans Mono", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(

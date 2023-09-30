@@ -11,7 +11,7 @@
 /* END plugins */
 
 /* BEGIN constants */
-#let ROOT_EM = 10.5pt
+#let ROOT_EM = 10pt
 #let VISIBLE_WIDTH = 21cm - 1in
 #let VISIBLE_HEIGHT = 29.7cm - 1.5in
 #let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM * 2
