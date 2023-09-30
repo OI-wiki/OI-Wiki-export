@@ -11,7 +11,7 @@
 /* END plugins */
 
 /* BEGIN constants */
-#let ROOT_EM = 10.5pt
+#let ROOT_EM = 10pt
 #let VISIBLE_WIDTH = 21cm - 1in
 #let VISIBLE_HEIGHT = 29.7cm - 1.5in
 #let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM * 2
@@ -87,9 +87,9 @@
   code
 ) = {
   let radius = if unwrapped {
-    (bottom: .5em)
+    (bottom: .1em)
   } else {
-    .5em
+    .1em
   }
   let stroke = if unwrapped {
     (
@@ -127,7 +127,7 @@
       stroke: stroke,
       
       {
-        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.071em, fill: antiflash-white.dark)
+        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.125em, fill: antiflash-white.dark)
         
         for (i, line) in code.replace("\t", "  ").split("\n").enumerate() {
           box(width: 0pt, inset: (right: 2em), align(right, str(i + 1)))
@@ -156,9 +156,9 @@
 //     },
 //     inset: (x: 1em, y: .5em),
 //     radius: if not unwrapped {
-//       .5em
+//       .1em
 //     } else {
-//       (bottom: .5em)
+//       (bottom: .1em)
 //     }
 //   )
 // 
@@ -280,7 +280,7 @@
   align(
     center,
     block(
-      radius: .5em,
+      radius: .1em,
       inset: (x: .5em),
       stroke: 1pt + antiflash-white.dark,
       tablex(

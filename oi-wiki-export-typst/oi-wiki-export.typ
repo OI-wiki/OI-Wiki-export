@@ -5,7 +5,7 @@
 /* END plugins */
 
 /* BEGIN constants */
-#let ROOT_EM = 10.5pt
+#let ROOT_EM = 10pt
 #let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
 /* END constants */
 
@@ -91,21 +91,26 @@
 #set heading(numbering: "1.1")
 #show heading: set block(spacing: 0em)
 #show heading: set text(
-  font: ("New Computer Modern", "Noto Serif CJK SC"),
-  weight: 700,
+  font: ("New Computer Modern", "Noto Sans CJK SC"),
+  weight: 551,
 )
-#show heading.where(level: 1): set text(size: 36pt)
-#show heading.where(level: 2): set text(size: 22pt)
-#show heading.where(level: 3): set text(size: 18pt)
-#show heading.where(level: 4): set text(size: 16pt)
-#show heading.where(level: 5): set text(size: 14pt)
-#show heading.where(level: 6): set text(size: 12pt)
+#show heading.where(level: 1): set text(size: 25pt)
+#show heading.where(level: 2): set text(size: 20pt)
+#show heading.where(level: 3): set text(size: 17pt)
+#show heading.where(level: 4): set text(size: 14pt)
+#show heading.where(level: 5): set text(size: 12pt)
+#show heading.where(level: 6): set text(size: 10pt)
 #show heading: it => [
   // #v(1fr, weak: true)
   #v(1.8em)
   #it
   #v(.2em)
 ]
+#show heading.where(level: 2): it => {
+  v(2em)
+  align(center)[#it]
+  v(2em)
+}
 
 #show emph: set text(
   font: ("New Computer Modern", "LXGW Wenkai")
@@ -119,7 +124,7 @@
   // NOTE: Default text size of raw block is 0.8rem
   // So we scale it back a little (to ~9pt in body)
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.071em,
+  size: 1.125em,
   font: ("DejaVu Sans Mono", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(
@@ -138,8 +143,13 @@
     #h(1fr)
   ]
 )
-
-#outline(indent: 2em)
+#show outline.entry.where(
+  level: 1
+): it => {
+  v(20pt, weak: true)
+  text(size: 14pt)[#strong(it)]
+}
+#outline(indent: auto)
 /* END outline */
 
 /* BEGIN main */
