@@ -1,0 +1,89 @@
+name: Build and Release Typst document
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Tag name of release
+        required: false
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: typstify
+          submodules: recursive
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Pre-build operations
+        run: |
+          sudo apt install curl git unzip imagemagick libwebp-dev librsvg2-dev fonts-noto-cjk fonts-noto-cjk-extra
+
+          curl -OL https://github.com/typst/typst/releases/download/v0.8.0/typst-x86_64-unknown-linux-musl.tar.xz
+          curl -OL https://github.com/megakite/texmath/releases/download/v0.12.8.3-20230929/texmath-arg
+          xz -dc typst-x86_64-unknown-linux-musl.tar.xz | tar -x
+          sudo mv ./typst-x86_64-unknown-linux-musl/typst /bin/
+          chmod +x texmath-arg
+          sudo mv texmath-arg /bin/
+
+          curl -OL https://github.com/lxgw/LxgwWenKai/releases/download/v1.300/lxgw-wenkai-v1.300.tar.gz
+          curl -OL https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip
+          gzip -dc lxgw-wenkai-v1.300.tar.gz | tar -x
+          sudo mv lxgw-wenkai-v1.300 /usr/share/fonts/
+          unzip -q -d source-code-pro OTF-source-code-pro-2.042R-u_1.062R-i.zip
+          sudo mv source-code-pro/OTF /usr/share/fonts/source-code-pro
+          fc-cache
+
+          git clone https://github.com/OI-wiki/OI-wiki.git
+          cd remark-typst
+          npm install
+          cd ..
+          cd oi-wiki-export-typst
+          npm install
+
+      - name: Build Typst document
+        run: |
+          cd oi-wiki-export-typst
+          node index.js ../OI-wiki
+          typst -v compile oi-wiki-export.typ
+
+      - name: Create Tag
+        id: create_tag
+        run: |
+          tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")_typst
+          if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
+          git tag $tag_name
+          git push --tags
+          echo "::set-output name=tag_name::$tag_name"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.create_tag.outputs.tag_name }}
+          release_name: Release ${{ steps.create_tag.outputs.tag_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./oi-wiki-export-typst/oi-wiki-export.pdf
+          asset_name: OI-wiki.pdf
+          asset_content_type: application/pdf
