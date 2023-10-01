@@ -1,34 +1,22 @@
-// Base template for oi-wiki-export
+/* Base template of oi-wiki-export-typst */
 
-/* BEGIN plugins */
-#let typst-qrcode-wasm = plugin("./typst_qrcode_wasm.wasm")
-/* END plugins */
+/* BEGIN imports */
+#import "constants.typ": *
+/* END imports */
 
-/* BEGIN constants */
-#let ROOT_EM = 10pt
-#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
-/* END constants */
-
-/* BEGIN functions */
-#let qrcode(arg) = image.decode(
-  str(typst-qrcode-wasm.generate(bytes(arg))),
-  width: .5in,
-)
-/* END functions */
-
-/* BEGIN meta formatting */
+/* BEGIN meta */
 #set text(
   lang: "zh",
   region: "cn",
 )
-/* END meta formatting */
+/* END meta */
 
 /* BEGIN front cover */
 #set page(
   paper: "a4",
   margin: (top: .8in, inside: .4in, bottom: .7in, outside: .6in),
   header-ascent: .3in,
-  fill: antiflash-white.bright,
+  fill: luma(95%),
 )
 
 #align(center + horizon)[
@@ -51,16 +39,15 @@
 ]
 
 #pagebreak(to: "odd")
-
-#set page(
-  fill: none,
-)
 /* END front cover */
 
 /* BEGIN article formatting */
+#set page(
+  fill: none,
+)
+
 #set text(
   ROOT_EM,
-  lang: "zh",
   font: ("New Computer Modern", "Noto Serif CJK SC"),
 )
 
@@ -120,14 +107,11 @@
 )
 
 #show raw: set text(
-  // NOTE: Default text size of raw block is 0.8rem
-  // So we scale it back a little (to 9pt in body)
-  // issue: https://github.com/typst/typst/issues/1331
-  1.125em,
+  RAW_EM,
   font: ("DejaVu Sans Mono", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(
-  fill: antiflash-white.bright,
+  fill: luma(95%),
   it
 )
 /* END article formatting */
@@ -208,7 +192,7 @@
 
   set page(
     header: none,
-    fill: antiflash-white.bright,
+    fill: luma(95%),
   )
   set text(
     25pt,
@@ -231,8 +215,8 @@
   it
 }
 
-// In New Computer Modern
-// Width of numbers:    500 units
+// Metrics in New Computer Modern
+// Width of digits:     500 units
 //       of period:     278 units
 //       of bullet:     778 units
 //       of whitespace: 333 units
@@ -264,15 +248,11 @@
 
 #set page(
   header: [],
-  fill: antiflash-white.bright,
+  fill: luma(95%),
 )
-
-#v(3fr)
 
 #align(
-  center,
-  text(14pt)[https://oi-wiki.org]
+  center + horizon,
+  text(17pt)[https://oi-wiki.org]
 )
-
-#v(1fr)
 /* END back cover */

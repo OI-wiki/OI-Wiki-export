@@ -1,40 +1,25 @@
-// Functions for OI-Wiki remark-typst
+/* Functions of oi-wiki-export-typst */
 
-/* BEGIN packages */
-#import "pymdownx-details.typ": *
-#import "@preview/tablex:0.0.5": *
-/* END packages */
+/* BEGIN imports */
+#import "constants.typ": *
+#import "pymdownx-details.typ": details
+
+#import "@preview/tablex:0.0.5": tablex
+/* END imports */
 
 /* BEGIN plugins */
 #let typst-qrcode-wasm = plugin("./typst_qrcode_wasm.wasm")
 /* END plugins */
 
-/* BEGIN constants */
-#let ROOT_EM = 10pt
-#let CODE_EM = 1.125 * 0.8 * 1em
-#let DIGIT_WIDTH = 1233 / 2048
-#let VISIBLE_WIDTH = 21cm - 1in
-#let VISIBLE_HEIGHT = 29.7cm - 1.5in
-#let MAX_IMAGE_WIDTH = VISIBLE_WIDTH - ROOT_EM * 8
-#let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 8
-// #let ENDPOINT = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
-// #let MAX_RATIO = MAX_IMAGE_WIDTH / ENDPOINT
-
-#let cmyk-gray = cmyk(0%, 0%, 0%, 70%)
-#let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
-/* END constants */
-
-// There ARE thematic (section) breaks in paperprints!
-// Although they are usually represented by three asterisks a.k.a. a dinkus.
 #let horizontalrule = align(center, block(
   sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op
 ))
 
 #let blockquote(content) = {
-  set text(fill: cmyk-gray)
+  set text(fill: luma(50%))
 
   block(
-    stroke: (left: (thickness: 4pt, paint: cmyk-gray, cap: "square")),
+    stroke: (left: (thickness: 4pt, paint: luma(50%), cap: "square")),
     inset: (left: 2em),
     spacing: 1.6em,
 
@@ -42,29 +27,27 @@
   )
 }
 
+#let authors(authors) = blockquote[*Authors:* #authors]
+
 #let kbd(string) = {
   let key = box(
     outset: .2em,
-    fill: antiflash-white.bright,
+    fill: luma(95%),
     stroke: (
-      bottom: (paint: cmyk-gray, thickness: 2pt, cap: "round"), 
-      x: (paint: cmyk-gray, thickness: 1pt, cap: "round"), 
+      bottom: (paint: luma(50%), thickness: 2pt, cap: "round"), 
+      x: (paint: luma(50%), thickness: 1pt, cap: "round"), 
     ),
     radius: .1em,
 
     raw(string)
   )
 
-  h(.5em)
-  key
-  h(.5em)
+  h(.5em) + key + h(.5em)
 }
-
-#let authors(authors) = blockquote[*Authors:* #authors]
 
 #let codeblock(
   lang: str,
-  unwrapped: false, 
+  unwrapped: false,
   code
 ) = {
   let radius = if unwrapped {
@@ -74,12 +57,12 @@
   }
   let stroke = if unwrapped {
     (
-      top: (thickness: 1pt, paint: antiflash-white.dark, dash: "dashed"),
-      bottom: 1pt + antiflash-white.dark,
-      x: 1pt + antiflash-white.dark
+      top: (thickness: 1pt, paint: luma(80%), dash: "dashed"),
+      bottom: 1pt + luma(80%),
+      x: 1pt + luma(80%)
     )
   } else {
-    1pt + antiflash-white.dark
+    1pt + luma(80%)
   }
 
   // Code block with line numbers
@@ -88,24 +71,28 @@
   let lines = code.replace("\t", "  ").split("\n")
   let digits = str(lines.len()).len()
 
-  let number-width = (digits + 2) * DIGIT_WIDTH * CODE_EM
-  let track-width = (digits + 5) * DIGIT_WIDTH * CODE_EM
+  // Width of digits in DejaVu Sans Mono is 1233 units
+  let digit-width = (1233 / 2048) * 0.8 * RAW_EM
+  let number-width = (digits + 2) * digit-width
+  let track-width = (digits + 5) * digit-width
+
   grid(
     columns: 2,
     column-gutter: -100%,
     
+    // Background & line numbers
     block(
       width: 100%,
       radius: radius,
       inset: (left: track-width, y: .5em),
-      fill: antiflash-white.bright,
+      fill: luma(95%),
       stroke: stroke,
       
       {
         set text(
-          font: ("DejaVu Sans Mono", "LXGW Wenkai"), 
-          size: CODE_EM, 
-          fill: antiflash-white.dark
+          0.8 * RAW_EM,
+          font: ("DejaVu Sans Mono", "LXGW WenKai"),
+          fill: luma(80%)
         )
         
         for (i, line) in lines.enumerate() {
@@ -119,6 +106,7 @@
         }
       }
     ),
+    // The code itself
     block(
       width: 100%,
       inset: (left: track-width, y: .5em),
@@ -138,12 +126,21 @@
   let img = image(src)
   let (width, height) = measure(img, styles)
 
-  if width / height > MAX_IMAGE_WIDTH / MAX_IMAGE_HEIGHT {
-    set image(width: calc.min(width, MAX_IMAGE_WIDTH))
-    v(.8em) + align(center, img) + v(.8em)
+  let max-image-width = VISIBLE_WIDTH - ROOT_EM * 8
+  let max-image-height = VISIBLE_HEIGHT / 2 - ROOT_EM * 8
+
+  if width / height > max-image-width / max-image-height {
+    set image(width: calc.min(width, max-image-width))
+    
+    v(.8em)
+    align(center, img)
+    v(.8em)
   } else {
-    set image(height: calc.min(height, MAX_IMAGE_HEIGHT))
-    v(.8em) + align(center, img) + v(.8em)
+    set image(height: calc.min(height, max-image-height))
+    
+    v(.8em)
+    align(center, img)
+    v(.8em)
   }
 
   // BEGIN trigonometric solution
@@ -158,12 +155,14 @@
   // END trigonometric solution
 
   // BEGIN another trigonometric solution
-  // if width / height > MAX_RATIO {
-  //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH))
+  // let endpoint = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
+  // let max-ratio = MAX_IMAGE_WIDTH / endpoint
+  // if width / height > max-ratio {
+  //   set image(width: calc.min(width / 2, max-image-width))
   //   figure(img, caption: alt)
   // } else {
-  //   let r   = MAX_RATIO / 2
-  //   let v   = MAX_RATIO / (width / height)
+  //   let r   = max-ratio / 2
+  //   let v   = max-ratio / (width / height)
   //   let b1  = calc.sqrt((v - 1) * (v - 1) + r * r)
   //   let c1  = calc.sqrt(v * v + r * r)
   //   let a   = 1
@@ -173,7 +172,7 @@
   //   let C   = 180deg - A - B
   //   let c   = (a * calc.sin(C) / calc.sin(A))
   //   let f   = c1 / c
-  //   set image(width: calc.min(width / 2, MAX_IMAGE_WIDTH / f))
+  //   set image(width: calc.min(width / 2, max-image-width / f))
   //   figure(img, caption: alt)
   // }
   // END another trigonometric solution
@@ -195,11 +194,6 @@
   img
 }))
 
-#let qrcode(arg) = image.decode(
-  str(typst-qrcode-wasm.generate(bytes(arg))),
-  width: .5in,
-)
-
 #let links-grid(..content) = {
   set text(9pt)
   set par(leading: .5em)
@@ -217,6 +211,10 @@
 
   align(horizon, content)
 )
+#let qrcode(arg) = image.decode(
+  str(typst-qrcode-wasm.generate(bytes(arg))),
+  width: .5in,
+)
 
 #let tablex-custom(
   columns: (),
@@ -229,7 +227,7 @@
   align(center, block(
     radius: .1em,
     inset: (x: .5em),
-    stroke: 1pt + antiflash-white.dark,
+    stroke: 1pt + luma(80%),
   
     tablex(
       columns: columns,
@@ -239,7 +237,7 @@
       // issue: https://github.com/PgBiel/typst-tablex/issues/43
       repeat-header: false,
       align: (col, row) => aligns.at(col),
-      stroke: 1pt + antiflash-white.dark,
+      stroke: 1pt + luma(80%),
       auto-vlines: false,
   
       ..cells
