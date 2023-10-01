@@ -68,7 +68,7 @@
       ),
       below: 0em,
       inset: (x: 1em, y: .5em),
-      radius: (top: .1em),
+      radius: (top: .2em),
     )[
       #show parbreak: []
 
@@ -87,7 +87,7 @@
         ),
         above: 0em,
         inset: (x: 1em, y: .5em),
-        radius: (bottom: .1em),
+        radius: (bottom: .2em),
 
         items.at(1)
       )

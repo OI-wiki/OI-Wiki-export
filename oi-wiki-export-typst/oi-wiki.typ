@@ -32,6 +32,7 @@
 #let kbd(string) = {
   let key = box(
     outset: .2em,
+    inset: (x: .1em),
     fill: luma(95%),
     stroke: (
       bottom: (paint: luma(50%), thickness: 2pt, cap: "round"),
