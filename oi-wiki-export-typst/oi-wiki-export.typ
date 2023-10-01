@@ -231,25 +231,6 @@
   it
 }
 
-// TODO: aligned enum indices & list bullets
-// #let fullwidth_bullet = block(
-//   width: 1em, 
-//   height: 1em,
-
-//   move(
-//     dx: (10.5pt - 10.5pt / 3) / 2, 
-//     dy: (10.5pt - 10.5pt / 3) / 2,
-
-//     circle(
-//       radius: 10.5pt / 2 / 3, 
-//       fill: black,
-//       stroke: none,
-//       inset: 0pt,
-//     )
-//   )
-// )
-// #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
-
 // In New Computer Modern
 // Width of numbers:    500 units
 //       of period:     278 units

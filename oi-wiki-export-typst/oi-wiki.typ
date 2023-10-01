@@ -3,7 +3,6 @@
 /* BEGIN packages */
 #import "pymdownx-details.typ": *
 #import "@preview/tablex:0.0.5": *
-// #import "@preview/codelst:1.0.0": code-frame, sourcecode
 /* END packages */
 
 /* BEGIN plugins */
@@ -83,17 +82,6 @@
     1pt + antiflash-white.dark
   }
 
-  // BEGIN plain code block
-  // block(
-  //   width: 100%,
-  //   radius: radius,
-  //   inset: (x: 1em, y: .5em),
-  //   fill: antiflash-white.bright,
-  //   stroke: stroke,
-  //   raw(block: true, lang: lang, code)
-  // )
-  // END plain code block
-
   // Code block with line numbers
   // Issue: https://github.com/typst/typst/issues/344
   // Reference: https://gist.github.com/mpizenberg/c6ed7bc3992ee5dfed55edce508080bb
@@ -140,55 +128,22 @@
   )
 }
 
-// BEGIN codeblock using codelst
-// #let codeblock(lang: str, unwrapped: false, code) = {
-//   let frame = code-frame.with(
-//     fill: antiflash-white,
-//     stroke: if not unwrapped {
-//       (bottom: 1pt + color.dark, left: 1pt + color.dark, right: 1pt + color.dark, )
-//     } else {
-//       none
-//     },
-//     inset: (x: 1em, y: .5em),
-//     radius: if not unwrapped {
-//       .1em
-//     } else {
-//       (bottom: .1em)
-//     }
-//   )
-// 
-//   sourcecode(
-//     frame: frame,
-//     raw(lang: lang, code)
-//   )
-// }
-// END codeblock using codelst
-
 // Auto-sized figure.
 // NOTE: optimized image size is in progress
 // issue: https://github.com/typst/typst/issues/436
 #let figauto(
   src: str, 
   alt: str, 
-  tight: false,
 ) = style(styles => {
   let img = image(src)
   let (width, height) = measure(img, styles)
 
   if width / height > MAX_IMAGE_WIDTH / MAX_IMAGE_HEIGHT {
     set image(width: calc.min(width, MAX_IMAGE_WIDTH))
-    // if tight {
-      v(.8em) + align(center, img) + v(.8em)
-    // } else {
-    //  v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
-    // }
+    v(.8em) + align(center, img) + v(.8em)
   } else {
     set image(height: calc.min(height, MAX_IMAGE_HEIGHT))
-    // if tight {
-      v(.8em) + align(center, img) + v(.8em)
-    // } else {
-    //  v(1fr) + v(.8em) + align(center, img) + v(.8em) + v(1fr)
-    // }
+    v(.8em) + align(center, img) + v(.8em)
   }
 
   // BEGIN trigonometric solution
