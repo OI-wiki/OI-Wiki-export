@@ -144,16 +144,16 @@
       // issue: https://github.com/typst/typst/issues/1613
 
       let section = query(
-        selector(heading.where(level: 2)).before(loc), 
+        selector(heading.where(level: 2)).before(loc),
         loc
       )
       if section == () {
         return []
       }
 
-      let sect_number(..headings) = {
+      let sect-number(..headings) = {
         let levels = headings.pos()
-      
+
         if levels.len() > 1 {
           [#levels.at(0).#levels.at(1)]
         } else {
@@ -163,7 +163,7 @@
 
       text(9pt, number-width: "tabular")[
         #emph[
-          #counter(heading).display(sect_number)
+          #counter(heading).display(sect-number)
           #h(1em)
           #smallcaps(section.last().body)
         ]
@@ -205,7 +205,7 @@
 
   align(horizon)[
     第#counter(heading).display("一")章
- 
+
     #it.body
   ]
 }

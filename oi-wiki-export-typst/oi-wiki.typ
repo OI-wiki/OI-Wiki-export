@@ -34,8 +34,8 @@
     outset: .2em,
     fill: luma(95%),
     stroke: (
-      bottom: (paint: luma(50%), thickness: 2pt, cap: "round"), 
-      x: (paint: luma(50%), thickness: 1pt, cap: "round"), 
+      bottom: (paint: luma(50%), thickness: 2pt, cap: "round"),
+      x: (paint: luma(50%), thickness: 1pt, cap: "round"),
     ),
     radius: .2em,
 
@@ -46,9 +46,9 @@
 }
 
 #let codeblock(
+  code,
   lang: str,
   unwrapped: false,
-  code
 ) = {
   let radius = if unwrapped {
     (bottom: .2em)
@@ -71,15 +71,15 @@
   let lines = code.replace("\t", "  ").split("\n")
   let digits = str(lines.len()).len()
 
-  // Width of digits in DejaVu Sans Mono is 1233 units
-  let digit-width = (1233 / 2048) * 0.8 * RAW_EM
-  let number-width = (digits + 2) * digit-width
-  let track-width = (digits + 5) * digit-width
+  // Width of glyphs in DejaVu Sans Mono is 1233 units
+  let glyph-width = (1233 / 2048) * 0.8 * RAW_EM
+  let number-width = (digits + 2) * glyph-width
+  let track-width = (digits + 5) * glyph-width
 
   grid(
     columns: 2,
     column-gutter: -100%,
-    
+
     // Background & line numbers
     block(
       width: 100%,
@@ -87,14 +87,14 @@
       inset: (left: track-width, y: .5em),
       fill: luma(95%),
       stroke: stroke,
-      
+
       {
         set text(
           0.8 * RAW_EM,
           font: ("DejaVu Sans Mono", "LXGW WenKai"),
           fill: luma(80%)
         )
-        
+
         for (i, line) in lines.enumerate() {
           box(
             width: 0pt,
@@ -116,12 +116,12 @@
   )
 }
 
-// Auto-sized figure.
-// NOTE: optimized image size is in progress
+// Auto-sized image.
+// NOTE: optimized image sizing is in progress
 // issue: https://github.com/typst/typst/issues/436
-#let figauto(
-  src: str, 
-  alt: str, 
+#let img-auto(
+  src,
+  alt: str,
 ) = style(styles => {
   let img = image(src)
   let (width, height) = measure(img, styles)
@@ -131,13 +131,13 @@
 
   if width / height > max-image-width / max-image-height {
     set image(width: calc.min(width, max-image-width))
-    
+
     v(.8em)
     align(center, img)
     v(.8em)
   } else {
     set image(height: calc.min(height, max-image-height))
-    
+
     v(.8em)
     align(center, img)
     v(.8em)
@@ -178,21 +178,20 @@
   // END another trigonometric solution
 })
 
-#let dispmath(svg: str) = style(styles => {
+#let svg-math(
+  svg,
+  display: false,
+) = style(styles => {
   let img = image.decode(svg)
   let (width, height) = measure(img, styles)
   set image(width: width * (12 / 16), height: height * (12 / 16))
 
-  align(center, img)
+  if display {
+    align(center, img)
+  } else {
+    box(img)
+  }
 })
-#let inlinemath(svg: str) = box(
-  style(styles => {
-    let img = image.decode(svg)
-    let (width, height) = measure(img, styles)
-    set image(width: width * (12 / 16), height: height * (12 / 16))
-
-  img
-}))
 
 #let links-grid(..content) = {
   set text(9pt)
@@ -206,7 +205,7 @@
   )
 }
 #let links-cell(content) = block(
-  width: 100%, 
+  width: 100%,
   height: 100%,
 
   align(horizon, content)
@@ -228,7 +227,7 @@
     radius: .2em,
     inset: (x: .5em),
     stroke: 1pt + luma(80%),
-  
+
     tablex(
       columns: columns,
       column-gutter: 1fr,
@@ -239,8 +238,8 @@
       align: (col, row) => aligns.at(col),
       stroke: 1pt + luma(80%),
       auto-vlines: false,
-  
+
       ..cells
-    ) 
+    )
   ))
 }
