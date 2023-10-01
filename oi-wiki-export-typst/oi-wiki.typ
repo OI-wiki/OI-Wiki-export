@@ -37,7 +37,7 @@
       bottom: (paint: luma(50%), thickness: 2pt, cap: "round"), 
       x: (paint: luma(50%), thickness: 1pt, cap: "round"), 
     ),
-    radius: .1em,
+    radius: .2em,
 
     raw(string)
   )
@@ -51,9 +51,9 @@
   code
 ) = {
   let radius = if unwrapped {
-    (bottom: .1em)
+    (bottom: .2em)
   } else {
-    .1em
+    .2em
   }
   let stroke = if unwrapped {
     (
@@ -225,7 +225,7 @@
   set text(9pt)
 
   align(center, block(
-    radius: .1em,
+    radius: .2em,
     inset: (x: .5em),
     stroke: 1pt + luma(80%),
   
