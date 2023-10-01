@@ -33,18 +33,15 @@
 
 #align(center + horizon)[
   // OI-Wiki logo
-  #image.decode("<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z\"></path></svg>", height: 5cm)
-
+  #image.decode("<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z\"></path></svg>", height: 4cm)
   #text(
-    size: 36pt,
+    25pt,
     font: ("New Computer Modern", "Noto Serif CJK SC"),
     weight: 700,
   )[OI Wiki (Beta)]
-  
-  #v(5cm)
-
+  #v(4cm)
   #text(
-    size: 18pt,
+    18pt,
     font: ("New Computer Modern", "Noto Serif CJK SC"),
   )[
     OI Wiki 项目组
@@ -62,8 +59,8 @@
 
 /* BEGIN article formatting */
 #set text(
+  ROOT_EM,
   lang: "zh",
-  size: ROOT_EM,
   font: ("New Computer Modern", "Noto Serif CJK SC"),
 )
 
@@ -84,6 +81,7 @@
   // New Computer Modern: 400      |----->700
   // Noto Sans CJK:       400 500<-|      700
   // DejaVu Sans Mono:    400      |----->700
+  // font-that-has-600:   400 500  |->600 700
   //                              551
   weight: 551,
 )
@@ -94,18 +92,19 @@
   font: ("New Computer Modern", "Noto Sans CJK SC"),
   weight: 551,
 )
-#show heading.where(level: 1): set text(size: 25pt)
-#show heading.where(level: 2): set text(size: 20pt)
-#show heading.where(level: 3): set text(size: 17pt)
-#show heading.where(level: 4): set text(size: 14pt)
-#show heading.where(level: 5): set text(size: 12pt)
-#show heading.where(level: 6): set text(size: 10pt)
-#show heading: it => [
-  // #v(1fr, weak: true)
-  #v(1.8em)
-  #it
-  #v(.2em)
-]
+#show heading.where(level: 1): set text(25pt)
+#show heading.where(level: 2): set text(20pt)
+#show heading.where(level: 3): set text(17pt)
+#show heading.where(level: 4): set text(14pt)
+#show heading.where(level: 5): set text(12pt)
+#show heading.where(level: 6): set text(10pt)
+#show heading: it => {
+  // NOTE: dynamic spacing?
+  // v(1fr, weak: true)
+  v(1.4em)
+  it
+  v(.2em)
+}
 #show heading.where(level: 2): it => {
   v(2em)
   align(center)[#it]
@@ -122,9 +121,9 @@
 
 #show raw: set text(
   // NOTE: Default text size of raw block is 0.8rem
-  // So we scale it back a little (to ~9pt in body)
+  // So we scale it back a little (to 9pt in body)
   // issue: https://github.com/typst/typst/issues/1331
-  size: 1.125em,
+  1.125em,
   font: ("DejaVu Sans Mono", "LXGW Wenkai"),
 )
 #show raw.where(block: false): it => highlight(
@@ -137,8 +136,7 @@
 #counter(page).update(0)
 
 #set page(
-  header: [
-    #set text(9pt)
+  header: text(9pt)[
     #counter(page).display("i")
     #h(1fr)
   ]
@@ -147,7 +145,7 @@
   level: 1
 ): it => {
   v(20pt, weak: true)
-  text(size: 14pt)[#strong(it)]
+  text(14pt)[#strong(it)]
 }
 #outline(indent: auto)
 /* END outline */
@@ -161,11 +159,11 @@
       // NOTE: not able to programatically hide headings on new chapters for now
       // issue: https://github.com/typst/typst/issues/1613
 
-      let curr_section = query(
+      let section = query(
         selector(heading.where(level: 2)).before(loc), 
         loc
       )
-      if curr_section == () {
+      if section == () {
         return []
       }
 
@@ -179,29 +177,27 @@
         }
       }
 
-      [
-        #set text(size: 9pt, number-width: "tabular")
-
+      text(9pt, number-width: "tabular")[
         #emph[
           #counter(heading).display(sect_number)
           #h(1em)
-          #smallcaps(curr_section.last().body)
+          #smallcaps(section.last().body)
         ]
         #h(1fr)
         #counter(page).display("1")
       ]
     } else {
-      let elems = query(
+      let chapters = query(
         selector(heading.where(level: 1)).before(loc),
         loc,
       )
 
-      [
-        #set text(9pt, number-width: "tabular")
-
+      text(9pt, number-width: "tabular")[
         #counter(page).display("1")
         #h(1fr)
-        第#counter(heading.where(level: 1)).display("一")章#h(1em)#elems.last().body
+        第#counter(heading.where(level: 1)).display("一")章
+        #h(1em)
+        #chapters.last().body
       ]
     }
   })
@@ -215,7 +211,7 @@
     fill: antiflash-white.bright,
   )
   set text(
-    size: 36pt,
+    25pt,
     font: ("New Computer Modern", "Noto Serif CJK SC"),
     weight: 700,
   )
@@ -223,12 +219,10 @@
     first-line-indent: 0em,
   )
 
-  [
-    #v(1fr)
+  align(horizon)[
     第#counter(heading).display("一")章
-
+ 
     #it.body
-    #v(1fr)
   ]
 }
 
@@ -255,30 +249,31 @@
 //   )
 // )
 // #set list(marker: fullwidth_bullet, indent: 2em, body-indent: 0pt)
+
+// In New Computer Modern
+// Width of numbers:    500 units
+//       of period:     278 units
+//       of bullet:     778 units
+//       of whitespace: 333 units
 #set list(
   indent: 1em,
-  // body-indent: 0pt,
-  // marker: box(width: 1em)[•],
+  body-indent: -.778em + 1em,
 )
-#show list: set block(width: 100%, spacing: .8em)
+#show list: set block(width: 100%)
 #set enum(
   indent: 1em,
-  // body-indent: 0pt,
-  // numbering: n => box(width: 1em)[#n.],
+  body-indent: -.5em -.278em + 1em,
 )
-#show enum: set block(width: 100%, spacing: .8em)
+#show enum: set block(width: 100%)
+
+#set ref(supplement: el => [#el.body→#h(-.333em)])
+#show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
 
 #show footnote.entry: it => {
   set text(9pt)
   show parbreak: []
   it
 }
-
-#show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
-#set ref(supplement: el => {
-  // Width of New Computer Modern's whitespace is 333 units / em
-  [#el.body→#h(-.333em)]
-})
 
 #include "includes.typ"
 /* END main */
@@ -295,7 +290,7 @@
 
 #align(
   center,
-  text(size: 18pt)[https://oi-wiki.org]
+  text(14pt)[https://oi-wiki.org]
 )
 
 #v(1fr)

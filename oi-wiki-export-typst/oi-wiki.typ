@@ -4,82 +4,64 @@
 #import "pymdownx-details.typ": *
 #import "@preview/tablex:0.0.5": *
 // #import "@preview/codelst:1.0.0": code-frame, sourcecode
-/* END plugins */
+/* END packages */
 
-/* BEGIN packages */
+/* BEGIN plugins */
 #let typst-qrcode-wasm = plugin("./typst_qrcode_wasm.wasm")
 /* END plugins */
 
 /* BEGIN constants */
 #let ROOT_EM = 10pt
+#let CODE_EM = 1.125 * 0.8 * 1em
+#let DIGIT_WIDTH = 1233 / 2048
 #let VISIBLE_WIDTH = 21cm - 1in
 #let VISIBLE_HEIGHT = 29.7cm - 1.5in
-#let BLOCKQUOTE_CONTENT_WIDTH = VISIBLE_WIDTH - ROOT_EM * 2
 #let MAX_IMAGE_WIDTH = VISIBLE_WIDTH - ROOT_EM * 8
 #let MAX_IMAGE_HEIGHT = VISIBLE_HEIGHT / 2 - ROOT_EM * 8
 // #let ENDPOINT = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
 // #let MAX_RATIO = MAX_IMAGE_WIDTH / ENDPOINT
-/* END constants */
 
+#let cmyk-gray = cmyk(0%, 0%, 0%, 70%)
 #let antiflash-white = (bright: cmyk(0%, 0%, 0%, 5%), dark: cmyk(0%, 0%, 0%, 20%))
+/* END constants */
 
 // There ARE thematic (section) breaks in paperprints!
 // Although they are usually represented by three asterisks a.k.a. a dinkus.
-#let horizontalrule = block(
-  h(1fr) + sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op + h(1fr)
-)
+#let horizontalrule = align(center, block(
+  sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op
+))
 
 #let blockquote(content) = {
-  let cmyk-gray = cmyk(0%, 0%, 0%, 70%)
+  set text(fill: cmyk-gray)
 
-  let cont_block = block.with(
-    inset: (left: 1.75em, y: .25em),
+  block(
+    stroke: (left: (thickness: 4pt, paint: cmyk-gray, cap: "square")),
+    inset: (left: 2em),
+    spacing: 1.6em,
+
+    content
   )
-
-  [
-    #v(.375em)
-    #grid(
-      columns: (.25em, auto),
-      // HACK: parameterized (not hard-coded) size measurement is in progess
-      // issue: https://github.com/typst/typst/issues/113
-      layout(size => style(styles => {
-        let h_cont = measure(
-          cont_block(width: BLOCKQUOTE_CONTENT_WIDTH)[#content],
-          styles
-        ).height
-        block(
-          width: 100%,
-          height: h_cont,
-          fill: cmyk-gray,
-          radius: .25em,
-        )[]
-      })),
-      cont_block[
-        #set text(fill: cmyk-gray)
-        #content
-      ]
-    )
-    #v(.375em)
-  ]
 }
 
 #let kbd(string) = {
   let key = box(
-    outset: .25em,
+    outset: .2em,
     fill: antiflash-white.bright,
     stroke: (
-      bottom: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 2pt, cap: "round", join: "round"), 
-      x: (paint: cmyk(0%, 0%, 0%, 50%), thickness: 1pt, cap: "round", join: "round"), 
+      bottom: (paint: cmyk-gray, thickness: 2pt, cap: "round"), 
+      x: (paint: cmyk-gray, thickness: 1pt, cap: "round"), 
     ),
-    radius: .25em,
+    radius: .1em,
 
     raw(string)
   )
 
-  [#h(.5em)#key#h(.5em)]
+  h(.5em)
+  key
+  h(.5em)
 }
 
-#let authors(authors) = blockquote[#strong[Authors: ]#authors]
+#let authors(authors) = blockquote[*Authors:* #authors]
 
 #let codeblock(
   lang: str,
@@ -115,6 +97,11 @@
   // Code block with line numbers
   // Issue: https://github.com/typst/typst/issues/344
   // Reference: https://gist.github.com/mpizenberg/c6ed7bc3992ee5dfed55edce508080bb
+  let lines = code.replace("\t", "  ").split("\n")
+  let digits = str(lines.len()).len()
+
+  let number-width = (digits + 2) * DIGIT_WIDTH * CODE_EM
+  let track-width = (digits + 5) * DIGIT_WIDTH * CODE_EM
   grid(
     columns: 2,
     column-gutter: -100%,
@@ -122,15 +109,23 @@
     block(
       width: 100%,
       radius: radius,
-      inset: (x: 4em, y: .5em),
+      inset: (left: track-width, y: .5em),
       fill: antiflash-white.bright,
       stroke: stroke,
       
       {
-        set text(font: ("DejaVu Sans Mono", "LXGW Wenkai"), size: 0.8 * 1.125em, fill: antiflash-white.dark)
+        set text(
+          font: ("DejaVu Sans Mono", "LXGW Wenkai"), 
+          size: CODE_EM, 
+          fill: antiflash-white.dark
+        )
         
-        for (i, line) in code.replace("\t", "  ").split("\n").enumerate() {
-          box(width: 0pt, inset: (right: 2em), align(right, str(i + 1)))
+        for (i, line) in lines.enumerate() {
+          box(
+            width: 0pt,
+            inset: (right: track-width - number-width),
+            align(right, str(i + 1))
+          )
           hide(line)
           linebreak()
         }
@@ -138,7 +133,7 @@
     ),
     block(
       width: 100%,
-      inset: (x: 4em, y: .5em),
+      inset: (left: track-width, y: .5em),
 
       raw(block: true, lang: lang, code)
     )
@@ -234,7 +229,7 @@
   let (width, height) = measure(img, styles)
   set image(width: width * (12 / 16), height: height * (12 / 16))
 
-  align(center)[#img]
+  align(center, img)
 })
 #let inlinemath(svg: str) = box(
   style(styles => {
@@ -242,9 +237,8 @@
     let (width, height) = measure(img, styles)
     set image(width: width * (12 / 16), height: height * (12 / 16))
 
-    img
-  })
-)
+  img
+}))
 
 #let qrcode(arg) = image.decode(
   str(typst-qrcode-wasm.generate(bytes(arg))),
@@ -277,25 +271,23 @@
 ) = {
   set text(9pt)
 
-  align(
-    center,
-    block(
-      radius: .1em,
-      inset: (x: .5em),
+  align(center, block(
+    radius: .1em,
+    inset: (x: .5em),
+    stroke: 1pt + antiflash-white.dark,
+  
+    tablex(
+      columns: columns,
+      column-gutter: 1fr,
+      // NOTE: repeat-header has no effect when the table is in a container
+      // it is also a little buggy right now, so we are not enabling it at this moment
+      // issue: https://github.com/PgBiel/typst-tablex/issues/43
+      repeat-header: false,
+      align: (col, row) => aligns.at(col),
       stroke: 1pt + antiflash-white.dark,
-      tablex(
-        columns: columns,
-        column-gutter: 1fr,
-        // NOTE: repeat-header has no effect when the table is in a container
-        // it is also a little buggy right now, so we are not enabling it at this moment
-        // issue: https://github.com/PgBiel/typst-tablex/issues/43
-        // repeat-header: true,
-        align: (col, row) => aligns.at(col),
-        stroke: 1pt + antiflash-white.dark,
-        auto-vlines: false,
-
-        ..cells
-      )
-    )
-  )
+      auto-vlines: false,
+  
+      ..cells
+    ) 
+  ))
 }
