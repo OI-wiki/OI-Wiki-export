@@ -28,7 +28,7 @@ jobs:
           sudo apt-get remove fonts-noto-color-emoji
           
           curl -OL https://github.com/typst/typst/releases/download/v0.8.0/typst-x86_64-unknown-linux-musl.tar.xz
-          curl -OL https://github.com/megakite/texmath/releases/download/v0.12.8.3-20230929/texmath-arg
+          curl -OL https://github.com/megakite/texmath/releases/download/v0.12.8.3-20231003/texmath-arg
           xz -dc typst-x86_64-unknown-linux-musl.tar.xz | tar -x
           sudo mv ./typst-x86_64-unknown-linux-musl/typst /bin/
           chmod +x texmath-arg
