@@ -8,6 +8,7 @@ import remarkParse from 'remark-parse'
 import remarkMath from 'remark-math'
 import remarkDetails from 'remark-details'
 import remarkGfm from 'remark-gfm'
+import remarkTabbed from 'remark-tabbed'
 import { read, writeSync } from 'to-vfile'
 import { Type, Schema, load } from 'js-yaml'
 
@@ -105,6 +106,7 @@ async function main() {
       .use(remarkMath)
       .use(remarkGfm)
       .use(remarkDetails)
+      .use(remarkTabbed)
       // .use(remarkTabbed)
       .use(remarkTypst, {
         prefix: filename.replace(PREFIX_REGEX, '').replace(/md$/, ''), // 根据路径生成 ID，用作 label
