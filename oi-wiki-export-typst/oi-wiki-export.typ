@@ -13,6 +13,7 @@
 
 /* BEGIN front cover */
 #set page(
+  header: none,
   paper: "a4",
   margin: (top: .8in, inside: .4in, bottom: .7in, outside: .6in),
   header-ascent: .3in,
@@ -38,13 +39,19 @@
   ]
 ]
 
-#pagebreak(to: "odd")
+#pagebreak(to: "odd", weak: true)
 /* END front cover */
 
 /* BEGIN article formatting */
+
 #set page(
   fill: none,
+  // header: text(9pt)[
+  //   #counter(page).display("i")
+  //   #h(1fr)
+  // ]
 )
+#counter(page).update(1)
 
 #set text(
   ROOT_EM,
@@ -117,26 +124,17 @@
 /* END article formatting */
 
 /* BEGIN outline */
-#counter(page).update(0)
-
-#set page(
-  header: text(9pt)[
-    #counter(page).display("i")
-    #h(1fr)
-  ]
-)
 #show outline.entry.where(
   level: 1
 ): it => {
   v(20pt, weak: true)
   text(14pt)[#strong(it)]
 }
+
 #outline(indent: auto)
 /* END outline */
 
 /* BEGIN main */
-#counter(page).update(0)
-
 #set page(
   header: locate(loc => {
     if calc.odd(loc.page()) {
@@ -148,7 +146,7 @@
         loc
       )
       if section == () {
-        return []
+        return none
       }
 
       let sect-number(..headings) = {
@@ -157,7 +155,7 @@
         if levels.len() > 1 {
           [#levels.at(0).#levels.at(1)]
         } else {
-          []
+          none
         }
       }
 
@@ -175,6 +173,13 @@
         selector(heading.where(level: 1)).before(loc),
         loc,
       )
+      // HACK: don't add headers in outlines (Chapter 0)
+      // This is only a workaround. Detailed mechanism of typst's pagebreaks
+      // needs to be further researched.
+      let chapter-counter = counter(heading.where(level: 1)).at(loc)
+      if chapter-counter == (0,) {
+        return none
+      }
 
       text(9pt, number-width: "tabular")[
         #counter(page).display("1")
@@ -187,13 +192,16 @@
   })
 )
 
-#show heading.where(level: 1): it => {
-  pagebreak(to: "odd")
+#counter(page).update(1)
 
+#show heading.where(level: 1): it => {
   set page(
     header: none,
-    fill: luma(95%),
+    //fill: luma(95%),
   )
+
+  pagebreak(to: "odd", weak: true)
+
   set text(
     25pt,
     font: ("New Computer Modern", "Noto Serif CJK SC"),
@@ -236,7 +244,7 @@
 
 #show footnote.entry: it => {
   set text(9pt)
-  show parbreak: []
+  show parbreak: none
   it
 }
 
@@ -247,7 +255,7 @@
 #pagebreak(to: "odd")
 
 #set page(
-  header: [],
+  header: none,
   fill: luma(95%),
 )
 
