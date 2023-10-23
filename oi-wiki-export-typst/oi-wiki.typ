@@ -58,12 +58,12 @@
   }
   let stroke = if unwrapped {
     (
-      top: (thickness: 1pt, paint: luma(80%), dash: "dashed"),
-      bottom: 1pt + luma(80%),
-      x: 1pt + luma(80%)
+      top: (thickness: 1pt, paint: luma(75%), dash: "dashed"),
+      bottom: 1pt + luma(75%),
+      x: 1pt + luma(75%)
     )
   } else {
-    1pt + luma(80%)
+    1pt + luma(75%)
   }
 
   // Code block with line numbers
@@ -93,7 +93,7 @@
         set text(
           0.8 * RAW_EM,
           font: ("DejaVu Sans Mono", "LXGW WenKai"),
-          fill: luma(80%)
+          fill: luma(75%)
         )
 
         for (i, line) in lines.enumerate() {
@@ -227,7 +227,7 @@
   align(center, block(
     radius: .2em,
     inset: (x: .5em),
-    stroke: 1pt + luma(80%),
+    stroke: 1pt + luma(75%),
 
     tablex(
       columns: columns,
@@ -237,10 +237,53 @@
       // issue: https://github.com/PgBiel/typst-tablex/issues/43
       repeat-header: false,
       align: (col, row) => aligns.at(col),
-      stroke: 1pt + luma(80%),
+      stroke: 1pt + luma(75%),
       auto-vlines: false,
 
       ..cells
     )
   ))
+}
+
+#let tabbed(unwrap: false, ..items) = {
+  let items = items.pos()
+  if items.len() != 2 {
+    panic("#tabbed receives exactly two content blocks")
+  }
+  
+  block[
+    #block(
+      width: 100%,
+      fill: luma(85%),
+      stroke: (
+        top: 1pt + luma(75%),
+        x: 1pt + luma(75%),
+      ),
+      below: 0em,
+      inset: (x: 1em, y: .5em),
+      radius: (top: .2em),
+    )[
+      #show parbreak: none
+
+      #strong(items.at(0))
+    ]
+
+    #if not unwrap {
+      block(
+        width: 100%,
+        stroke: (
+          top: (thickness: 1pt, paint: luma(75%), dash: "dashed"),
+          bottom: 1pt + luma(75%),
+          x: 1pt + luma(75%),
+        ),
+        above: 0em,
+        inset: (x: 1em, y: .5em),
+        radius: (bottom: .2em),
+
+        items.at(1)
+      )
+    } else {
+      items.at(1)
+    }
+  ]
 }
