@@ -1,9 +1,9 @@
 name: Build LaTeX document
 
 on:
-  push:
   pull_request:
-    types: [opened, reopened]
+    branches:
+     - master
 
 jobs:
   build:
