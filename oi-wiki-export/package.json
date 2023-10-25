@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A tool to export all OI Wiki documents.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,17 +11,20 @@
   "license": "ISC",
   "dependencies": {
     "escape-latex": "^1.2.0",
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^4.1.0",
     "rehype-stringify": "^8.0.0",
-    "remark-details": "^1.1.0",
-    "remark-footnotes": "^1.0.0",
+    "remark-details": "^4.1.1",
+    "remark-footnotes": "^4.0.1",
+    "remark-gfm": "^3.0.1",
     "remark-latex": "file:../remark-latex",
-    "remark-math": "^1.0.5",
-    "remark-parse": "^6.0.2",
+    "remark-math": "^5.1.1",
+    "remark-parse": "^10.0.1",
     "remark-rehype": "^7.0.0",
+    "remark-tabbed": "OI-wiki/remark-tabbed#pre-release",
     "tiny-glob": "^0.2.9",
-    "to-vfile": "^6.1.0",
-    "unified": "^9.0.0",
-    "unified-stream": "^1.0.6"
+    "to-vfile": "^8.0.0",
+    "trim": "^1.0.1",
+    "unified": "^10.1.2",
+    "unified-stream": "^3.0.0"
   }
 }
