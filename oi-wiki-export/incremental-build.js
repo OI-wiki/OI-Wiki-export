@@ -1,9 +1,14 @@
 'use strict'
 
-const https = require('https');
-const util = require("util")
-const fs = require('fs').promises
-const path = require("path")
+import { promises as fs } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import fetch from 'node-fetch'
+import process from 'process'
+import util from 'util'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
 
 // Map doc path to pdf chapters
 const PATH_TO_CHAPTER = {
@@ -35,8 +40,8 @@ const PATH_TO_CHAPTER = {
  * @returns - JSON data of changed files
  */
 async function fetchData(owner, repo, PrNumber, token) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${PrNumber}/files`;
   const options = {
-    method: 'GET',
     headers: {
       'Accept': 'application/vnd.github+json',
       'Authorization': `Bearer ${token}`,
@@ -45,37 +50,20 @@ async function fetchData(owner, repo, PrNumber, token) {
     }
   };
 
-  return new Promise((resolve, reject) => {
-    const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${PrNumber}/files`;
-    let data = '';
-
-    const req = https.request(url, options, (response) => {
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      response.on('end', () => {
-        try {
-          const jsonData = JSON.parse(data);
-          resolve(jsonData);
-        } catch (error) {
-          reject(new Error('Error parsing JSON: ' + error.message));
-        }
-      });
-    });
-
-    req.on('error', (error) => {
-      reject(new Error(`Error making HTTPS request: ${error.message}`));
-    });
-
-    req.end();
-  });
+  try {
+    const response = await fetch(url, options);
+    const jsonData = await response.json();
+    return jsonData;
+  } catch (error) {
+    throw new Error(`Error fetching data: ${error.message}`);
+  }
 }
 
 async function main () {
   if (process.argv.length !== 4) {
     console.log('This script is intended for running on Github Actions.')
     console.log('Usage: node ' + __filename.split('/').pop() + ' ${{ github.ref }} +  ${{ secrets.GITHUB_TOKEN }}')
+    return
   }
 
   const PrNumber = process.argv[2].split("/")[2]

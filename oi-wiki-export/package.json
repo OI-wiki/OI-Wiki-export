@@ -12,6 +12,7 @@
   "dependencies": {
     "escape-latex": "^1.2.0",
     "js-yaml": "^4.1.0",
+    "node-fetch": "^3.3.2",
     "rehype-stringify": "^8.0.0",
     "remark-details": "^4.1.1",
     "remark-footnotes": "^4.0.1",
