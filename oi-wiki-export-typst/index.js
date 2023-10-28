@@ -9,7 +9,7 @@ import remarkMath from 'remark-math'
 import remarkDetails from 'remark-details'
 import remarkGfm from 'remark-gfm'
 import remarkTabbed from 'remark-tabbed'
-import { read, writeSync } from 'to-vfile'
+import { read, write } from 'to-vfile'
 import { Type, Schema, load } from 'js-yaml'
 
 import { snippet as _snippet } from './snippet.js'
@@ -109,7 +109,6 @@ async function main() {
       .use(remarkGfm)
       .use(remarkDetails)
       .use(remarkTabbed)
-      // .use(remarkTabbed)
       .use(remarkTypst, {
         prefix: filename.replace(PREFIX_REGEX, '').replace(/md$/, ''), // 根据路径生成 ID，用作 label
         depth: depth, // 标题 h1 深度
@@ -120,14 +119,14 @@ async function main() {
         path: filename.replace(/\.md$/, '/'), // 由文件名转换而来的路径
         title: title,
       })
-      .process(await read(filename), (err, file) => {
+      .process(await read(filename), async (err, file) => {
         if (err) {
           throw err
         }
         file.dirname = 'typ'
         file.stem = filename.replace(PREFIX_REGEX, '')
         file.extname = '.typ'
-        writeSync(file)
+        await write(file)
       })
   }
 
