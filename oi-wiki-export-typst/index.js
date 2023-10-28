@@ -81,11 +81,13 @@ async function main() {
   const catalog = config.nav // 文档目录
 
   let includes = ''
+  const exportPromises = []
   for (const id in catalog) {
     const texModule = join('typ', id.toString())
-    await fs.writeFile(texModule + '.typ', await exportRecursive(catalog[id], 0))
+    await fs.writeFile(texModule + '.typ', exportRecursive(catalog[id], 0))
     includes += '#include "' + texModule + '.typ"\n' // 输出 includes.typ 章节目录文件
   }
+  await Promise.all(exportPromises)
 
   await fs.writeFile('includes.typ', includes)
   console.log(INFO + 'Export successful.')
@@ -130,7 +132,7 @@ async function main() {
   }
 
   // 递归处理各个 chapter
-  async function exportRecursive(object, depth) {
+  function exportRecursive(object, depth) {
     let result = ''
     depth = Math.min(depth, 6)
 
@@ -138,7 +140,8 @@ async function main() {
       console.log(INFO + 'Exporting: ' + key)
 
       if (typeof object[key] === 'string') { // 对应页面
-        await convertMarkdown(join(oiwikiRoot, 'docs', object[key]), depth + 1, object[key])
+        const convert_promise = convertMarkdown(join(oiwikiRoot, 'docs', object[key]), depth + 1, object[key])
+        exportPromises.push(convert_promise)
 
         const moduleName = escape(getModuleName(object[key]))
         result += '{0} {1} <{2}>\n'.format(
@@ -158,7 +161,7 @@ async function main() {
         }
 
         for (const id in object[key]) {
-          result += await exportRecursive(object[key][id], depth + 1)
+          result += exportRecursive(object[key][id], depth + 1)
         }
       }
     }
