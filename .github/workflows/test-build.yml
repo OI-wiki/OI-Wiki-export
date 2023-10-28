@@ -1,6 +1,9 @@
 name: Build LaTeX document
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
      - master
