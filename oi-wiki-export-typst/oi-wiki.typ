@@ -5,11 +5,9 @@
 #import "pymdownx-details.typ": details
 
 #import "@preview/tablex:0.0.5": tablex
+#import "@preview/tiaoma:0.1.0"
 /* END imports */
 
-/* BEGIN plugins */
-#let typst-qrcode-wasm = plugin("./typst_qrcode_wasm.wasm")
-/* END plugins */
 
 #let horizontalrule = align(center, block(
   sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op
@@ -211,10 +209,7 @@
 
   align(horizon, content)
 )
-#let qrcode(arg) = image.decode(
-  str(typst-qrcode-wasm.generate(bytes(arg))),
-  width: .5in,
-)
+#let qrcode(arg) = tiaoma.qrcode(arg, width: .4in)
 
 #let tablex-custom(
   columns: (),
