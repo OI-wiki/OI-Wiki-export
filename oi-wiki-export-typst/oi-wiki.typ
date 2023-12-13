@@ -8,6 +8,61 @@
 #import "@preview/tiaoma:0.1.0"
 /* END imports */
 
+#let page-header = locate(loc => {
+    if calc.odd(loc.page()) {
+      // NOTE: not able to programatically hide headings on new chapters for now
+      // issue: https://github.com/typst/typst/issues/1613
+
+      let section = query(
+        selector(heading.where(level: 2)).before(loc),
+        loc
+      )
+      if section == () {
+        return none
+      }
+
+      let sect-number(..headings) = {
+        let levels = headings.pos()
+
+        if levels.len() > 1 {
+          [#levels.at(0).#levels.at(1)]
+        } else {
+          none
+        }
+      }
+
+      text(9pt, number-width: "tabular")[
+        #emph[
+          #counter(heading).display(sect-number)
+          #h(1em)
+          #smallcaps(section.last().body)
+        ]
+        #h(1fr)
+        #counter(page).display("1")
+      ]
+    } else {
+      let chapters = query(
+        selector(heading.where(level: 1)).before(loc),
+        loc,
+      )
+      // HACK: don't add headers in outlines (Chapter 0)
+      // This is only a workaround. Detailed mechanism of typst's pagebreaks
+      // needs to be further researched.
+      let chapter-counter = counter(heading.where(level: 1)).at(loc)
+      if chapter-counter == (0,) {
+        return none
+      }
+
+      text(9pt, number-width: "tabular")[
+        #counter(page).display("1")
+        #h(1fr)
+        第#counter(heading.where(level: 1)).display("一")章
+        #h(1em)
+        #chapters.last().body
+      ]
+    }
+  }
+)
 
 #let horizontalrule = align(center, block(
   sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op

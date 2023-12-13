@@ -2,6 +2,7 @@
 
 /* BEGIN imports */
 #import "constants.typ": *
+#import "oi-wiki.typ": page-header
 /* END imports */
 
 /* BEGIN meta */
@@ -136,72 +137,12 @@
 
 /* BEGIN main */
 #set page(
-  header: locate(loc => {
-    if calc.odd(loc.page()) {
-      // NOTE: not able to programatically hide headings on new chapters for now
-      // issue: https://github.com/typst/typst/issues/1613
-
-      let section = query(
-        selector(heading.where(level: 2)).before(loc),
-        loc
-      )
-      if section == () {
-        return none
-      }
-
-      let sect-number(..headings) = {
-        let levels = headings.pos()
-
-        if levels.len() > 1 {
-          [#levels.at(0).#levels.at(1)]
-        } else {
-          none
-        }
-      }
-
-      text(9pt, number-width: "tabular")[
-        #emph[
-          #counter(heading).display(sect-number)
-          #h(1em)
-          #smallcaps(section.last().body)
-        ]
-        #h(1fr)
-        #counter(page).display("1")
-      ]
-    } else {
-      let chapters = query(
-        selector(heading.where(level: 1)).before(loc),
-        loc,
-      )
-      // HACK: don't add headers in outlines (Chapter 0)
-      // This is only a workaround. Detailed mechanism of typst's pagebreaks
-      // needs to be further researched.
-      let chapter-counter = counter(heading.where(level: 1)).at(loc)
-      if chapter-counter == (0,) {
-        return none
-      }
-
-      text(9pt, number-width: "tabular")[
-        #counter(page).display("1")
-        #h(1fr)
-        第#counter(heading.where(level: 1)).display("一")章
-        #h(1em)
-        #chapters.last().body
-      ]
-    }
-  })
+  header: page-header
 )
 
 #counter(page).update(1)
 
 #show heading.where(level: 1): it => {
-  set page(
-    header: none,
-    //fill: luma(95%),
-  )
-
-  pagebreak(to: "odd", weak: true)
-
   set text(
     25pt,
     font: ("New Computer Modern", "Noto Serif CJK SC"),
