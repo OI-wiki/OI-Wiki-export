@@ -8,7 +8,7 @@ Typst 版本不低于 0.8.0。
 
 Markdown 源文档到 Typst 的转换通过 [remark-typst](https://github.com/OI-wiki/remark-typst) 完成。
 
-TeX 公式到 Typst 的转换通过 [texmath 的一个分支版本](https://github.com/megakite/texmath/tree/for-oi-wiki)完成。
+TeX 公式到 Typst 的转换通过 [mitex](https://github.com/orangex4/mitex)完成。
 
 二维码的生成通过 [typst-qrcode-wasm](https://github.com/megakite/typst-qrcode-wasm) 插件完成；插件的二进制文件已包含在根目录当中。
 
