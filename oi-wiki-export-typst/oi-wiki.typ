@@ -6,11 +6,8 @@
 
 #import "@preview/tablex:0.0.5": tablex
 #import "@preview/tiaoma:0.1.0"
-#import "@preview/mitex:0.1.0" as mmm
+#import "@preview/mitex:0.2.0": mi, mitex
 /* END imports */
-
-#let mi(..args) = mmm.mi(..args)
-#let mitex(eq, numbering: none, supplement: auto) = mmm.mitex(eq)
 
 #let page-header = locate(loc => {
     if calc.odd(loc.page()) {
