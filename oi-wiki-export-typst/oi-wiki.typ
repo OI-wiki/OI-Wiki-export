@@ -6,7 +6,7 @@
 
 #import "@preview/tablex:0.0.5": tablex
 #import "@preview/tiaoma:0.1.0"
-#import "@preview/mitex:0.2.0": mi, mitex
+#import "@preview/mitex:0.2.1": mi, mitex
 /* END imports */
 
 #let page-header = locate(loc => {
