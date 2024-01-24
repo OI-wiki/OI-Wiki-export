@@ -21,7 +21,7 @@
     "remark-math": "^5.1.1",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^7.0.0",
-    "remark-tabbed": "OI-wiki/remark-tabbed#pre-release",
+    "remark-tabbed": "^0.1.0",
     "tiny-glob": "^0.2.9",
     "to-vfile": "^8.0.0",
     "trim": "^1.0.1",
