@@ -11,7 +11,7 @@
   "dependencies": {
     "js-yaml": "^4.1.0",
     "remark-details": "^4.1.1",
-    "remark-tabbed": "OI-wiki/remark-tabbed#pre-release",
+    "remark-tabbed": "^0.1.0",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "remark-parse": "^10.0.1",
