@@ -4,8 +4,8 @@
 #import "constants.typ": *
 #import "pymdownx-details.typ": details
 
-#import "@preview/tablex:0.0.5": tablex
-#import "@preview/tiaoma:0.1.0"
+#import "@preview/tablex:0.0.8": tablex
+#import "@preview/tiaoma:0.2.0"
 #import "@preview/mitex:0.2.1": mi, mitex
 /* END imports */
 
