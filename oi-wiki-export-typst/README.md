@@ -10,7 +10,7 @@ Markdown 源文档到 Typst 的转换通过 [remark-typst](https://github.com/OI
 
 TeX 公式到 Typst 的转换通过 [mitex](https://github.com/orangex4/mitex)完成。
 
-二维码的生成通过 [typst-qrcode-wasm](https://github.com/megakite/typst-qrcode-wasm) 插件完成；插件的二进制文件已包含在根目录当中。
+二维码的生成通过 [tiaoma](https://github.com/Enter-tainer/zint-wasi) 插件完成；插件的二进制文件已包含在根目录当中。
 
 ## 使用方法
 
@@ -62,6 +62,5 @@ includes.typ
 
 ## 已知问题
 
-- 尚未支持 Tabbed 环境。
 - Details 块下的标题和正文直接可能会出现换页。
 - SVG 中出现的 CJK 字符无法 fallback 到正确的字体。
