@@ -53,7 +53,7 @@ jobs:
           typst -v compile oi-wiki-export.typ
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OI-wiki.pdf
           path: ./oi-wiki-export-typst/oi-wiki-export.pdf
