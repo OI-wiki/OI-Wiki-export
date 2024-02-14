@@ -38,7 +38,7 @@ jobs:
           sudo mv lxgw-wenkai-v1.320 /usr/share/fonts/
           fc-cache
           
-          git clone https://github.com/OI-wiki/OI-wiki.git --depth=1
+          git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
           cd remark-typst
           npm install
           cd ..

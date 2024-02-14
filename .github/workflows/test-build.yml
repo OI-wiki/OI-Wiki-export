@@ -56,7 +56,7 @@ jobs:
             cd ..
             cd oi-wiki-export
             npm i
-            git clone https://github.com/OI-wiki/OI-wiki.git --depth=1
+            git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
             python3 increase-mem-limit.py
             fmtutil-sys --all
             node index.js ./OI-wiki
