@@ -51,7 +51,7 @@ jobs:
         run: |
           cd oi-wiki-export-typst
           node index.js ../OI-wiki
-          typst -v compile oi-wiki-export.typ --font-path .fonts
+          typst compile oi-wiki-export.typ --font-path .fonts
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
