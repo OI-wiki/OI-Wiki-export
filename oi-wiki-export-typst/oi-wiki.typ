@@ -6,18 +6,15 @@
 
 #import "@preview/tablex:0.0.8": tablex
 #import "@preview/tiaoma:0.2.0"
-#import "@preview/mitex:0.2.1": mi, mitex
+#import "@preview/mitex:0.2.2": mi, mitex
 /* END imports */
 
-#let page-header = locate(loc => {
+#let page-header = locate(
+  loc => {
     if calc.odd(loc.page()) {
       // NOTE: not able to programatically hide headings on new chapters for now
       // issue: https://github.com/typst/typst/issues/1613
-
-      let section = query(
-        selector(heading.where(level: 2)).before(loc),
-        loc
-      )
+      let section = query(selector(heading.where(level: 2)).before(loc), loc)
       if section == () {
         return none
       }
@@ -42,10 +39,7 @@
         #counter(page).display("1")
       ]
     } else {
-      let chapters = query(
-        selector(heading.where(level: 1)).before(loc),
-        loc,
-      )
+      let chapters = query(selector(heading.where(level: 1)).before(loc), loc)
       // HACK: don't add headers in outlines (Chapter 0)
       // This is only a workaround. Detailed mechanism of typst's pagebreaks
       // needs to be further researched.
@@ -62,12 +56,10 @@
         #chapters.last().body
       ]
     }
-  }
+  },
 )
 
-#let horizontalrule = align(center, block(
-  sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op
-))
+#let horizontalrule = align(center, block(sym.ast.op + h(1em) + sym.ast.op + h(1em) + sym.ast.op))
 
 #let blockquote(content) = {
   set text(fill: luma(50%))
@@ -76,35 +68,22 @@
     stroke: (left: (thickness: 4pt, paint: luma(50%), cap: "square")),
     inset: (left: 2em),
     spacing: 1.6em,
-
-    content
+    content,
   )
 }
 
 #let authors(authors) = blockquote[*Authors:* #authors]
 
 #let kbd(string) = {
-  let key = box(
-    outset: .2em,
-    inset: (x: .1em),
-    fill: luma(95%),
-    stroke: (
-      bottom: (paint: luma(50%), thickness: 2pt, cap: "round"),
-      x: (paint: luma(50%), thickness: 1pt, cap: "round"),
-    ),
-    radius: .2em,
-
-    raw(string)
-  )
+  let key = box(outset: .2em, inset: (x: .1em), fill: luma(95%), stroke: (
+    bottom: (paint: luma(50%), thickness: 2pt, cap: "round"),
+    x: (paint: luma(50%), thickness: 1pt, cap: "round"),
+  ), radius: .2em, raw(string))
 
   h(.5em) + key + h(.5em)
 }
 
-#let codeblock(
-  code,
-  lang: str,
-  unwrapped: false,
-) = {
+#let codeblock(code, lang: str, unwrapped: false) = {
   let radius = if unwrapped {
     (bottom: .2em)
   } else {
@@ -114,7 +93,7 @@
     (
       top: (thickness: 1pt, paint: luma(75%), dash: "dashed"),
       bottom: 1pt + luma(75%),
-      x: 1pt + luma(75%)
+      x: 1pt + luma(75%),
     )
   } else {
     1pt + luma(75%)
@@ -134,7 +113,6 @@
   grid(
     columns: 2,
     column-gutter: -100%,
-
     // Background & line numbers
     block(
       width: 100%,
@@ -142,42 +120,37 @@
       inset: (left: track-width, y: .5em),
       fill: luma(95%),
       stroke: stroke,
-
       {
         set text(
           0.8 * RAW_EM,
           font: ("DejaVu Sans Mono", "LXGW WenKai"),
-          fill: luma(75%)
+          fill: luma(75%),
         )
 
         for (i, line) in lines.enumerate() {
           box(
             width: 0pt,
             inset: (right: track-width - number-width),
-            align(right, str(i + 1))
+            align(right, str(i + 1)),
           )
           hide(line)
           linebreak()
         }
-      }
+      },
     ),
     // The code itself
     block(
       width: 100%,
       inset: (left: track-width, y: .5em),
-
-      raw(block: true, lang: lang, code)
-    )
+      raw(block: true, lang: lang, code),
+    ),
   )
 }
 
 // Auto-sized image.
 // NOTE: optimized image sizing is in progress
 // issue: https://github.com/typst/typst/issues/436
-#let img-auto(
-  src,
-  alt: str,
-) = style(styles => {
+#let img-auto(src, alt: str) = style(styles => {
   let img = image(src)
   let (width, height) = measure(img, styles)
 
@@ -197,7 +170,6 @@
     align(center, img)
     v(.8em)
   }
-
   // BEGIN trigonometric solution
   // let hori = VISIBLE_WIDTH.pt()
   // let radius = hori / 2
@@ -208,7 +180,6 @@
   // set image(width: calc.min(width, VISIBLE_WIDTH / factor))
   // figure(img, caption: alt)
   // END trigonometric solution
-
   // BEGIN another trigonometric solution
   // let endpoint = MAX_IMAGE_HEIGHT - MAX_IMAGE_WIDTH / 2
   // let max-ratio = MAX_IMAGE_WIDTH / endpoint
@@ -233,10 +204,7 @@
   // END another trigonometric solution
 })
 
-#let svg-math(
-  svg,
-  display: false,
-) = style(styles => {
+#let svg-math(svg, display: false) = style(styles => {
   let img = image.decode(svg)
   let (width, height) = measure(img, styles)
   set image(width: width * (12 / 16), height: height * (12 / 16))
@@ -252,48 +220,34 @@
   set text(9pt)
   set par(leading: .5em)
 
-  grid(
-    columns: (1fr, .75in, 1fr, .5in),
-    rows: .5in,
-
-    ..content
-  )
+  grid(columns: (1fr, .75in, 1fr, .5in), rows: .5in, ..content)
 }
-#let links-cell(content) = block(
-  width: 100%,
-  height: 100%,
-
-  align(horizon, content)
-)
+#let links-cell(content) = block(width: 100%, height: 100%, align(horizon, content))
 #let qrcode(arg) = tiaoma.qrcode(arg, width: .4in)
 
-#let tablex-custom(
-  columns: (),
-  aligns: (),
-
-  ..cells
-) = {
+#let tablex-custom(columns: (), aligns: (), ..cells) = {
   set text(9pt)
 
-  align(center, block(
-    radius: .2em,
-    inset: (x: .5em),
-    stroke: 1pt + luma(75%),
-
-    tablex(
-      columns: columns,
-      column-gutter: 1fr,
-      // NOTE: repeat-header has no effect when the table is in a container
-      // it is also a little buggy right now, so we are not enabling it at this moment
-      // issue: https://github.com/PgBiel/typst-tablex/issues/43
-      repeat-header: false,
-      align: (col, row) => aligns.at(col),
+  align(
+    center,
+    block(
+      radius: .2em,
+      inset: (x: .5em),
       stroke: 1pt + luma(75%),
-      auto-vlines: false,
-
-      ..cells
-    )
-  ))
+      tablex(
+        columns: columns,
+        column-gutter: 1fr,
+        // NOTE: repeat-header has no effect when the table is in a container
+        // it is also a little buggy right now, so we are not enabling it at this moment
+        // issue: https://github.com/PgBiel/typst-tablex/issues/43
+        repeat-header: false,
+        align: (col, row) => aligns.at(col),
+        stroke: 1pt + luma(75%),
+        auto-vlines: false,
+        ..cells,
+      ),
+    ),
+  )
 }
 
 #let tabbed(unwrap: false, ..items) = {
@@ -301,15 +255,12 @@
   if items.len() != 2 {
     panic("#tabbed receives exactly two content blocks")
   }
-  
+
   block[
     #block(
       width: 100%,
       fill: luma(85%),
-      stroke: (
-        top: 1pt + luma(75%),
-        x: 1pt + luma(75%),
-      ),
+      stroke: (top: 1pt + luma(75%), x: 1pt + luma(75%)),
       below: 0em,
       inset: (x: 1em, y: .5em),
       radius: (top: .2em),
@@ -330,8 +281,7 @@
         above: 0em,
         inset: (x: 1em, y: .5em),
         radius: (bottom: .2em),
-
-        items.at(1)
+        items.at(1),
       )
     } else {
       items.at(1)
