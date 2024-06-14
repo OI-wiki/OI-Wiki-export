@@ -63,14 +63,14 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
-      - name: create tag
+      - name: Create Tag
         id: create_tag
         run: |
           tag_name=$(TZ="Asia/Shanghai" date +"v%Y%m%d_%H%M")
           if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
           git tag $tag_name
           git push --tags
-          echo "::set-output name=tag_name::$tag_name"
+          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
