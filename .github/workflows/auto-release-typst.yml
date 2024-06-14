@@ -19,15 +19,15 @@ jobs:
           submodules: recursive
 
       - name: Setup node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: 'npm'
 
       - uses: typst-community/setup-typst@v3
         with:
-          typst-version: 0.11.0
-          cache-dependency-path: OI-Wiki-export/oi-wiki-export-typst/oi-wiki.typ
+          typst-version: 0.11.1
+          cache-dependency-path: oi-wiki-export-typst/oi-wiki.typ
 
       - name: Pre-build operations
         env:
@@ -59,7 +59,7 @@ jobs:
           if [[ -n "${{github.event.inputs.tag_name}}" ]]; then tag_name=${{github.event.inputs.tag_name}}; fi
           git tag $tag_name
           git push --tags
-          echo "::set-output name=tag_name::$tag_name"
+          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
