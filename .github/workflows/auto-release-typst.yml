@@ -62,23 +62,11 @@ jobs:
           echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        shell: bash
+        run: |
+          set -x
+          mv ./oi-wiki-export-typst/oi-wiki-export.pdf ./OI-wiki.pdf
+          gh release create "${{ steps.create_tag.outputs.tag_name }}" ./OI-wiki.pdf
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.create_tag.outputs.tag_name }}
-          release_name: Release ${{ steps.create_tag.outputs.tag_name }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./oi-wiki-export-typst/oi-wiki-export.pdf
-          asset_name: OI-wiki.pdf
-          asset_content_type: application/pdf
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_NAME: "Release ${{ steps.create_tag.outputs.tag_name }}"
