@@ -8,10 +8,8 @@ let oi_wiki_root = '.'
 function resolvePath(snip, spacesAtStart) {
   const str = snip.substring(SNIPPET_TOKEN.length + spacesAtStart)
   let res = { "path": str, "beg_line": undefined, "end_line": undefined }
-  if (
-    (str.startsWith('"') && str.endsWith('"')) ||
-    (str.startsWith("'") && str.endsWith("'"))
-  ) {
+  if ((str.startsWith('"') && str.endsWith('"')) ||
+    (str.startsWith("'") && str.endsWith("'"))) {
     const strs = str.substring(1, str.length - 1).split(":")
     res.path = strs[0]
     if (strs.length > 1) {
@@ -19,7 +17,7 @@ function resolvePath(snip, spacesAtStart) {
       res.end_line = Number(strs[2])
     }
   } else {
-    console.error("cannot parse snippet:", snip)
+    console.error('cannot parse snippet:', snip)
   }
   res.path = resolve(oi_wiki_root, res.path)
   return res
