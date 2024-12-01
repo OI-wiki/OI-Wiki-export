@@ -2,20 +2,29 @@ import glob from "tiny-glob";
 import { promises as fs } from "fs";
 import { resolve } from "path";
 const SNIPPET_TOKEN = "--8<-- ";
+const snippetRegEx = /^("|')(.*?)(:(\d+):(\d+))?\1$/;
 
 let oi_wiki_root = ".";
 
 function resolvePath(snip, spacesAtStart) {
-  let str = snip.substring(SNIPPET_TOKEN.length + spacesAtStart);
-  if (
-    (str.startsWith('"') && str.endsWith('"')) ||
-    (str.startsWith("'") && str.endsWith("'"))
-  ) {
-    str = str.substring(1, str.length - 1);
-  } else {
+  const str = snip.substring(SNIPPET_TOKEN.length + spacesAtStart);
+  const matches = snippetRegEx.exec(str);
+  let res = {
+    "path": str,
+    "beg_line": undefined,
+    "end_line": undefined,
+  };
+  if (matches === null || matches[2] === undefined) {
     console.error("cannot parse snippet:", snip);
+  } else {
+    res.path = matches[2];
+    if (matches[3] !== undefined) {
+      res.beg_line = Number(matches[4]) - 1;
+      res.end_line = Number(matches[5]);
+    }
   }
-  return resolve(oi_wiki_root, str);
+  res.path = resolve(oi_wiki_root, res.path);
+  return res;
 }
 
 async function process_snippet(file) {
@@ -27,9 +36,10 @@ async function process_snippet(file) {
         const spaceString = " ".repeat(spacesAtStart);
         if (line.trim().startsWith(SNIPPET_TOKEN)) {
           const res = resolvePath(line, spacesAtStart);
-          line = await fs.readFile(res, "utf8");
+          line = await fs.readFile(res.path, "utf8");
           line = line
             .split("\n")
+            .slice(res.beg_line, res.end_line)
             .map((l) => spaceString + l)
             .join("\n");
         }
