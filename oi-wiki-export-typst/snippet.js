@@ -2,26 +2,24 @@ import glob from 'tiny-glob'
 import { promises as fs } from 'fs'
 import { resolve } from 'path'
 const SNIPPET_TOKEN = '--8<-- '
-const snippetRegEx = /^("|')(.*?)(:(\d+):(\d+))?\1$/
 
 let oi_wiki_root = '.'
 
 function resolvePath(snip, spacesAtStart) {
   const str = snip.substring(SNIPPET_TOKEN.length + spacesAtStart)
-  const matches = snippetRegEx.exec(str)
-  let res = {
-    "path": str,
-    "beg_line": undefined,
-    "end_line": undefined,
-  }
-  if (matches === null || matches[2] === undefined) {
-    console.error("cannot parse snippet:", snip)
-  } else {
-    res.path = matches[2];
-    if (matches[3] !== undefined) {
-      res.beg_line = Number(matches[4]) - 1
-      res.end_line = Number(matches[5])
+  let res = { "path": str, "beg_line": undefined, "end_line": undefined }
+  if (
+    (str.startsWith('"') && str.endsWith('"')) ||
+    (str.startsWith("'") && str.endsWith("'"))
+  ) {
+    const strs = str.substring(1, str.length - 1).split(":")
+    res.path = strs[0]
+    if (strs.length > 1) {
+      res.beg_line = Number(strs[1]) - 1
+      res.end_line = Number(strs[2])
     }
+  } else {
+    console.error("cannot parse snippet:", snip)
   }
   res.path = resolve(oi_wiki_root, res.path)
   return res
