@@ -13,12 +13,12 @@ function resolvePath(snip, spacesAtStart) {
     (str.startsWith("'") && str.endsWith("'"))
   ) {
     const strs = str.substring(1, str.length - 1).split(":");
-    res.path = strs[0];
-    if (strs.length == 3) {
-      res.beg_line = Number(strs[1]) - 1;
-      res.end_line = Number(strs[2]);
-    } else if (strs.length != 1) {
+    if (strs.length < 1 || strs.length > 3) {
       console.error("cannot parse snippet:", snip);
+    } else {
+      res.path = strs[0];
+      res.beg_line = strs[1] ? Number(strs[1]) - 1 : undefined;
+      res.end_line = strs[2] ? Number(strs[2]) : undefined;
     }
   } else {
     console.error("cannot parse snippet:", snip);
