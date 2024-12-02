@@ -14,9 +14,11 @@ function resolvePath(snip, spacesAtStart) {
   ) {
     const strs = str.substring(1, str.length - 1).split(":");
     res.path = strs[0];
-    if (strs.length > 1) {
+    if (strs.length == 3) {
       res.beg_line = Number(strs[1]) - 1;
       res.end_line = Number(strs[2]);
+    } else if (strs.length != 1) {
+      console.error("cannot parse snippet:", snip);
     }
   } else {
     console.error("cannot parse snippet:", snip);
