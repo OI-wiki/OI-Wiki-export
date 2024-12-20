@@ -9,5 +9,14 @@
 #let RAW_EM = 1.125em
 
 // Page dimensions minus margin
-#let VISIBLE_WIDTH = 21cm - 1in
-#let VISIBLE_HEIGHT = 29.7cm - 1.5in
+#let serif-font = (
+  "New Computer Modern",
+  "Noto Serif CJK SC",
+  "Source Han Serif SC",
+)
+#let sans-font = (
+  "New Computer Modern",
+  "Noto Sans CJK SC",
+  "Source Han Sans SC",
+)
+#let emph-font = ("New Computer Modern", "LXGW Wenkai")
