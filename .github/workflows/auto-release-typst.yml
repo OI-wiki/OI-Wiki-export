@@ -26,7 +26,7 @@ jobs:
 
       - uses: typst-community/setup-typst@v3
         with:
-          typst-version: 0.11.1
+          typst-version: 0.12.0
           cache-dependency-path: oi-wiki-export-typst/oi-wiki.typ
 
       - name: Pre-build operations
