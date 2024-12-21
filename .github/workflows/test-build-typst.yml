@@ -39,7 +39,9 @@ jobs:
           
           mkdir .fonts
           curl -L $(gh api /repos/lxgw/LxgwWenKai/releases/latest -q '.assets[].browser_download_url | select(contains("tar.gz"))') | tar xfz - -C .fonts
-          
+          wget -O .fonts/CrimsonText.zip https://fonts.google.com/download?family=Crimson+Text
+          cd .fonts && unzip CrimsonText.zip
+
           git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
           cd remark-typst
           npm install
