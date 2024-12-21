@@ -88,6 +88,7 @@
     icon: icon,
     accent-color: color.dark,
     title-font: sans-font,
+    breakable: true,
     content,
   )
 }

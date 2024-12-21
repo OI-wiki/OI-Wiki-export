@@ -173,13 +173,11 @@
 //       of bullet:     778 units
 //       of whitespace: 333 units
 #set list(
-  indent: 1em,
-  body-indent: -.778em + 1em,
+  indent: 2em,
 )
 #show list: set block(width: 100%)
 #set enum(
-  indent: 1em,
-  body-indent: -.5em - .278em + 1em,
+  indent: 2em,
 )
 #show enum: set block(width: 100%)
 

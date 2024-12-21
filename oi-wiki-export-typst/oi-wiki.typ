@@ -103,12 +103,12 @@
 )
 
 #let blockquote(content) = {
-  set text(fill: luma(50%))
+  set text(fill: luma(20%))
 
   block(
-    stroke: (left: (thickness: 4pt, paint: luma(50%), cap: "square")),
-    inset: (left: 2em),
-    spacing: 1.6em,
+    stroke: (left: (thickness: 3pt, paint: luma(80%), cap: "square")),
+    inset: (left: 1em),
+    spacing: 1.5em,
     content,
   )
 }
@@ -151,14 +151,14 @@
   set text(9pt)
   set par(leading: .5em)
 
-  grid(columns: (1fr, .75in, 1fr, .5in), rows: .5in, ..content)
+  grid(columns: (1fr, 1cm, 1fr, 1cm, 1fr, 1cm), rows: 1cm, column-gutter: .2cm, row-gutter: .2cm, ..content)
 }
 #let links-cell(content) = block(
   width: 100%,
   height: 100%,
   align(horizon, content),
 )
-#let qrcode(arg) = tiaoma.qrcode(arg, width: .4in)
+#let qrcode(arg) = tiaoma.qrcode(arg, width: .9cm)
 
 #let tablex-custom(columns: (), aligns: (), ..cells) = {
   set text(9pt)
@@ -186,33 +186,8 @@
 
   let (tab, content) = items
 
-  block[
-    #block(
-      width: 100%,
-      fill: luma(85%),
-      stroke: (top: 1pt + luma(75%), x: 1pt + luma(75%)),
-      below: 0em,
-      inset: (x: 1em, y: .5em),
-      radius: (top: .2em),
-    )[
-      #strong(items.at(0))
-    ]
-
-    #if not unwrap {
-      block(
-        width: 100%,
-        stroke: (
-          top: (thickness: 1pt, paint: luma(75%), dash: "dashed"),
-          bottom: 1pt + luma(75%),
-          x: 1pt + luma(75%),
-        ),
-        above: 0em,
-        inset: (x: 1em, y: .5em),
-        radius: (bottom: .2em),
-        items.at(1),
-      )
-    } else {
-      items.at(1)
-    }
+  [
+    - #tab
+      #content
   ]
 }
