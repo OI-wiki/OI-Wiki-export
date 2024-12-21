@@ -6,17 +6,24 @@
 // Default text size of raw block is 0.8rem
 // So we scale it back a little (equivalent to 9pt)
 // issue: https://github.com/typst/typst/issues/1331
-#let RAW_EM = 1.125em
+#let RAW_EM = 1.1em
+#let en-font = "Crimson"
 
 // Page dimensions minus margin
 #let serif-font = (
-  "New Computer Modern",
+  en-font,
   "Noto Serif CJK SC",
   "Source Han Serif SC",
 )
 #let sans-font = (
-  "New Computer Modern",
+  en-font,
   "Noto Sans CJK SC",
   "Source Han Sans SC",
 )
-#let emph-font = ("New Computer Modern", "LXGW Wenkai")
+#let emph-font = (en-font, "LXGW Wenkai")
+#let raw-font = ("DejaVu Sans Mono", "Noto Sans CJK SC", "Source Han Sans SC")
+#let math-font = (
+  "New Computer Modern Math",
+  "Noto Serif CJK SC",
+  "Source Han Serif SC",
+)

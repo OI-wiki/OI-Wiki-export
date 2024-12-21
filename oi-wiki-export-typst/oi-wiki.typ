@@ -7,7 +7,42 @@
 #import "@preview/tablex:0.0.8": tablex
 #import "@preview/tiaoma:0.2.0"
 #import "@preview/mitex:0.2.4": mi, mitex
-#import "@preview/codelst:2.0.2": sourcecode
+#let sourcecode(body, highlight_color: rgb("#fffd11a1").lighten(70%)) = {
+  let rlines = ()
+  show raw.where(block: true): it => {
+    set par(justify: false)
+    block(
+      fill: luma(245),
+      inset: (top: 4pt, bottom: 4pt),
+      radius: 4pt,
+      width: 100%,
+      stack(
+        ..it.lines.map(raw_line => block(
+          inset: 3pt,
+          width: 100%,
+          fill: if rlines.contains(raw_line.number) {
+            highlight_color
+          } else {
+            none
+          },
+          grid(
+            columns: (1em + 4pt, 1fr),
+            align: (right + horizon, left),
+            column-gutter: 0.7em,
+            row-gutter: 0.6em,
+            if rlines.contains(raw_line.number) {
+              text(highlight_color.darken(89%), [#raw_line.number])
+            } else {
+              text(gray, [#raw_line.number])
+            },
+            raw_line,
+          ),
+        )),
+      ),
+    )
+  }
+  body
+}
 
 
 /* END imports */
@@ -148,6 +183,8 @@
   if items.len() != 2 {
     panic("#tabbed receives exactly two content blocks")
   }
+
+  let (tab, content) = items
 
   block[
     #block(

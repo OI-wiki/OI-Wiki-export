@@ -104,20 +104,27 @@
 #show heading.where(level: 1): set text(18pt)
 #show heading.where(level: 2): it => {
   set text(16pt)
+  v(1em, weak: true)
   align(center, it)
+  v(1em, weak: true)
 }
-#show heading.where(level: 3): set text(14pt)
+#show heading.where(level: 3): it => {
+  set text(14pt)
+  v(1em, weak: true)
+  it
+  v(1em, weak: true)
+}
 #show heading.where(level: 4): set text(12pt)
 #show heading.where(level: 5): set text(11pt)
 #show heading.where(level: 6): set text(10pt)
 
 #show emph: set text(font: emph-font)
 
-#show math.equation: set text(font: ("New Computer Modern Math", "LXGW Wenkai"))
+#show math.equation: set text(font: math-font)
 
 #show raw: set text(
   RAW_EM,
-  font: ("DejaVu Sans Mono", "LXGW Wenkai"),
+  font: raw-font,
 )
 
 #show raw.where(block: false): it => highlight(
