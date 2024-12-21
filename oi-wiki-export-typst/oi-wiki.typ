@@ -7,12 +7,15 @@
 #import "@preview/tablex:0.0.8": tablex
 #import "@preview/tiaoma:0.2.0"
 #import "@preview/mitex:0.2.4": mi, mitex
+#import "@preview/codly:1.1.1": *
+#import "@preview/codly-languages:0.1.1": *
 #let sourcecode(body, highlight_color: rgb("#fffd11a1").lighten(70%)) = {
   let rlines = ()
   show raw.where(block: true): it => {
     set par(justify: false)
     block(
       fill: luma(245),
+      stroke: 1pt + luma(245),
       inset: (top: 4pt, bottom: 4pt),
       radius: 4pt,
       width: 100%,
@@ -20,8 +23,9 @@
         ..it.lines.map(raw_line => block(
           inset: 3pt,
           width: 100%,
-          fill: if rlines.contains(raw_line.number) {
-            highlight_color
+          stroke: none,
+          fill: if calc.rem(raw_line.number, 2) == 0 {
+            luma(100%)
           } else {
             none
           },
@@ -151,7 +155,14 @@
   set text(9pt)
   set par(leading: .5em)
 
-  grid(columns: (1fr, 1cm, 1fr, 1cm, 1fr, 1cm), rows: 1cm, column-gutter: .2cm, row-gutter: .2cm, ..content)
+  grid(columns: (
+      1fr,
+      1cm,
+      1fr,
+      1cm,
+      1fr,
+      1cm,
+    ), rows: 1cm, column-gutter: .2cm, row-gutter: .2cm, ..content)
 }
 #let links-cell(content) = block(
   width: 100%,
