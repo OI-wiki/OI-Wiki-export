@@ -1,0 +1,374 @@
+# rehype-mathjax
+
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
+
+**[rehype][]** plugin to render elements with a `language-math` class with
+[MathJax][].
+
+## Contents
+
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`unified().use(rehypeMathjax[, options])`](#unifieduserehypemathjax-options)
+    *   [`Options`](#options)
+*   [Markdown](#markdown)
+*   [HTML](#html)
+*   [CSS](#css)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Security](#security)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This package is a [unified][] ([rehype][]) plugin to render math.
+You can add classes to HTML elements, use fenced code in markdown, or combine
+with [`remark-math`][remark-math] for a `$C$` syntax extension.
+
+## When should I use this?
+
+This project is useful as it renders math with MathJax at compile time, which
+means that there is no client side JavaScript needed.
+
+A different plugin, [`rehype-katex`][rehype-katex], does the same but with
+[KaTeX][].
+
+## Install
+
+This package is [ESM only][esm].
+In Node.js (version 16+), install with [npm][]:
+
+```sh
+npm install rehype-mathjax
+```
+
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import rehypeMathjax from 'https://esm.sh/rehype-mathjax@5'
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import rehypeMathjax from 'https://esm.sh/rehype-mathjax@5?bundle'
+</script>
+```
+
+## Use
+
+Say our document `input.html` contains:
+
+```html
+<p>
+  Lift(<code class="language-math">L</code>) can be determined by Lift Coefficient
+  (<code class="language-math">C_L</code>) like the following equation.
+</p>
+<pre><code class="language-math">
+  L = \frac{1}{2} \rho v^2 S C_L
+</code></pre>
+```
+
+…and our module `example.js` contains:
+
+```js
+import rehypeMathjax from 'rehype-mathjax'
+import rehypeParse from 'rehype-parse'
+import rehypeStringify from 'rehype-stringify'
+import {read, write} from 'to-vfile'
+import {unified} from 'unified'
+
+const file = await unified()
+  .use(rehypeParse, {fragment: true})
+  .use(rehypeMathjax)
+  .use(rehypeStringify)
+  .process(await read('input.html'))
+
+file.basename = 'output.html'
+await write(file)
+```
+
+…then running `node example.js` creates an `output.html` with:
+
+```html
+<p>
+  Lift(<mjx-container class="MathJax" jax="SVG"><!--…--></mjx-container>) can be determined by Lift Coefficient
+  (<mjx-container class="MathJax" jax="SVG"><!--…--></mjx-container>) like the following equation.
+</p>
+<mjx-container class="MathJax" jax="SVG" display="true"><!--…--></mjx-container>
+<style>
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+/* … */
+</style>
+```
+
+…open `output.html` in a browser to see the rendered math.
+
+## API
+
+This package has an export map with several entries for plugins using different
+strategies:
+
+*   `rehype-mathjax/browser` — browser (±1kb)
+*   `rehype-mathjax/chtml` — [CHTML][mathjax-chtml] (±154kb)
+*   `rehype-mathjax/svg` — [SVG][mathjax-svg] (±566kb)
+*   `rehype-mathjax` — same as SVG
+
+Each module exports the plugin [`rehypeMathjax`][api-rehype-mathjax] as
+the default export.
+
+### `unified().use(rehypeMathjax[, options])`
+
+Render elements with a `language-math` (or `math-display`, `math-inline`)
+class with [MathJax][].
+
+###### Parameters
+
+*   `options` ([`Options`][api-options], typically optional)
+    — configuration
+
+###### Returns
+
+Transform ([`Transformer`][unified-transformer]).
+
+### `Options`
+
+Configuration (TypeScript type).
+
+###### Fields
+
+*   `chtml` (`unknown`, optional)
+    — configuration for the output, when CHTML;
+    see [*CommonHTML Output Processor Options* on
+    `mathjax.org`][mathjax-chtml-options]
+*   `svg` (`unknown`, optional)
+    — configuration for the output, when SVG;
+    see [*SVG Output Processor Options* on
+    `mathjax.org`][mathjax-svg-options]
+*   `tex` (`unknown`, optional)
+    — configuration for the input TeX;
+    see [*TeX Input Processor Options* on
+    `mathjax.org`][mathjax-tex-options]
+
+###### Notes
+
+When using `rehype-mathjax/browser`, only `options.tex.displayMath` and
+`options.tex.inlineMath` are used.
+That plugin will use the first delimiter pair in those fields to wrap
+math.
+Then you need to load MathJax yourself on the client and start it with the
+same markers.
+You can pass other options on the client.
+
+When using `rehype-mathjax/chtml`, `options.chtml.fontURL` is required.
+For example:
+
+```js
+  // …
+  .use(rehypeMathjaxChtml, {
+    chtml: {
+      fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2'
+    }
+  })
+  // …
+```
+
+## Markdown
+
+This plugin supports the syntax extension enabled by
+[`remark-math`][remark-math].
+It also supports math generated by using fenced code:
+
+````markdown
+```math
+C_L
+```
+````
+
+## HTML
+
+The content of any element with a `language-math`, `math-inline`, or
+`math-display` class is transformed.
+The elements are replaced by what MathJax renders.
+Either a `math-display` class or using `<pre><code class="language-math">` will
+result in “display” math: math that is a centered block on its own line.
+
+## CSS
+
+The HTML produced by MathJax does not require any extra CSS to render correctly.
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports the additional type [`Options`][api-options].
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with maintained
+versions of Node.js.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line, `rehype-mathjax@^5`,
+compatible with Node.js 16.
+
+This plugin works with unified version 6+ and rehype version 4+.
+
+## Security
+
+Assuming you trust MathJax, using `rehype-mathjax` is safe.
+A vulnerability in it could open you to a
+[cross-site scripting (XSS)][wiki-xss] attack.
+Be wary of user input and use [`rehype-sanitize`][rehype-sanitize].
+
+When you don’t trust user content but do trust MathJax, run `rehype-mathjax`
+*after* `rehype-sanitize`:
+
+```js
+import rehypeMathjax from 'rehype-mathjax'
+import rehypeSanitize, {defaultSchema} from 'rehype-sanitize'
+import rehypeStringify from 'rehype-stringify'
+import remarkMath from 'remark-math'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import {unified} from 'unified'
+
+const file = await unified()
+  .use(remarkParse)
+  .use(remarkMath)
+  .use(remarkRehype)
+  .use(rehypeSanitize, {
+    ...defaultSchema,
+    attributes: {
+      ...defaultSchema.attributes,
+      // The `language-*` regex is allowed by default.
+      code: [['className', /^language-./, 'math-inline', 'math-display']]
+    }
+  })
+  .use(rehypeMathjax)
+  .use(rehypeStringify)
+  .process('$C$')
+
+console.log(String(file))
+```
+
+## Related
+
+*   [`rehype-katex`][rehype-katex]
+    — same but with KaTeX
+*   [`rehype-highlight`](https://github.com/rehypejs/rehype-highlight)
+    — highlight code blocks
+*   [`rehype-autolink-headings`](https://github.com/rehypejs/rehype-autolink-headings)
+    — add links to headings
+*   [`rehype-sanitize`](https://github.com/rehypejs/rehype-sanitize)
+    — sanitize HTML
+*   [`rehype-document`](https://github.com/rehypejs/rehype-document)
+    — wrap a document around the tree
+
+## Contribute
+
+See [`contributing.md`][contributing] in [`remarkjs/.github`][health] for ways
+to get started.
+See [`support.md`][support] for ways to get help.
+
+This project has a [code of conduct][coc].
+By interacting with this repository, organization, or community you agree to
+abide by its terms.
+
+## License
+
+[MIT][license] © [TANIGUCHI Masaya][author]
+
+<!-- Definitions -->
+
+[build-badge]: https://github.com/remarkjs/remark-math/workflows/main/badge.svg
+
+[build]: https://github.com/remarkjs/remark-math/actions
+
+[coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-math.svg
+
+[coverage]: https://codecov.io/github/remarkjs/remark-math
+
+[downloads-badge]: https://img.shields.io/npm/dm/rehype-mathjax.svg
+
+[downloads]: https://www.npmjs.com/package/rehype-mathjax
+
+[size-badge]: https://img.shields.io/bundlejs/size/rehype-mathjax
+
+[size]: https://bundlejs.com/?q=rehype-mathjax
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
+
+[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
+
+[chat]: https://github.com/remarkjs/remark/discussions
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[health]: https://github.com/remarkjs/.github
+
+[contributing]: https://github.com/remarkjs/.github/blob/main/contributing.md
+
+[support]: https://github.com/remarkjs/.github/blob/main/support.md
+
+[coc]: https://github.com/remarkjs/.github/blob/main/code-of-conduct.md
+
+[license]: https://github.com/remarkjs/remark-math/blob/main/license
+
+[author]: https://rokt33r.github.io
+
+[katex]: https://github.com/Khan/KaTeX
+
+[mathjax-svg]: http://docs.mathjax.org/en/latest/output/svg.html
+
+[mathjax-chtml]: http://docs.mathjax.org/en/latest/output/html.html
+
+[mathjax-tex-options]: http://docs.mathjax.org/en/latest/options/input/tex.html
+
+[mathjax-svg-options]: http://docs.mathjax.org/en/latest/options/output/svg.html
+
+[mathjax-chtml-options]: http://docs.mathjax.org/en/latest/options/output/chtml.html
+
+[rehype]: https://github.com/rehypejs/rehype
+
+[rehype-sanitize]: https://github.com/rehypejs/rehype-sanitize
+
+[typescript]: https://www.typescriptlang.org
+
+[unified]: https://github.com/unifiedjs/unified
+
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
+
+[wiki-xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[mathjax]: https://mathjax.org/
+
+[remark-math]: ../remark-math/
+
+[rehype-katex]: ../rehype-katex/
+
+[api-options]: #options
+
+[api-rehype-mathjax]: #unifieduserehypemathjax-options

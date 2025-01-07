@@ -1,0 +1,23 @@
+{
+  "name": "remark-typst",
+  "version": "0.14.0",
+  "description": "A tool to compile mdast to Typst, remastered.",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "sync-request": "^6.1.0",
+    "to-vfile": "^8.0.0",
+    "unified": "^10.1.2",
+    "unist-util-visit": "^4.1.0",
+    "remark-mathjax": "file:./remark-mathjax",
+    "escape-typst": "file:./escape-typst"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "remark",
+    "typst",
+    "markdown"
+  ]
+}

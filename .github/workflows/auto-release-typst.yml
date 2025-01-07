@@ -26,7 +26,7 @@ jobs:
 
       - uses: typst-community/setup-typst@v3
         with:
-          typst-version: 0.11.1
+          typst-version: 0.12.0
           cache-dependency-path: oi-wiki-export-typst/oi-wiki.typ
 
       - name: Pre-build operations
@@ -38,6 +38,7 @@ jobs:
           
           mkdir .fonts
           curl -L $(gh api /repos/lxgw/LxgwWenKai/releases/latest -q '.assets[].browser_download_url | select(contains("tar.gz"))') | tar xfz - -C .fonts
+          cp -r oi-wiki-export-typst/fonts/* .fonts
           
           git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
           cd remark-typst
