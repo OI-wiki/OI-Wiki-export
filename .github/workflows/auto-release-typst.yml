@@ -38,7 +38,12 @@ jobs:
           
           mkdir .fonts
           curl -L $(gh api /repos/lxgw/LxgwWenKai/releases/latest -q '.assets[].browser_download_url | select(contains("tar.gz"))') | tar xfz - -C .fonts
-          cp -r oi-wiki-export-typst/fonts/* .fonts
+          git clone --filter=blob:none --no-checkout --depth 1 --sparse https://github.com/google/fonts.git
+          cd fonts
+          git sparse-checkout add ofl/crimsontext
+          git checkout
+          cd ..
+          cp -r fonts/* .fonts
           
           git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
           cd remark-typst
