@@ -13,17 +13,14 @@
 #let serif-font = (
   en-font,
   "Noto Serif CJK SC",
-  "Source Han Serif SC",
 )
 #let sans-font = (
   en-font,
   "Noto Sans CJK SC",
-  "Source Han Sans SC",
 )
 #let emph-font = (en-font, "LXGW Wenkai")
-#let raw-font = ("DejaVu Sans Mono", "Noto Sans CJK SC", "Source Han Sans SC")
+#let raw-font = ("DejaVu Sans Mono", "Noto Sans CJK SC")
 #let math-font = (
   "New Computer Modern Math",
   "Noto Serif CJK SC",
-  "Source Han Serif SC",
 )
