@@ -7,7 +7,7 @@
 // So we scale it back a little (equivalent to 9pt)
 // issue: https://github.com/typst/typst/issues/1331
 #let RAW_EM = 1.1em
-#let en-font = "Crimson"
+#let en-font = "Crimson Text"
 
 // Page dimensions minus margin
 #let serif-font = (
