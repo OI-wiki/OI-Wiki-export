@@ -1,0 +1,6 @@
+[submodule "remark-typst/escape-typst"]
+	path = remark-typst/escape-typst
+	url = https://github.com/megakite/escape-typst
+[submodule "remark-typst/remark-mathjax"]
+	path = remark-typst/remark-mathjax
+	url = https://github.com/megakite/remark-mathjax.git
