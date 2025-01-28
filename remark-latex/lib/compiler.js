@@ -296,23 +296,30 @@ export default function compiler(options) {
             if (existsSync(uri.replace(/\.svg$/, ".printable.svg"))) {
               console.log(`[SVG] Detected printable version of ${uri}`);
               if (!existsSync(dest)) {
-                execFileSync("inkscape", [
-                  `--export-filename=${dest}`,
+                execFileSync("magick", [
                   uri.replace(/\.svg$/, ".printable.svg"),
+                  "-background",
+                  "white",
+                  dest,
                 ]);
               }
             } else if (!existsSync(dest)) {
-              execFileSync("inkscape", [`--export-filename=${dest}`, uri]);
+              execFileSync("magick", [
+                uri,
+                "-background",
+                "white",
+                dest,
+              ]);
             }
           }
           default: {
             if (!existsSync(dest)) {
               // 混合白色背景（原图可能是 PNG 透明图）
-              execFileSync("convert", [
+              execFileSync("magick", [
+                ext === ".gif" ? uri + "[0]" : uri,
                 "-background",
                 "white",
                 "-flatten",
-                ext === ".gif" ? uri + "[0]" : uri,
                 dest,
               ]);
             }
