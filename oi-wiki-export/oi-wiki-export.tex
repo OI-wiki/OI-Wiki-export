@@ -58,6 +58,27 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks,urlcolor=.,breaklinks=true,hyperfootnotes=true,unicode}
 
+\usepackage{xpatch}
+\ExplSyntaxOn
+% apply the patch only if package date is at least 2022-08-05 _and_
+% earlier than 2022-08-31
+% bug was introduced in v3.9.1 (2022-08-15) and fixed in dev on 2022-08-31
+% see
+% https://github.com/CTeX-org/ctex-kit/commit/a841dabaac7c2dccacd1858ba96f6eb38adfb335
+% https://github.com/CTeX-org/ctex-kit/commit/aa5f00db05f12034845f8e5c4119971b5aae33ff
+% https://github.com/CTeX-org/ctex-kit/issues/636
+% TODO: Test and remove this when xeCJK v3.9.2 avaliable
+\IfPackageAtLeastTF{xeCJK}{2022-08-05}{
+  \IfPackageAtLeastTF{xeCJK}{2022-08-31}{}{
+    \xpatchcmd \__xeCJK_check_for_xglue:
+      {\__xeCJK_if_last_glue:TF}
+      {\__xeCJK_if_last_glue:T}
+      {}{\PatchFailed}
+  }
+}{}
+\ExplSyntaxOff
+
+
 % additional CJK characters for '←' and '→'
 \xeCJKsetcharclass{"2190}{"2192}{1}% 1: CJK
 \xeCJKsetup{xCJKecglue}
