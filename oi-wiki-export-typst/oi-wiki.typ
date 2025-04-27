@@ -4,11 +4,9 @@
 #import "constants.typ": *
 #import "pymdownx-details.typ": details
 
-#import "@preview/tablex:0.0.8": tablex
-#import "@preview/tiaoma:0.2.0"
+#import "@preview/tablex:0.0.9": tablex
+#import "@preview/tiaoma:0.3.0"
 #import "@preview/mitex:0.2.5": mi, mitex
-#import "@preview/codly:1.1.1": *
-#import "@preview/codly-languages:0.1.1": *
 #let sourcecode(body, highlight_color: rgb("#fffd11a1").lighten(70%)) = {
   let rlines = ()
   show raw.where(block: true): it => {
