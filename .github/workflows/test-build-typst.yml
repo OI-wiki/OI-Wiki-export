@@ -25,9 +25,9 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
-      - uses: typst-community/setup-typst@v3
+      - uses: typst-community/setup-typst@v4
         with:
-          typst-version: 0.12.0
+          typst-version: 0.13.1
           cache-dependency-path: oi-wiki-export-typst/oi-wiki.typ
 
       - name: Pre-build operations
