@@ -1,6 +1,7 @@
 node_modules/*
 oi-wiki-export/node_modules/*
 remark-latex/node_modules/*
+remark-snippet/node_modules/*
 
 OI-wiki/
 

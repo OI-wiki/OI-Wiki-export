@@ -48,6 +48,9 @@ jobs:
           cp -r fonts/* .fonts
 
           git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 --single-branch -b master
+          cd remark-snippet
+          npm install
+          cd ..
           cd remark-typst
           npm install
           cd ..
