@@ -12,7 +12,7 @@ import remarkTabbed from 'remark-tabbed'
 import { read, writeSync } from 'to-vfile'
 import { Type, Schema, load } from 'js-yaml'
 
-import { snippet as _snippet } from './snippet.js'
+import _snippet from '../remark-snippet/index.js'
 import remarkTypst from '../remark-typst/index.js'
 import escape from '../remark-typst/escape-typst/src/index.js'
 // import remarkTabbed from '../remark-tabbed/lib/index.js'

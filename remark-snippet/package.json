@@ -1,0 +1,23 @@
+{
+  "name": "remark-snippet",
+  "version": "0.1.0",
+  "description": "A tool to parse snippet syntax. Used by oi-wiki-export",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "cd test && ava && cd .."
+  },
+  "dependencies": {
+    "tiny-glob": "^0.2.9"
+  },
+  "devDependencies": {
+    "ava": "^5.3.1"
+  },
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ]
+  },
+  "author": "",
+  "license": "ISC"
+}

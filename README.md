@@ -31,6 +31,9 @@
 然后安装所需依赖，因为modules之间存在依赖关系，请严格按照顺序执行命令，否则可能会产生版本冲突：
 
 ```
+cd remark-snippet
+npm install
+cd ..
 cd remark-latex
 npm install
 cd ..
@@ -69,6 +72,9 @@ latexmk -shell-escape -8bit -xelatex oi-wiki-export.tex
 然后安装所需依赖，因为modules之间存在依赖关系，请严格按照顺序执行命令，否则可能会产生版本冲突：
 
 ```sh
+cd remark-snippet
+npm install
+cd ..
 cd remark-typst
 npm install
 cd ..

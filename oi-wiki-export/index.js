@@ -11,7 +11,7 @@ import { read, writeSync } from "to-vfile";
 import { Type, Schema, load } from "js-yaml";
 import { join } from "path";
 import { promises as fs } from "fs";
-import { snippet } from "./snippet.js";
+import snippet from "../remark-snippet/index.js";
 import remarkTabbed from "remark-tabbed";
 import escape from "escape-latex";
 

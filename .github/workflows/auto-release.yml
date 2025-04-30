@@ -51,6 +51,9 @@ jobs:
             unzip ./cm-unicode.zip
             cp -r notosans notoserif notosanscjk notoserifcjk cm-unicode/fonts/otf/* RobotoMono/fonts/ttf/* /usr/share/fonts
             fc-cache
+            cd remark-snippet
+            npm i
+            cd ..
             cd remark-latex
             npm i
             cd ..
