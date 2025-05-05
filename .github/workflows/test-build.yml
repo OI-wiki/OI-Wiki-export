@@ -62,6 +62,15 @@ jobs:
 
           root_file: |
             oi-wiki-export.tex
+
+      - name: Upload logs on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: log
+          path: ./oi-wiki-export/oi-wiki-export.log
+
+      - name: Upload artifact
       - uses: actions/upload-artifact@v4
         with:
           name: OI-wiki.pdf
