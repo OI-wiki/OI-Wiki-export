@@ -211,7 +211,7 @@ export default function compiler(options) {
       if (isInternalLink(url)) {
         const location = toPrefix(joinRelative(url, options));
         return location !== "" && raw !== ""
-          ? "\\hyperref[sect:{0}]{{1}}".format(location, children)
+          ? "\\linkwithpage{sect:{0}}{{1}}".format(location, children)
           : "";
       } else {
         const location = escape(url);

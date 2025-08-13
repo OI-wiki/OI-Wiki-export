@@ -110,8 +110,9 @@ function toTypst(tree, options) {
     const makeLink = function (url) {
       if (isInternalLink(url)) {
         const location = toPrefix(joinRelative(url, options))
-
-        return (location !== '') ? `@${location}` : ''
+        const children = all(node, parse).join('')
+        
+        return location !== '' ? '@{0}[{1}]'.format(location, children) : ''
       } else {
         const location = url.replace(/\\/g, '\\\\')
         ++linkIndex

@@ -278,6 +278,11 @@
 \newcommand{\lt}{\symbol{"3C}}  % less than
 \newcommand{\gt}{\symbol{"3E}}  % greater than
 
+% To generate internal links with section number and page number.
+\newcommand{\linkwithpage}[2]{%
+  \hyperref[#1]{#2\scalebox{0.9}{→\ref*{#1}@p\pageref*{#1}}}%
+}
+
 \makeatother
 \begin{document}
     \maketitle

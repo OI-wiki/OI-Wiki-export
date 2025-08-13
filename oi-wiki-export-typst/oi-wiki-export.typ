@@ -181,7 +181,20 @@
 )
 #show enum: set block(width: 100%)
 
-#set ref(supplement: el => [#el.body→#h(-.333em)])
+#show ref: it => {
+  let el = it.element
+  if el != none and el.func() == heading and it.form == "normal" and it.supplement != auto {
+    link(
+      el.location(), 
+      it.supplement + text(size: 0.8em, "→" + numbering(
+        el.numbering,
+        ..counter(heading).at(el.location())
+      ) + "@p" + str(el.location().page()))
+    )
+  } else {
+    it
+  }
+}
 #show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
 
 #show footnote.entry: it => {
