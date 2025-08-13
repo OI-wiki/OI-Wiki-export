@@ -622,8 +622,7 @@ export default function compiler(options) {
         node.children = node.children.slice(1);
 
         const content = all(node, parse).join("");
-        // return "\\begin{tabbed}{{0}}\n{{1}}\n\\end{tabbed}".format(title, content);
-        return content;
+        return "\\begin{tabbed}{{0}}\n{{1}}\n\\end{tabbed}".format(title, content);
       }
       case "tabbedContainerTitle": {
         return all(node, parse).join("");
