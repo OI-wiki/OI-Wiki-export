@@ -163,6 +163,8 @@ export function isUrl(str) {
 export function unquote(str) {
   if (str.startsWith('\\"') && str.endsWith('\\"')) {
     return str.slice(2, -2);
+  } if (str.startsWith('"') && str.endsWith('"')) {
+    return str.slice(1, -1);
   } else {
     return str;
   }

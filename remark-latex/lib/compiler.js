@@ -603,7 +603,7 @@ export default function compiler(options) {
       case "detailsContainer": {
         // Pymdown details 语法块
         const type = node.attributes.class;
-        const summary = parse(node.children[0]);
+        const summary = unquote(parse(node.children[0]));
 
         node.children = node.children.slice(1);
 
