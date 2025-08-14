@@ -186,8 +186,9 @@
     \else
         \begin{mdframed}[%
             roundcorner=3pt,
-            linewidth=0pt,
-            backgroundcolor=#1!20!white,
+            linewidth=1pt,
+            linecolor=#1,
+            backgroundcolor=white,
             frametitle={#2},
             frametitlefont={\sffamily},
             frametitlerule=false,
@@ -222,7 +223,7 @@
 \newcommand{\hytt}[1]{\texttt{\hyphenchar\font="200B #1}}
 
 % minted settings
-\setminted{fontsize=\small}
+\setminted{fontsize=\small,backgroundcolor=black!5!white}
 \newmdenv[%
     roundcorner=5pt,
     linewidth=0pt,
