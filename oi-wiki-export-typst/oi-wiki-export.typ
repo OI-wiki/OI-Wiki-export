@@ -186,7 +186,7 @@
   if el != none and el.func() == heading and it.form == "normal" and it.supplement != auto {
     link(
       el.location(), 
-      it.supplement + text(size: 0.8em, "→" + numbering(
+      it.supplement + text(size: 0.9em, "→" + numbering(
         el.numbering,
         ..counter(heading).at(el.location())
       ) + "@p" + str(el.location().page()))
