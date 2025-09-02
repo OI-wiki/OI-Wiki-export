@@ -6,6 +6,7 @@ import { existsSync, writeFileSync, copyFileSync } from "fs";
 import { URL } from "url";
 
 import { visit } from "unist-util-visit";
+import { toString } from 'mdast-util-to-string';
 import request from "sync-request";
 
 // Utilities
@@ -14,6 +15,7 @@ import {
   isInternalLink,
   toPrefix,
   joinRelative,
+  getLabelText,
   isUrl,
   isCjk,
   trailingLineFeed,
@@ -22,6 +24,8 @@ import {
   nonParagraphBegin,
   escapeTextCommand,
   getTextEstimatedLength,
+  unicodeToLabel,
+  mkdocsMaterialSlugify,
 } from "./util.js";
 
 // Escape reserved symbols
@@ -48,8 +52,13 @@ export default function compiler(options) {
   const identifiers = {}; // indices 的逆映射
   const footnoteRefs = {}; // 脚注被引用的次数，键-值：标识符-引用次数
   const footnoteRefId = {}; // 脚注当前被引用第几次，键-值：脚注序号-第几次引用
+  const slugs = new Set(); // 记录用掉的锚点标签
   let footnoteCount = 0; // 脚注数量
   let inFootnote = false;
+
+  // 用于识别自定义锚点的正则表达式
+  // 要求字符串以 `<a ` 开始 `>` 结尾，且包含一个 `id` 字段，其中，`id` 字段必须以双引号包围
+  const anchorRegex = /^<a\b[^>]*\bid="([^"]+)"[^>]*>$/u; 
 
   parser.prototype.compile = wrapper;
   return parser;
@@ -197,6 +206,15 @@ export default function compiler(options) {
       }
       footnoteRefs[outLinkLable.get(location)]++;
     });
+
+    // 将小节标题配上锚点标签
+    visit(tree, 'heading', (node) => {
+      const headingText = toString(node);
+      const anchorId = mkdocsMaterialSlugify(headingText, slugs);
+      
+      node.data = node.data || {};
+      node.data.anchorId = anchorId;
+    });
   }
 
   function parse(node) {
@@ -210,9 +228,10 @@ export default function compiler(options) {
 
       if (isInternalLink(url)) {
         const location = toPrefix(joinRelative(url, options));
-        return location !== "" && raw !== ""
-          ? "\\linkwithpage{sect:{0}}{{1}}".format(location, children)
-          : "";
+        if (location === "" || raw === "") return "";
+        const labelID = getLabelText(url);
+        const label = labelID !== "" ? "{0}-{1}".format(location, unicodeToLabel(labelID)) : location;
+        return "\\linkwithpage{sect:{0}}{{1}}".format(label, children);
       } else {
         const location = escape(url);
         if (outLinkLable.has(location) === false || inFootnote) {
@@ -353,6 +372,9 @@ export default function compiler(options) {
         if (parText.startsWith("disqus:")) {
           return "";
         }
+        // The single-anchor paragraph should also start with a \par.
+        // Otherwise, the anchor will be placed at the end of the last paragraph.
+        // In latex, an empty line, even with an anchor, is invisible by default.
         return "\\par {0}".format(parText);
       }
       case "heading": {
@@ -365,7 +387,12 @@ export default function compiler(options) {
           "subparagraph",
         ];
         const depth = Math.min(options.depth + Math.max(node.depth, 2) - 2, 5);
-        return "\\{0}*{{1}}".format(block[depth], all(node, parse).join(""));
+        return "\\phantomsection\\{0}*{{1}}\\label{sect:{2}-{3}}".format(
+          block[depth], 
+          all(node, parse).join(""), 
+          options.prefix, 
+          unicodeToLabel(node.data.anchorId)
+        );
       }
       case "text": {
         if (options.forceEscape) {
@@ -466,6 +493,10 @@ export default function compiler(options) {
         return ""; // YAML front-matter，这里直接忽略
       }
       case "html": {
+        const labelID = node.value.trim().match(anchorRegex);
+        if (labelID) {
+          return "\\phantomsection\\label{sect:{0}-{1}}".format(options.prefix, unicodeToLabel(labelID[1]));
+        }
         return ""; // HTML 标签（不含标签里的内容，如 <kbd>A</kbd> 会分别产生一个 html('<kbd>'), text('A'), html('</kbd>')，这里直接忽略掉就行
       }
       case "link": {
