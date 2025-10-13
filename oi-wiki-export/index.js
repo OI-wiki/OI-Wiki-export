@@ -101,7 +101,7 @@ async function main() {
       .use(remarkParse)
       .use(remarkMath)
       .use(remarkGfm)
-      .use(remarkDetails)
+      .use(remarkDetails, {normalize: true})
       .use(remarkTabbed)
       .use(remarkFootnotes)
       .use(latex, {
