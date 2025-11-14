@@ -6,7 +6,7 @@
 
 #import "@preview/tablex:0.0.9": tablex
 #import "@preview/tiaoma:0.3.0"
-#import "@preview/mitex:0.2.5": mi, mitex
+#import "@preview/mitex:0.2.6": mi, mitex
 #let sourcecode(body, highlight_color: rgb("#fffd11a1").lighten(70%)) = {
   let rlines = ()
   show raw.where(block: true): it => {
