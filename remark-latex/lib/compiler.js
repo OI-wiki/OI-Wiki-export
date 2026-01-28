@@ -2,7 +2,7 @@
 
 import { extname, join, dirname, basename } from "path";
 import { execFileSync } from "child_process";
-import { existsSync, writeFileSync, copyFileSync } from "fs";
+import { existsSync, writeFileSync, copyFileSync, readFileSync } from "fs";
 import { URL } from "url";
 
 import { visit } from "unist-util-visit";
@@ -37,6 +37,11 @@ if (!String.prototype.format) {
   };
 }
 
+//读取data.js，获取每个链接对应的archiveLink
+const archiveRawData = readFileSync("data.json", 'utf-8')
+const archiveData = JSON.parse(archiveRawData)
+
+
 export default function compiler(options) {
   const outLinkLable = new Map(); // 所有的外部链接，包括直接链接和引用式链接，键-值：链接-链接label
   let hasFootnote = false; // 判断之前有没有footnote
@@ -69,6 +74,7 @@ export default function compiler(options) {
     if (footnoteCount > 0) {
       if (hasFootnote === false) {
         article += "\n\\subsubsection{参考资料与注释}";
+        article += "\n\\begin{flushright}\n原链接 \\quad 存档链接\n\\end{flushright}"
       }
       article += "\n\\begin{enumerate}\n";
       for (let id = 1; id <= footnoteCount; ++id) {
@@ -99,7 +105,16 @@ export default function compiler(options) {
           ) {
             url[i] = encodeURI(url[i]);
           }
-          const urlFormat = `\\quad \\qrcode[height=1cm]{${url[i]}}`;
+          let urlFormat = "";
+          const originalUrl = url[i].replace(/\\/g, "");
+          const archiveUrl = archiveData[originalUrl] && archiveData[originalUrl]["shortArchiveLink"]
+           if (archiveUrl != null) {
+            urlFormat = `\\quad \\qrcode[height=1cm]{${url[i]}} \\quad \\quad \\qrcode[height=1cm]{${archiveUrl}}`;
+          }
+          else {
+            urlFormat = `\\quad \\qrcode[height=1cm]{${url[i]}}`;
+            console.log(`Unarchive: ${originalUrl}`);
+          }
           article += urlFormat;
         }
         article += "\n";

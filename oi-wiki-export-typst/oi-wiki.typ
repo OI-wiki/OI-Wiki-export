@@ -153,20 +153,18 @@
   set text(9pt)
   set par(leading: .5em)
 
-  grid(columns: (
-      1fr,
-      1cm,
-      1fr,
-      1cm,
-      1fr,
-      1cm,
-    ), rows: 1cm, column-gutter: .2cm, row-gutter: .2cm, ..content)
+  // 每行只放一条参考：三列 -> [链接文本 | 二维码1 | 二维码2]
+  grid(
+    columns: (1fr, 1cm, 1cm),
+    align: (left + horizon, center + horizon, center + horizon),
+    column-gutter: .2cm,
+    row-gutter: .2cm,
+    ..content,
+  )
 }
-#let links-cell(content) = block(
-  width: 100%,
-  height: 100%,
-  align(horizon, content),
-)
+
+#let links-cell(content) = content
+
 #let qrcode(arg) = tiaoma.qrcode(arg, width: .9cm)
 
 #let tablex-custom(columns: (), aligns: (), ..cells) = {

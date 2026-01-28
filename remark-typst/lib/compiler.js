@@ -2,7 +2,7 @@
 
 import { extname, join, dirname, basename } from 'path'
 import { execFileSync, spawnSync } from 'child_process'
-import { existsSync, writeFileSync, copyFileSync } from 'fs'
+import { existsSync, writeFileSync, copyFileSync, readFileSync } from 'fs'
 import { URL } from 'url'
 
 import { visit } from 'unist-util-visit'
@@ -17,6 +17,10 @@ import {
 import escape from '../escape-typst/src/index.js'
 // MathJax SVG export
 import { renderSvg } from '../remark-mathjax/svg.js'
+
+// 读取存档链接
+const archiveRawData = readFileSync("data.json", 'utf-8')
+const archiveData = JSON.parse(archiveRawData)
 
 // 给 String 添加 format 方法，方便格式化输出
 if (!String.prototype.format) {
@@ -86,10 +90,23 @@ function toTypst(tree, options) {
 
     article += '#links-grid('
     for (const [i, link] of arrayLinks.entries()) {
-      article += 'links-cell[#text(fill: cmyk(0%, 100%, 100%, 0%))[\\[{0}\\]] #link("{1}")[{2}]], qrcode("{1}"), \n'.format(
-        i + 1,
-        link.location.replace(/\\/g, '\\\\'),
-        link.plainText)
+      const originalUrl = link.location.replace(/\\/g, "")
+      const archiveUrl = archiveData[originalUrl] && archiveData[originalUrl]["shortArchiveLink"]
+      if (archiveUrl != null) {
+        article += 'links-cell[#text(fill: cmyk(0%, 100%, 100%, 0%))[\\[{0}\\]] #link("{1}")[{2}]], qrcode("{1}"), qrcode("{3}"), \n'.format(
+          i + 1,
+          link.location.replace(/\\/g, '\\\\'),
+          link.plainText,
+          archiveUrl)
+      }
+      else {
+        article += 'links-cell[#text(fill: cmyk(0%, 100%, 100%, 0%))[\\[{0}\\]] #link("{1}")[{2}]], qrcode("{1}"), block(width: .9cm, height: .9cm)[], \n'.format(
+          i + 1,
+          link.location.replace(/\\/g, '\\\\'),
+          link.plainText)
+        console.log(`Unarchive: ${originalUrl}`)
+      }
+      
     }
     article += ')\n'
   }

@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download data.json
+        run: wget https://github.com/jyeric/OI-wiki/raw/refs/heads/archiveLink/data.json
+        working-directory: oi-wiki-export
+
       - name: Build the LaTeX document
         uses: xu-cheng/latex-action@v3
         with:

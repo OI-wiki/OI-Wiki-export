@@ -18,6 +18,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Download data.json
+        run: wget https://github.com/jyeric/OI-wiki/raw/refs/heads/archiveLink/data.json
+        working-directory: oi-wiki-export-typst
       
       - name: Setup node.js
         uses: actions/setup-node@v4
