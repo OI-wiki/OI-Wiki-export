@@ -58,7 +58,7 @@ latexmk -shell-escape -8bit -xelatex oi-wiki-export.tex
 
 首先请安装好以下软件包：
 
-- Typst (0.8.0+)
+- Typst (0.14.0+)
 - NodeJS (16+)
 - imagemagick
 - libwebp

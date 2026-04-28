@@ -6,7 +6,7 @@
 
 #import "@preview/tablex:0.0.9": tablex
 #import "@preview/tiaoma:0.3.0"
-#import "@preview/mitex:0.2.5": mi, mitex
+#import "@preview/mitex:0.2.6": mi, mitex
 #let sourcecode(body, highlight_color: rgb("#fffd11a1").lighten(70%)) = {
   let rlines = ()
   show raw.where(block: true): it => {
@@ -54,7 +54,7 @@
   if calc.odd(loc.page()) {
     // NOTE: not able to programatically hide headings on new chapters for now
     // issue: https://github.com/typst/typst/issues/1613
-    let section = query(selector(heading.where(level: 2)).before(loc))
+    let section = query(heading.where(level: 2).before(loc))
     if section == () {
       return none
     }
@@ -79,7 +79,7 @@
       #counter(page).display("1")
     ]
   } else {
-    let chapters = query(selector(heading.where(level: 1)).before(loc))
+    let chapters = query(heading.where(level: 1).before(loc))
     // HACK: don't add headers in outlines (Chapter 0)
     // This is only a workaround. Detailed mechanism of typst's pagebreaks
     // needs to be further researched.
