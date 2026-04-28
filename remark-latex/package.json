@@ -13,7 +13,8 @@
     "sync-request": "^6.1.0",
     "to-vfile": "^8.0.0",
     "unified": "^10.1.2",
-    "unist-util-visit": "^4.1.0"
+    "unist-util-visit": "^4.1.0",
+    "mdast-util-to-string": "^4.0.0"
   },
   "devDependencies": {},
   "scripts": {

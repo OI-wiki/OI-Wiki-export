@@ -6,12 +6,13 @@ import { existsSync, writeFileSync, copyFileSync } from 'fs'
 import { URL } from 'url'
 
 import { visit } from 'unist-util-visit'
+import { toString } from 'mdast-util-to-string'
 import request from 'sync-request'
 
 // Utilities
 import {
-  all, isInternalLink, toPrefix, joinRelative, isUrl, trailingLineFeed,
-  forceLinebreak, escapeAsString, checkCodeLang, capitalize, unquote
+  all, isInternalLink, toPrefix, joinRelative, getLabelText, isUrl, trailingLineFeed,
+  forceLinebreak, escapeAsString, checkCodeLang, capitalize, unquote, unicodeToLabel, mkdocsMaterialSlugify
 } from './util.js'
 // Escape reserved symbols
 import escape from '../escape-typst/src/index.js'
@@ -55,6 +56,8 @@ function toTypst(tree, options) {
   // that indentation should (not) be performed.
   const indentPar = new Array(true)
 
+  const slugs = new Set(); // 记录用掉的锚点标签
+
   // Index of current outer link
   let linkIndex = 0
   // Used to indicate whether the section named "References"
@@ -71,6 +74,10 @@ function toTypst(tree, options) {
   let isEscapingAsString = false
   // Whether we are in details block right now
   // let inDetails = false
+
+  // 用于识别自定义锚点的正则表达式
+  // 要求字符串以 `<a ` 开始 `>` 结尾，且包含一个 `id` 字段，其中，`id` 字段必须以双引号包围
+  const anchorRegex = /^<a\b[^>]*\bid="([^"]+)"[^>]*>$/u
 
   // Main procedure
   // 处理掉所有标签定义和链接跳转定义
@@ -104,15 +111,27 @@ function toTypst(tree, options) {
     visit(tree, 'definition', node => {
       mapDefinitions.set(node.identifier, node)
     })
+
+    // 将小节标题配上锚点标签
+    visit(tree, 'heading', (node) => {
+      const headingText = toString(node)
+      const anchorId = mkdocsMaterialSlugify(headingText, slugs)
+      
+      node.data = node.data || {}
+      node.data.anchorId = anchorId
+    })
   }
 
   function parse(node) {
     const makeLink = function (url) {
       if (isInternalLink(url)) {
         const location = toPrefix(joinRelative(url, options))
+        if (location === '') return ''
         const children = all(node, parse).join('')
+        const labelID = getLabelText(url)
+        const label = labelID !== "" ? "{0}-{1}".format(location, unicodeToLabel(labelID)) : location
         
-        return location !== '' ? '@{0}[{1}]'.format(location, children) : ''
+        return '@{0}[{1}]'.format(label, children)
       } else {
         const location = url.replace(/\\/g, '\\\\')
         ++linkIndex
@@ -205,6 +224,19 @@ function toTypst(tree, options) {
           return ''
         }
 
+        // The single-anchor paragraph should not start with an #h(2em).
+        // Otherwise, there will be an empty line in the PDF.
+        // It does not matter whether there is an empty line (in Typst) after this paragraph.
+        if (
+          node.children && node.children.length === 2
+          && node.children[0].type === "html"
+          && node.children[1].type === "html"
+          && anchorRegex.test(node.children[0].value.trim())
+          && node.children[1].value.trim() === "<\/a>"
+        ) {
+          return '{0}\n\n'.format(parText)
+        }
+
         if (indentPar.at(-1)) {
           return '#h(2em){0}\n\n'.format(parText)
         }
@@ -212,10 +244,11 @@ function toTypst(tree, options) {
       }
       case 'heading': {
         const depth = Math.min(options.depth + (node.depth - 1), 6)
-        return '#heading(level: {0}, numbering: none, outlined: false)[{1}]'.format(
+        const text = all(node, parse).join("")
+        return '#heading(level: {0}, numbering: none, outlined: false)[{1}] <{2}>'.format(
           depth,
-          all(node, parse).join(''),
-          options.nested ? '' : options.prefix)
+          text,
+          '{0}-{1}'.format(options.prefix, unicodeToLabel(node.data.anchorId)))
       }
       case 'text': {
         // NOTE: remove spaces between text objects?
@@ -287,6 +320,10 @@ function toTypst(tree, options) {
         } else if (node.value === '</kbd>') {
           isEscapingAsString = false
           return '")'
+        }
+        const labelID = node.value.trim().match(anchorRegex)
+        if (labelID) {
+          return '#place(dx: 0pt, dy: 0pt)[]#label("{0}-{1}")'.format(options.prefix, unicodeToLabel(labelID[1]))
         }
         return ''
       }

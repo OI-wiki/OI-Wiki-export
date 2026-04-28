@@ -14,7 +14,7 @@
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
     "rehype-stringify": "^8.0.0",
-    "remark-details": "^4.1.1",
+    "remark-details": "github:c-forrest/remark-details#patch-refactor",
     "remark-footnotes": "^4.0.1",
     "remark-gfm": "^3.0.1",
     "remark-latex": "file:../remark-latex",

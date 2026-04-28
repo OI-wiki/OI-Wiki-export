@@ -181,20 +181,61 @@
 )
 #show enum: set block(width: 100%)
 
+#let get-section-numbering-from-label(label-str, location) = {
+  if not label-str.contains("-") { return none }
+  
+  let parts = label-str.split("-")
+  if parts.len() < 2 { return none }
+  
+  let section-label = parts.first()
+  let section-query = query(label(section-label))
+  
+  if section-query.len() > 0 {
+    let section-el = section-query.first()
+    if section-el.func() == heading and section-el.numbering != none {
+      // Return the section numbering, not the label
+      return numbering(
+        section-el.numbering,
+        ..counter(heading).at(section-el.location())
+      )
+    }
+  }
+  none
+}
+
 #show ref: it => {
   let el = it.element
-  if el != none and el.func() == heading and it.form == "normal" and it.supplement != auto {
-    link(
-      el.location(), 
-      it.supplement + text(size: 0.9em, "→" + numbering(
-        el.numbering,
-        ..counter(heading).at(el.location())
-      ) + "@p" + str(el.location().page()))
-    )
+  
+  if el != none and it.form == "normal" and it.supplement != auto {
+    // Case 1: Element has its own numbering (original behavior)
+    if el.func() == heading and el.numbering != none {
+      link(
+        el.location(), 
+        it.supplement + text(size: 0.9em, "→" + numbering(
+          el.numbering,
+          ..counter(heading).at(el.location())
+        ) + "@p" + str(el.location().page()))
+      )
+    }
+    // Case 2: Element doesn't have numbering, get section numbering from label
+    else {
+      let section-numbering = get-section-numbering-from-label(str(it.target), el.location())
+      
+      if section-numbering != none {
+        link(
+          el.location(),
+          it.supplement + text(size: 0.9em, "→" + section-numbering + "@p" + str(el.location().page()))
+        )
+      } else {
+        // Just return the original reference to keep program running
+        it
+      }
+    }
   } else {
     it
   }
 }
+
 #show ref: set text(fill: cmyk(0%, 100%, 100%, 0%))
 
 #show footnote.entry: it => {
