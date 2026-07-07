@@ -1,4 +1,4 @@
-#import "@preview/gentle-clues:1.2.0": *
+#import "@preview/gentle-clues:1.3.1": *
 #import "constants.typ": *
 /* BEGIN constants */
 #let note-color = (bright: cmyk(10%, 5%, 0%, 0%), dark: cmyk(40%, 20%, 0%, 0%))
