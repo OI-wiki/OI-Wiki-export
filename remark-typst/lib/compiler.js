@@ -32,6 +32,10 @@ const WARNING = '\x1b[1;33m[WARNING]\x1b[0m '
 const ERROR = '\x1b[1;31m[ERROR]\x1b[0m '
 const ZWSP = '\u200b'
 
+function normalizeMath(value) {
+  return value.replace(/\\and\b/g, '\\land')
+}
+
 // Valid types for Pymdown details
 const DETAILS_TYPES = [
   'note', 'abstract', 'info', 'tip', 'success', 'question',
@@ -367,13 +371,13 @@ function toTypst(tree, options) {
         return '' // 已经预处理掉了
       }
       case 'inlineMath': { // 行内公式
-        return `#mi(\`${node.value}\`)`
+        return `#mi(\`${normalizeMath(node.value)}\`)`
       }
       case 'math': { // 行间公式
         const tags = node.value.match(/\\tag{(?<tagNumber>[0-9]+)}/)
         return tags
-          ? `#mitex(numbering: ignored => "(${tags.groups.tagNumber})", \`${node.value}\`)`
-          : `#mitex(\`${node.value}\`)`
+          ? `#mitex(numbering: ignored => "(${tags.groups.tagNumber})", \`${normalizeMath(node.value)}\`)`
+          : `#mitex(\`${normalizeMath(node.value)}\`)`
       }
       case 'detailsContainer': { // Pymdown details 语法块
         // inDetails = true
