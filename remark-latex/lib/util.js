@@ -2,6 +2,7 @@
 
 import escape from "escape-latex";
 import { join } from "path";
+import crypto from 'crypto';
 
 // 对 node 的所有子结点执行 map(handler)
 export const all = function (node, handler) {
@@ -99,6 +100,7 @@ export function joinRelative(dir, options) {
   if (dir.indexOf("#") !== -1) {
     dir = dir.slice(0, dir.indexOf("#"));
   }
+  if (!dir) return options.path
   if (dir.startsWith("/")) {
     return join(options.root, dir.slice(1));
   } else if (dir.startsWith(".") && !dir.endsWith("md")) {
@@ -110,6 +112,14 @@ export function joinRelative(dir, options) {
     return join(options.path.split("/").slice(0, -2).join("/"), dir);
   }
 };
+
+// 获得 URL 中 # 后面的部分（用于内链索引）
+export function getLabelText(dir) {
+  if (dir.indexOf("#") !== -1) {
+    return dir.slice(dir.indexOf("#") + 1);
+  }
+  return "";
+}
 
 // 强制 LaTeX 在每个字符后都可换行（方式是在每个非 CJK 字符之间插入零宽间隔字符 Zero-Width Space）
 export function forceLinebreak(text) {
@@ -168,4 +178,37 @@ export function unquote(str) {
   } else {
     return str;
   }
+}
+
+// 将 Unicode 的标签转换为 ascii
+// 假设标签已经经过 slugify 处理，包含的 ascii 字符只有英语小写字母、hyphen 和下划线
+export function unicodeToLabel(str) {
+  const normalized = encodeURIComponent(str).replace(/%25/g, '%');
+  const hash = crypto.createHash('sha1').update(normalized, 'utf8').digest('hex');
+  return hash.slice(0, 16);
+}
+
+// 给小节标题转化为锚点标签并处理重复的问题
+export function mkdocsMaterialSlugify(text, existingSlugs = new Set()) {
+  // 参考 https://github.com/facelessuser/pymdown-extensions/blob/main/pymdownx/slugs.py
+  const slug = text
+    .normalize('NFC')
+    .trim()
+    .toLowerCase()
+    // 只保留数字、字母、重音符号、下划线、空格和 hyphen
+    .replace(/[^\p{L}\p{M}\p{N}_\- ]/gu, '')
+    // 将空格替换为 hyphen
+    .replace(/ /g, '-');
+
+  // 去重
+  let finalSlug = slug;
+  let counter = 1;
+  
+  while (existingSlugs.has(finalSlug)) {
+    finalSlug = `${slug}_${counter}`;
+    counter++;
+  }
+  
+  existingSlugs.add(finalSlug);
+  return finalSlug;
 }

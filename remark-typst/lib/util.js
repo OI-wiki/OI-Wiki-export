@@ -1,6 +1,7 @@
 'use strict'
 
 import { join } from 'path'
+import crypto from 'crypto'
 
 export function all(node, handler) {
   return node.children.map(handler)
@@ -50,7 +51,7 @@ export function joinRelative(url, options) {
   if (url.indexOf('#') !== -1) {
     url = url.slice(0, url.indexOf('#'))
   }
-
+  if (!url) return options.path
   // Join directories
   const isFolder = url.slice(url.lastIndexOf('.')).includes('/')
   if (url.startsWith('/')) {
@@ -64,6 +65,13 @@ export function joinRelative(url, options) {
   } else {
     return join(options.path.split('/').slice(0, -2).join('/'), url)
   }
+}
+
+export function getLabelText(dir) {
+  if (dir.indexOf("#") !== -1) {
+    return dir.slice(dir.indexOf("#") + 1);
+  }
+  return "";
 }
 
 export function forceLinebreak(text) {
@@ -120,4 +128,37 @@ export function unquote(str) {
   } else {
     return str
   }
+}
+
+// 将 Unicode 的标签转换为 ascii
+// 假设标签已经经过 slugify 处理，包含的 ascii 字符只有英语小写字母、hyphen 和下划线
+export function unicodeToLabel(str) {
+  const normalized = encodeURIComponent(str).replace(/%25/g, '%')
+  const hash = crypto.createHash('sha1').update(normalized, 'utf8').digest('hex')
+  return hash.slice(0, 16)
+}
+
+// 给小节标题转化为锚点标签并处理重复的问题
+export function mkdocsMaterialSlugify(text, existingSlugs = new Set()) {
+  // 参考 https://github.com/facelessuser/pymdown-extensions/blob/main/pymdownx/slugs.py
+  const slug = text
+    .normalize('NFC')
+    .trim()
+    .toLowerCase()
+    // 只保留数字、字母、重音符号、下划线、空格和 hyphen
+    .replace(/[^\p{L}\p{M}\p{N}_\- ]/gu, '')
+    // 将空格替换为 hyphen
+    .replace(/ /g, '-')
+
+  // 去重
+  let finalSlug = slug
+  let counter = 1
+  
+  while (existingSlugs.has(finalSlug)) {
+    finalSlug = `${slug}_${counter}`
+    counter++
+  }
+  
+  existingSlugs.add(finalSlug)
+  return finalSlug
 }
