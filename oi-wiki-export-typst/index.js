@@ -10,7 +10,7 @@ import remarkDetails from 'remark-details'
 import remarkGfm from 'remark-gfm'
 import remarkTabbed from 'remark-tabbed'
 import { read, writeSync } from 'to-vfile'
-import { Type, Schema, load } from 'js-yaml'
+import { Type, DEFAULT_SCHEMA, load } from 'js-yaml'
 
 import _snippet from '../remark-snippet/index.js'
 import remarkTypst from '../remark-typst/index.js'
@@ -67,15 +67,16 @@ async function main() {
   const yamlFileContent = await fs.readFile(yamlFile, 'utf8');
 
   // fix YAMLException: unknown tag
-  const types = yamlFileContent
-    .match(/!!python\/name:.*/g)
-    .map(s => new Type(s.replace('!!', 'tag:yaml.org,2002:'), {
-      kind: 'mapping',
-      construct: function (data) {
-        return data
-      }
-    }))
-  const configSchema = new Schema(types)
+  const pythonNameTags = [
+    ...new Set(yamlFileContent.match(/!!python\/name:[^\s]+/g) ?? [])
+  ]
+  const types = pythonNameTags.map(s => new Type(s.replace('!!', 'tag:yaml.org,2002:'), {
+    kind: 'scalar',
+    construct: function (data) {
+      return data
+    }
+  }))
+  const configSchema = DEFAULT_SCHEMA.extend(types)
 
   const config = load(yamlFileContent, { schema: configSchema })
   const catalog = config.nav // 文档目录
@@ -134,6 +135,20 @@ async function main() {
     let result = ''
     depth = Math.min(depth, 6)
 
+    if (typeof object === 'string') {
+      await convertMarkdown(join(oiwikiRoot, 'docs', object), depth, object)
+
+      const moduleName = escape(getModuleName(object))
+      return '#include "' + moduleName + '.typ"\n'
+    }
+
+    if (object instanceof Array) {
+      for (const item of object) {
+        result += await exportRecursive(item, depth)
+      }
+      return result
+    }
+
     for (const key in object) {
       console.log(INFO + 'Exporting: ' + key)
 
@@ -177,16 +192,12 @@ async function main() {
 
   function getLabel(obj) {  
     if (obj instanceof Array) {
-      let idx = 0
-      let label = ''
-      while (true) {
-        label = getLabel(obj[idx])
+      for (const item of obj) {
+        const label = getLabel(item)
         if (label !== '')
-          break
-
-        ++idx
+          return label
       }
-      return label
+      return ''
     }
 
     if (obj instanceof Object) {
