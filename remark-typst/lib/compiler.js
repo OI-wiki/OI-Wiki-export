@@ -322,7 +322,7 @@ function toTypst(tree, options) {
         const header = parse(node.children[0])
         inTableHeader = false
 
-        return '#tablex-custom(columns: {0}, aligns: ({1}), {2}{3})'.format(
+        return '#tablex-custom(columns: {0}, aligns: ({1},), {2}{3})'.format(
           node.align.length,
           node.align.map(s => s || 'left').join(', '),
           header,
