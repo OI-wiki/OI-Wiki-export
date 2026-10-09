@@ -148,10 +148,11 @@ function toTypst(tree, options) {
         } else {
           ext = extname(loc)
         }
-        const is_svg = ext === '.svg'
+        const normalizedExt = ext.toLowerCase()
+        const is_svg = normalizedExt === '.svg'
         dest = join('images', toPrefix(join(dirname(uri), basename(uri, extname(uri)))) + (is_svg ? '.svg' : '.jpg'))
         // convert
-        switch (ext) {
+        switch (normalizedExt) {
           case '.jpg':
           case '.svg': {
             if (!existsSync(dest)) {
@@ -170,7 +171,7 @@ function toTypst(tree, options) {
               // 混合白色背景（原图可能是 PNG 透明图）
               execFileSync(
                 'convert',
-                ['-background', 'white', '-flatten', ext === '.gif' ? uri + '[0]' : uri, dest])
+                ['-background', 'white', '-flatten', normalizedExt === '.gif' ? uri + '[0]' : uri, dest])
             }
             break
           }
@@ -300,7 +301,7 @@ function toTypst(tree, options) {
         if (parsingPlain) {
           return node.title || node.alt || node.url
         }
-        return makeImage(node.url.toLowerCase())
+        return makeImage(node.url)
       }
       case 'imageReference': {
         const defn = mapDefinitions.get(node.identifier)

@@ -276,14 +276,15 @@ export default function compiler(options) {
         } else {
           ext = extname(loc);
         }
-        const is_svg = ext === ".svg";
+        const normalizedExt = ext.toLowerCase();
+        const is_svg = normalizedExt === ".svg";
         dest = join(
           "images",
           toPrefix(join(dirname(uri), basename(uri, extname(uri)))) +
             (is_svg ? ".pdf" : ".jpg")
         );
         // convert
-        switch (ext) {
+        switch (normalizedExt) {
           case ".jpg":
           case ".jpeg": {
             if (!existsSync(dest)) {
@@ -316,7 +317,7 @@ export default function compiler(options) {
             if (!existsSync(dest)) {
               // 混合白色背景（原图可能是 PNG 透明图）
               execFileSync("magick", [
-                ext === ".gif" ? uri + "[0]" : uri,
+                normalizedExt === ".gif" ? uri + "[0]" : uri,
                 "-background",
                 "white",
                 "-flatten",
@@ -483,7 +484,7 @@ export default function compiler(options) {
         return "";
       }
       case "image": {
-        return makeImage(node.url.toLowerCase());
+        return makeImage(node.url);
       }
       case "imageReference": {
         if (links[node.identifier]) {
