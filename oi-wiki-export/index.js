@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 import { latex } from "remark-latex";
 import remarkFootnotes from "remark-footnotes";
 import { read, writeSync } from "to-vfile";
-import { Type, Schema, load } from "js-yaml";
+import { Type, DEFAULT_SCHEMA, load } from "js-yaml";
 import { join } from "path";
 import { promises as fs } from "fs";
 import snippet from "../remark-snippet/index.js";
@@ -59,16 +59,19 @@ async function main() {
   const yamlFileContent = await fs.readFile(yamlFile, "utf8");
 
   // fix YAMLException: unknown tag
-  const types = yamlFileContent.match(/!!python\/name:.*/g).map(
+  const pythonNameTags = [
+    ...new Set(yamlFileContent.match(/!!python\/name:[^\s]+/g) ?? []),
+  ];
+  const types = pythonNameTags.map(
     (s) =>
       new Type(s.replace("!!", "tag:yaml.org,2002:"), {
-        kind: "mapping",
+        kind: "scalar",
         construct: function (data) {
           return data;
         },
       })
   );
-  const CONFIG_SCHEMA = new Schema(types);
+  const CONFIG_SCHEMA = DEFAULT_SCHEMA.extend(types);
 
   const config = load(yamlFileContent, { schema: CONFIG_SCHEMA });
   const catalog = config.nav; // 文档目录
@@ -136,6 +139,19 @@ async function main() {
     ]; // 各层次对应的 TeX 命令
     let result = "";
     depth = Math.min(depth, block.length);
+
+    if (typeof object === "string") {
+      await convertMarkdown(join(oiwikiRoot, "docs", object), depth);
+      return "\\input{" + escape(getTexModuleName(object)) + "}\n";
+    }
+
+    if (object instanceof Array) {
+      for (const item of object) {
+        result += await exportRecursive(item, depth);
+      }
+      return result;
+    }
+
     for (const key in object) {
       console.log("[Info] Exporting: " + key);
       result += "\\" + block[depth] + "{" + escape(key) + "}\n";
